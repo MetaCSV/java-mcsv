@@ -1,5 +1,6 @@
 domain,key,value
-file,encoding,UTF-8-SIG
+file,encoding,UTF-8
+file,bom,true
 csv,delimiter,;
 csv,double_quote,false
 data,col/3/type,integer

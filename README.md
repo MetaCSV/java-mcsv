@@ -10,7 +10,7 @@ I quote the README:
 
 > MetaCSV is an open specification for a CSV file description. This description
 > is written in a small auxiliary CSV file that may be stored along wih the 
->CSV file itself. This auxilary file should provide the informations necessary 
+>CSV file itself. This auxiliary file should provide the information necessary 
 >to read and type the content of the CSV file. The standard extension is 
 >".mcsv".
 
@@ -38,15 +38,15 @@ newline: CRLF, see the [MetaCSV format specification](https://github.com/jferard
 The code is:
 
     File f = getResourceAsFile("example.csv");
-    MetaCSVReader reader = MetaCSVReader.create(f);
+    com.github.jferard.javamcsv.MetaCSVReader reader = com.github.jferard.javamcsv.MetaCSVReader.create(f);
     System.out.println(reader.getTypes());
-    for (MetaCSVRecord record : reader) {
+    for (com.github.jferard.javamcsv.MetaCSVRecord record : reader) {
         System.out.println(record);
     }
         
 Output:
 
     {1=date/YYYY-MM-dd, 2=integer}
-    MetaCSVRecord(CSVRecord [comment=null, mapping=null, recordNumber=1, values=[name, date, count]] ,[name, date, count])
-    MetaCSVRecord(CSVRecord [comment=null, mapping=null, recordNumber=2, values=[foo, 2020-11-21, 15]] ,[foo, Mon Dec 30 00:00:00 CET 2019, 15])
-    MetaCSVRecord(CSVRecord [comment=null, mapping=null, recordNumber=3, values=[foo, 2020-11-22, -8]] ,[foo, Mon Dec 30 00:00:00 CET 2019, -8])
+    com.github.jferard.javamcsv.MetaCSVRecord(CSVRecord [comment=null, mapping=null, recordNumber=1, values=[name, date, count]] ,[name, date, count])
+    com.github.jferard.javamcsv.MetaCSVRecord(CSVRecord [comment=null, mapping=null, recordNumber=2, values=[foo, 2020-11-21, 15]] ,[foo, Mon Dec 30 00:00:00 CET 2019, 15])
+    com.github.jferard.javamcsv.MetaCSVRecord(CSVRecord [comment=null, mapping=null, recordNumber=3, values=[foo, 2020-11-22, -8]] ,[foo, Mon Dec 30 00:00:00 CET 2019, -8])
