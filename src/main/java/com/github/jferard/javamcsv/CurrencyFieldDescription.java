@@ -18,7 +18,9 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;import java.io.IOException;
+package com.github.jferard.javamcsv;
+
+import java.io.IOException;
 
 public class CurrencyFieldDescription implements FieldDescription<Number> {
     private final boolean pre;
@@ -45,5 +47,11 @@ public class CurrencyFieldDescription implements FieldDescription<Number> {
     public FieldProcessor<Number> toFieldProcessor(String nullValue) {
         return new CurrencyFieldProcessor(this.pre, this.symbol,
                 this.numberDescription.toFieldProcessor(nullValue), nullValue);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("CurrencyFieldDescription(%b, %s, %s)",
+                this.pre, this.symbol, this.numberDescription.toString());
     }
 }

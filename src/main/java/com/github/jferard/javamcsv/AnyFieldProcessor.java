@@ -18,7 +18,9 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;public class AnyFieldProcessor implements FieldProcessor<Object> {
+package com.github.jferard.javamcsv;
+
+public class AnyFieldProcessor implements FieldProcessor<Object> {
     private final String nullValue;
 
     public AnyFieldProcessor(String nullValue) {

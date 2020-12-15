@@ -107,4 +107,20 @@ public class MetaCSVData {
     public String getNullValue() {
         return this.nullValue;
     }
+
+    public boolean isDoubleQuote() {
+        return this.doubleQuote;
+    }
+
+    public char getEscapeChar() {
+        return this.escapeChar;
+    }
+
+    public char getQuoteChar() {
+        return this.quoteChar;
+    }
+
+    public boolean isSkipInitialSpace() {
+        return this.skipInitialSpace;
+    }
 }

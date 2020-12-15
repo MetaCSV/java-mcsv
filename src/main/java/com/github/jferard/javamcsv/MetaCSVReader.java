@@ -18,7 +18,9 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;import org.apache.commons.csv.CSVParser;
+package com.github.jferard.javamcsv;
+
+import org.apache.commons.csv.CSVParser;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,21 +33,32 @@ import java.util.Map;
 
 public class MetaCSVReader implements Iterable<MetaCSVRecord> {
     public static MetaCSVReader create(File csvFile)
-            throws IOException, MetaCSVParseException {
+            throws IOException, MetaCSVParseException, MetaCSVReadException {
         File metaCSVFile = Util.withExtension(csvFile, ".mcsv");
         return create(csvFile, metaCSVFile);
     }
 
     public static MetaCSVReader create(File csvFile, File metaCSVFile)
-            throws IOException, MetaCSVParseException {
+            throws IOException, MetaCSVParseException, MetaCSVReadException {
         InputStream metaIn = new FileInputStream(metaCSVFile);
         InputStream in = new FileInputStream(csvFile);
         return create(in, metaIn);
     }
 
     public static MetaCSVReader create(InputStream is, InputStream metaIs)
-            throws IOException, MetaCSVParseException {
+            throws IOException, MetaCSVParseException, MetaCSVReadException {
         MetaCSVData data = MetaCSVParser.create(metaIs).parse();
+        if (data.isUtf8BOM()) {
+            byte[] buffer = new byte[3];
+            int count = 0;
+            while (count < 3) {
+                count = is.read(buffer, count, 3);
+            }
+            if ((buffer[0] & 0xFF) != 0xEF || (buffer[1] & 0xFF) != 0xBB ||
+                    (buffer[2] & 0xFF) != 0xBF) {
+                throw new MetaCSVReadException("BOM expected");
+            }
+        }
         Reader reader = new InputStreamReader(is, data.getEncoding());
         return new MetaCSVReaderFactory(data, reader).build();
     }
@@ -54,7 +67,8 @@ public class MetaCSVReader implements Iterable<MetaCSVRecord> {
     private final CSVRecordProcessor processor;
     private Map<Integer, String> types;
 
-    public MetaCSVReader(CSVParser parser, CSVRecordProcessor processor, Map<Integer, String> types) {
+    public MetaCSVReader(CSVParser parser, CSVRecordProcessor processor,
+                         Map<Integer, String> types) {
         this.parser = parser;
         this.processor = processor;
         this.types = types;

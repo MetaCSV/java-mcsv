@@ -21,6 +21,7 @@
 package com.github.jferard.javamcsv.it;
 
 import com.github.jferard.javamcsv.MetaCSVParseException;
+import com.github.jferard.javamcsv.MetaCSVReadException;
 import com.github.jferard.javamcsv.MetaCSVReader;
 import com.github.jferard.javamcsv.MetaCSVRecord;
 import org.junit.Assert;
@@ -59,7 +60,7 @@ public class MetaCSVReaderIT {
     }
 
     @Test
-    public void testMeta() throws IOException, MetaCSVParseException {
+    public void testMeta() throws IOException, MetaCSVParseException, MetaCSVReadException {
         InputStream is =
                 getResourceAsStream("meta_csv.mcsv");
         InputStream metaIs =
@@ -102,7 +103,8 @@ public class MetaCSVReaderIT {
     }
 
     @Test
-    public void testLongFile() throws IOException, MetaCSVParseException, URISyntaxException {
+    public void testLongFile()
+            throws IOException, MetaCSVParseException, URISyntaxException, MetaCSVReadException {
         File f = getResourceAsFile("20201001-bal-216402149.csv");
         MetaCSVReader reader = MetaCSVReader.create(f);
         Map<Integer, String> expectedTypes = new HashMap<Integer, String>();
@@ -116,7 +118,7 @@ public class MetaCSVReaderIT {
         Iterator<MetaCSVRecord> iterator = reader.iterator();
         Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(
-                Arrays.asList("\uFEFFcle_interop", "uid_adresse", "voie_nom", "numero", "suffixe",
+                Arrays.asList("cle_interop", "uid_adresse", "voie_nom", "numero", "suffixe",
                         "commune_nom", "position", "x", "y", "long", "lat", "source",
                         "date_der_maj", "refparc", "voie_nom_eu", "complement"),
                 toList(iterator.next()));
@@ -136,7 +138,8 @@ public class MetaCSVReaderIT {
     }
 
     @Test
-    public void testExample() throws IOException, MetaCSVParseException, URISyntaxException {
+    public void testExample()
+            throws IOException, MetaCSVParseException, URISyntaxException, MetaCSVReadException {
         File f = getResourceAsFile("example.csv");
         MetaCSVReader reader = MetaCSVReader.create(f);
         Map<Integer, String> expectedTypes = new HashMap<Integer, String>();

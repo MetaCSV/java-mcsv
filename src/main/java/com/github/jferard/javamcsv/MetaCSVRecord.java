@@ -46,8 +46,10 @@ public class MetaCSVRecord implements Iterable<Object> {
         return this.values.iterator();
     }
 
+    // TODO: continue
+
     @Override
     public String toString() {
-        return "com.github.jferard.javamcsv.MetaCSVRecord(" + record + " ," + values + ")";
+        return "MetaCSVRecord(" + record + " ," + values + ")";
     }
 }

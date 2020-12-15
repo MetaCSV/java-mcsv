@@ -24,6 +24,8 @@ import com.github.jferard.javamcsv.MetaCSVData;
 import com.github.jferard.javamcsv.MetaCSVParseException;
 import com.github.jferard.javamcsv.MetaCSVParser;
 import com.github.jferard.javamcsv.MetaCSVRenderer;
+import com.github.jferard.javamcsv.TestHelper;
+import com.sun.org.apache.xalan.internal.xsltc.compiler.util.TestGenerator;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -95,7 +97,7 @@ public class MetaCSVParserIT {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         MetaCSVRenderer renderer = MetaCSVRenderer.create(bos, minimal);
         renderer.render(metaCSVData);
-        return bos.toString("UTF-8");
+        return bos.toString(TestHelper.UTF_8_CHARSET_NAME);
     }
 
     private MetaCSVData getMetaCSVData(String metaCSVFilename)

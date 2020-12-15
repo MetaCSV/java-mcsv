@@ -44,6 +44,6 @@ public class BooleanFieldDescription implements FieldDescription<Boolean> {
 
     @Override
     public String toString() {
-        return String.format("com.github.jferard.javamcsv.BooleanFieldDescription(%s, %s)", this.trueWord, this.falseWord);
+        return String.format("BooleanFieldDescription(%s, %s)", this.trueWord, this.falseWord);
     }
 }

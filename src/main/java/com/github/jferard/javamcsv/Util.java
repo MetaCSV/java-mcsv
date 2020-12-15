@@ -27,6 +27,7 @@ import java.util.List;
 class Util {
     public static final String CRLF = "\r\n";
     public static Charset UTF_8_CHARSET = Charset.forName("UTF-8");
+    public static String UTF_8_CHARSET_NAME = "UTF-8";
 
     public static List<String> parse(String s) {
         List<String> parts = new ArrayList<String>();

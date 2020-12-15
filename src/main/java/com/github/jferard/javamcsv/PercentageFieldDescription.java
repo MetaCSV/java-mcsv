@@ -44,4 +44,10 @@ public class PercentageFieldDescription implements FieldDescription<Double> {
         return new PercentageFieldProcessor(this.pre, this.symbol,
                 this.floatDescription.toFieldProcessor(nullValue), nullValue);
     }
+
+    @Override
+    public String toString() {
+        return String.format("PercentageFieldDescription(%b, %s, %s)",
+                this.pre, this.symbol, this.floatDescription.toString());
+    }
 }

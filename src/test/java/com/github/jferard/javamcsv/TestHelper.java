@@ -18,23 +18,26 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;import java.io.IOException;
+package com.github.jferard.javamcsv;
 
-public class TextFieldDescription implements FieldDescription<String> {
-    public static final FieldDescription<String> INSTANCE = new TextFieldDescription();
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
-    @Override
-    public void render(Appendable out) throws IOException {
-        out.append("text");
+public class TestHelper {
+    public static String UTF_8_CHARSET_NAME = "UTF-8";
+    public static Charset UTF_8_CHARSET = Charset.forName("UTF-8");
+    public static Charset ASCII_CHARSET = Charset.forName("US-ASCII");
+
+    public static String render(FieldDescription<?> fd) throws IOException {
+        Appendable sb = new StringBuilder();
+        fd.render(sb);
+        return sb.toString();
     }
 
-    @Override
-    public FieldProcessor<String> toFieldProcessor(String nullValue) {
-        return new TextFieldProcessor(nullValue);
-    }
-
-    @Override
-    public String toString() {
-        return "TextFieldDescription()";
+    public static ByteArrayInputStream utf8InputStream(String s) throws
+            UnsupportedEncodingException {
+        return new ByteArrayInputStream(s.getBytes(UTF_8_CHARSET_NAME));
     }
 }

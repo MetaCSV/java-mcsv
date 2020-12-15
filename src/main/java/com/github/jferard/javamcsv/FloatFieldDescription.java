@@ -45,4 +45,10 @@ public class FloatFieldDescription implements FieldDescription<Double> {
     public FieldProcessor<Double> toFieldProcessor(String nullValue) {
         return new FloatFieldProcessor(this.thousandsSeparator, this.decimalSeparator, nullValue);
     }
+
+    @Override
+    public String toString() {
+        return String.format("FloatFieldDescription(%s, %s)",
+                this.thousandsSeparator, this.decimalSeparator);
+    }
 }

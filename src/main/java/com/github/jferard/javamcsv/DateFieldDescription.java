@@ -56,4 +56,10 @@ public class DateFieldDescription implements FieldDescription<Date> {
     public FieldProcessor<Date> toFieldProcessor(String nullValue) {
         return new DateFieldProcessor(this.simpleDateFormat, this.locale, nullValue);
     }
+
+    @Override
+    public String toString() {
+        return String.format("DateFieldDescription(%s, %s)",
+                this.simpleDateFormat.toPattern(), this.locale);
+    }
 }

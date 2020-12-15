@@ -18,10 +18,12 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;import java.io.IOException;
+package com.github.jferard.javamcsv;
+
+import java.io.IOException;
 
 public class IntegerFieldDescription implements FieldDescription<Integer> {
-    private String thousandsSeparator;
+    private final String thousandsSeparator;
 
     public IntegerFieldDescription(String thousandsSeparator) {
         this.thousandsSeparator = thousandsSeparator;
@@ -39,5 +41,11 @@ public class IntegerFieldDescription implements FieldDescription<Integer> {
     @Override
     public FieldProcessor<Integer> toFieldProcessor(String nullValue) {
         return new IntegerFieldProcessor(this.thousandsSeparator, nullValue);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("IntegerFieldDescription(%s)",
+                this.thousandsSeparator);
     }
 }

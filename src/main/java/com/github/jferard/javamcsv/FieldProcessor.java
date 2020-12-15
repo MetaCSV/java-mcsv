@@ -45,7 +45,7 @@ interface FieldProcessor<T> {
      * @return the Object
      * @throws MetaCSVReadException
      */
-    T toObject(String text) throws MetaCSVReadException;
+    T   toObject(String text) throws MetaCSVReadException;
 
     /**
      * Prepare a value for CSV file.

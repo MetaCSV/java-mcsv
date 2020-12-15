@@ -45,13 +45,13 @@ public class MetaCSVReaderTest {
     }
 
     @Test
-    public void test() throws IOException, MetaCSVParseException {
-        ByteArrayInputStream is = new ByteArrayInputStream(
-                ("boolean,currency,date,datetime,float,integer,percentage,text\r\n" +
+    public void test() throws IOException, MetaCSVParseException, MetaCSVReadException {
+        ByteArrayInputStream is = TestHelper.utf8InputStream(
+                "boolean,currency,date,datetime,float,integer,percentage,text\r\n" +
                         "T,$15,01/12/2020,NULL,\"10,000.5\",12 354,56.5%,Foo\r\n" +
-                        "F,\"$-1,900.5\",NULL,2020-12-01 09:30:55,-520.8,-1 000,-12.8%,Bar\r\n")
-                        .getBytes(Util.UTF_8_CHARSET));
-        ByteArrayInputStream metaIs = new ByteArrayInputStream(("domain,key,value\r\n" +
+                        "F,\"$-1,900.5\",NULL,2020-12-01 09:30:55,-520.8,-1 000,-12.8%,Bar\r\n");
+        ByteArrayInputStream metaIs = TestHelper.utf8InputStream(
+                "domain,key,value\r\n" +
                 "data,null_value,NULL\r\n" +
                 "data,col/0/type,boolean/T/F\r\n" +
                 "data,col/1/type,\"currency/pre/$/float/,/.\"\r\n" +
@@ -59,8 +59,7 @@ public class MetaCSVReaderTest {
                 "data,col/3/type,datetime/yyyy-MM-dd HH:mm:ss\r\n" +
                 "data,col/4/type,\"float/,/.\"\r\n" +
                 "data,col/5/type,\"integer/ \"\r\n" +
-                "data,col/6/type,\"percentage/post/%/float/,/.\"\r\n")
-                .getBytes(Util.UTF_8_CHARSET));
+                "data,col/6/type,\"percentage/post/%/float/,/.\"\r\n");
         MetaCSVReader reader = MetaCSVReader.create(is, metaIs);
 
         Map<Integer, String> expectedTypes = new HashMap<Integer, String>();
