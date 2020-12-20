@@ -45,7 +45,8 @@ public class MetaCSVReaderTest {
     }
 
     @Test
-    public void test() throws IOException, MetaCSVParseException, MetaCSVReadException {
+    public void test()
+            throws IOException, MetaCSVParseException, MetaCSVReadException, MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "boolean,currency,date,datetime,float,integer,percentage,text\r\n" +
                         "T,$15,01/12/2020,NULL,\"10,000.5\",12 354,56.5%,Foo\r\n" +

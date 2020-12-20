@@ -39,17 +39,22 @@ public class MetaCSVDataBuilder {
         this.lineTerminator = Util.CRLF;
         this.descriptionByColIndex = new HashMap<Integer, FieldDescription<?>>();
         this.delimiter = ',';
+        this.doubleQuote = true;
+        this.quoteChar = '"';
         this.nullValue = null;
         this.bom = false;
     }
 
-    public MetaCSVData build() {
+    public MetaCSVData build() throws MetaCSVDataException {
         Charset charset;
         if (this.encoding.equals("UTF-8-SIG")) {
             charset = Util.UTF_8_CHARSET;
             this.bom = true;
         } else {
             charset = Charset.forName(this.encoding);
+        }
+        if (!charset.equals(Util.UTF_8_CHARSET) && bom) {
+            throw new MetaCSVDataException("Can't have a bom with charset "+charset);
         }
         return new MetaCSVData(charset, this.bom, Util.unescapeLineTerminator(lineTerminator),
                 this.delimiter, this.doubleQuote, this.escapeChar, this.quoteChar,

@@ -33,20 +33,20 @@ import java.util.Map;
 
 public class MetaCSVReader implements Iterable<MetaCSVRecord> {
     public static MetaCSVReader create(File csvFile)
-            throws IOException, MetaCSVParseException, MetaCSVReadException {
+            throws IOException, MetaCSVParseException, MetaCSVReadException, MetaCSVDataException {
         File metaCSVFile = Util.withExtension(csvFile, ".mcsv");
         return create(csvFile, metaCSVFile);
     }
 
     public static MetaCSVReader create(File csvFile, File metaCSVFile)
-            throws IOException, MetaCSVParseException, MetaCSVReadException {
+            throws IOException, MetaCSVParseException, MetaCSVReadException, MetaCSVDataException {
         InputStream metaIn = new FileInputStream(metaCSVFile);
         InputStream in = new FileInputStream(csvFile);
         return create(in, metaIn);
     }
 
     public static MetaCSVReader create(InputStream is, InputStream metaIs)
-            throws IOException, MetaCSVParseException, MetaCSVReadException {
+            throws IOException, MetaCSVParseException, MetaCSVReadException, MetaCSVDataException {
         MetaCSVData data = MetaCSVParser.create(metaIs).parse();
         if (data.isUtf8BOM()) {
             byte[] buffer = new byte[3];

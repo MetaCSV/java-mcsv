@@ -20,6 +20,7 @@
 
 package com.github.jferard.javamcsv.it;
 
+import com.github.jferard.javamcsv.MetaCSVDataException;
 import com.github.jferard.javamcsv.MetaCSVParseException;
 import com.github.jferard.javamcsv.MetaCSVReadException;
 import com.github.jferard.javamcsv.MetaCSVReader;
@@ -60,7 +61,8 @@ public class MetaCSVReaderIT {
     }
 
     @Test
-    public void testMeta() throws IOException, MetaCSVParseException, MetaCSVReadException {
+    public void testMeta()
+            throws IOException, MetaCSVParseException, MetaCSVReadException, MetaCSVDataException {
         InputStream is =
                 getResourceAsStream("meta_csv.mcsv");
         InputStream metaIs =
@@ -104,9 +106,11 @@ public class MetaCSVReaderIT {
 
     @Test
     public void testLongFile()
-            throws IOException, MetaCSVParseException, URISyntaxException, MetaCSVReadException {
+            throws IOException, MetaCSVParseException, URISyntaxException, MetaCSVReadException,
+            MetaCSVDataException {
         File f = getResourceAsFile("20201001-bal-216402149.csv");
-        MetaCSVReader reader = MetaCSVReader.create(f);
+        MetaCSVReader reader;
+        reader = MetaCSVReader.create(f);
         Map<Integer, String> expectedTypes = new HashMap<Integer, String>();
         expectedTypes.put(3, "integer");
         expectedTypes.put(7, "float//.");
@@ -139,9 +143,11 @@ public class MetaCSVReaderIT {
 
     @Test
     public void testExample()
-            throws IOException, MetaCSVParseException, URISyntaxException, MetaCSVReadException {
+            throws IOException, MetaCSVParseException, URISyntaxException, MetaCSVReadException,
+            MetaCSVDataException {
         File f = getResourceAsFile("example.csv");
-        MetaCSVReader reader = MetaCSVReader.create(f);
+        MetaCSVReader reader;
+        reader = MetaCSVReader.create(f);
         Map<Integer, String> expectedTypes = new HashMap<Integer, String>();
         expectedTypes.put(1, "date/YYYY-MM-dd");
         expectedTypes.put(2, "integer");

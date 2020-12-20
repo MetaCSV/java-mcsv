@@ -28,45 +28,46 @@ import java.io.IOException;
 
 public class MetaCSVParserTest {
     @Test(expected = MetaCSVParseException.class)
-    public void testEmptyStream() throws IOException, MetaCSVParseException {
+    public void testEmptyStream() throws IOException, MetaCSVParseException, MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream("");
         MetaCSVParser.create(is).parse();
     }
 
     @Test
-    public void testEmptyBody() throws IOException, MetaCSVParseException {
+    public void testEmptyBody() throws IOException, MetaCSVParseException, MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream("domain,key,value\r\n");
         MetaCSVData data = MetaCSVParser.create(is).parse();
         Assert.assertEquals(TestHelper.UTF_8_CHARSET, data.getEncoding());
         Assert.assertFalse(data.isUtf8BOM());
         Assert.assertEquals("\r\n", data.getLineTerminator());
         Assert.assertEquals(',', data.getDelimiter());
-        Assert.assertFalse(data.isDoubleQuote());
+        Assert.assertTrue(data.isDoubleQuote());
         Assert.assertEquals(0, data.getEscapeChar());
-        Assert.assertEquals(0, data.getQuoteChar());
+        Assert.assertEquals('"', data.getQuoteChar());
         Assert.assertFalse(data.isSkipInitialSpace());
     }
 
     @Test(expected = MetaCSVParseException.class)
-    public void testBadHeader1() throws IOException, MetaCSVParseException {
+    public void testBadHeader1() throws IOException, MetaCSVParseException, MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream("domai,key,value\r\n");
         MetaCSVParser.create(is).parse();
     }
 
     @Test(expected = MetaCSVParseException.class)
-    public void testBadHeader2() throws IOException, MetaCSVParseException {
+    public void testBadHeader2() throws IOException, MetaCSVParseException, MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream("domain,ke,value\r\n");
         MetaCSVParser.create(is).parse();
     }
 
     @Test(expected = MetaCSVParseException.class)
-    public void testBadHeader3() throws IOException, MetaCSVParseException {
+    public void testBadHeader3() throws IOException, MetaCSVParseException, MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream("domain,key,valu\r\n");
         MetaCSVParser.create(is).parse();
     }
 
     @Test(expected = MetaCSVParseException.class)
-    public void testUnknownDomain() throws IOException, MetaCSVParseException {
+    public void testUnknownDomain() throws IOException, MetaCSVParseException,
+            MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "domain,key,value\r\n" +
                         "foo,bar,baz\r\n");
@@ -74,20 +75,21 @@ public class MetaCSVParserTest {
     }
 
     @Test
-    public void testFileDomain() throws IOException, MetaCSVParseException {
+    public void testFileDomain() throws IOException, MetaCSVParseException, MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "domain,key,value\r\n" +
                         "file,encoding,ascii\r\n" +
-                        "file,bom,true\r\n" +
+                        "file,bom,false\r\n" +
                         "file,line_terminator,\\n\r\n");
         MetaCSVData data = MetaCSVParser.create(is).parse();
         Assert.assertEquals(TestHelper.ASCII_CHARSET, data.getEncoding());
-        Assert.assertTrue(data.isUtf8BOM());
+        Assert.assertFalse(data.isUtf8BOM());
         Assert.assertEquals("\n", data.getLineTerminator());
     }
 
     @Test(expected = MetaCSVParseException.class)
-    public void testUnknownFileKey() throws IOException, MetaCSVParseException {
+    public void testUnknownFileKey() throws IOException, MetaCSVParseException,
+            MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "domain,key,value\r\n" +
                         "file,bar,baz\r\n");
@@ -95,7 +97,7 @@ public class MetaCSVParserTest {
     }
 
     @Test
-    public void testCSVDomain() throws IOException, MetaCSVParseException {
+    public void testCSVDomain() throws IOException, MetaCSVParseException, MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "domain,key,value\r\n" +
                         "csv,delimiter,\",\"\r\n" +
@@ -112,7 +114,8 @@ public class MetaCSVParserTest {
     }
 
     @Test(expected = MetaCSVParseException.class)
-    public void testUnknownCSVKey() throws IOException, MetaCSVParseException {
+    public void testUnknownCSVKey() throws IOException, MetaCSVParseException,
+            MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "domain,key,value\r\n" +
                         "csv,bar,baz\r\n");
@@ -120,7 +123,8 @@ public class MetaCSVParserTest {
     }
 
     @Test(expected = MetaCSVParseException.class)
-    public void testUnknownBoolean() throws IOException, MetaCSVParseException {
+    public void testUnknownBoolean() throws IOException, MetaCSVParseException,
+            MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "domain,key,value\r\n" +
                         "csv,double_quote,T\r\n");
@@ -128,7 +132,7 @@ public class MetaCSVParserTest {
     }
 
     @Test(expected = MetaCSVParseException.class)
-    public void testUnknownChar() throws IOException, MetaCSVParseException {
+    public void testUnknownChar() throws IOException, MetaCSVParseException, MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "domain,key,value\r\n" +
                         "csv,delimiter,foo\r\n");
@@ -136,7 +140,7 @@ public class MetaCSVParserTest {
     }
 
     @Test
-    public void testDataDomain() throws IOException, MetaCSVParseException {
+    public void testDataDomain() throws IOException, MetaCSVParseException, MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "domain,key,value\r\n" +
                         "data,null_value,NULL\r\n" +
@@ -172,7 +176,8 @@ public class MetaCSVParserTest {
     }
 
     @Test(expected = MetaCSVParseException.class)
-    public void testBadDataNullKey() throws IOException, MetaCSVParseException {
+    public void testBadDataNullKey() throws IOException, MetaCSVParseException,
+            MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "domain,key,value\r\n" +
                         "data,null_value/foo,NULL\r\n");
@@ -180,7 +185,8 @@ public class MetaCSVParserTest {
     }
 
     @Test(expected = MetaCSVParseException.class)
-    public void testBadDataColKey() throws IOException, MetaCSVParseException {
+    public void testBadDataColKey() throws IOException, MetaCSVParseException,
+            MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "domain,key,value\r\n" +
                         "data,col/1/type/foo,bar\r\n");
@@ -188,7 +194,8 @@ public class MetaCSVParserTest {
     }
 
     @Test(expected = MetaCSVParseException.class)
-    public void testUnkownDataKey() throws IOException, MetaCSVParseException {
+    public void testUnkownDataKey() throws IOException, MetaCSVParseException,
+            MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "domain,key,value\r\n" +
                         "data,foo,bar\r\n");
@@ -196,7 +203,7 @@ public class MetaCSVParserTest {
     }
 
     @Test(expected = MetaCSVParseException.class)
-    public void testBadColNum() throws IOException, MetaCSVParseException {
+    public void testBadColNum() throws IOException, MetaCSVParseException, MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "domain,key,value\r\n" +
                         "data,col/foo/type,bar\r\n");
@@ -204,7 +211,7 @@ public class MetaCSVParserTest {
     }
 
     @Test(expected = MetaCSVParseException.class)
-    public void testBadColSubKey() throws IOException, MetaCSVParseException {
+    public void testBadColSubKey() throws IOException, MetaCSVParseException, MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "domain,key,value\r\n" +
                         "data,col/3/foo,bar\r\n");
@@ -212,10 +219,81 @@ public class MetaCSVParserTest {
     }
 
     @Test(expected = MetaCSVParseException.class)
-    public void testUnknownColType() throws IOException, MetaCSVParseException {
+    public void testUnknownColType() throws IOException, MetaCSVParseException,
+            MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "domain,key,value\r\n" +
                         "data,col/3/type,foo\r\n");
+        MetaCSVParser.create(is).parse();
+    }
+
+    @Test
+    public void testMissingFalse() throws IOException, MetaCSVParseException, MetaCSVDataException {
+        ByteArrayInputStream is = TestHelper.utf8InputStream(
+                "domain,key,value\r\n" +
+                        "data,col/3/type,boolean/X\r\n");
+        MetaCSVData data = MetaCSVParser.create(is).parse();
+        Assert.assertEquals("BooleanFieldDescription(X, )",
+                data.getDescriptionByIndex().get(3).toString());
+    }
+
+    @Test(expected = MetaCSVParseException.class)
+    public void testMissingBooleanParameters() throws IOException, MetaCSVParseException, MetaCSVDataException {
+        ByteArrayInputStream is = TestHelper.utf8InputStream(
+                "domain,key,value\r\n" +
+                        "data,col/3/type,boolean\r\n");
+        MetaCSVParser.create(is).parse();
+    }
+
+    @Test(expected = MetaCSVParseException.class)
+    public void testTooManyBooleanParameters() throws IOException, MetaCSVParseException, MetaCSVDataException {
+        ByteArrayInputStream is = TestHelper.utf8InputStream(
+                "domain,key,value\r\n" +
+                        "data,col/3/type,boolean/true/false/maybe\r\n");
+        MetaCSVParser.create(is).parse();
+    }
+
+    @Test
+    public void testCurrencyInteger() throws IOException, MetaCSVParseException, MetaCSVDataException {
+        ByteArrayInputStream is = TestHelper.utf8InputStream(
+                "domain,key,value\r\n" +
+                        "data,col/2/type,currency/pre/$/integer\r\n");
+        MetaCSVData data = MetaCSVParser.create(is).parse();
+        Assert.assertEquals("CurrencyFieldDescription(true, $, IntegerFieldDescription())",
+                data.getDescriptionByIndex().get(2).toString());
+    }
+
+    @Test(expected = MetaCSVParseException.class)
+    public void testCurrencyOther() throws IOException, MetaCSVParseException, MetaCSVDataException {
+        ByteArrayInputStream is = TestHelper.utf8InputStream(
+                "domain,key,value\r\n" +
+                        "data,col/2/type,currency/pre/$/foo/a/b\r\n");
+        MetaCSVParser.create(is).parse();
+    }
+
+    @Test
+    public void testDateLocale() throws IOException, MetaCSVParseException, MetaCSVDataException {
+        ByteArrayInputStream is = TestHelper.utf8InputStream(
+                "domain,key,value\r\n" +
+                        "data,col/1/type,date/YYYY/fr_FR\r\n");
+        MetaCSVData data = MetaCSVParser.create(is).parse();
+        Assert.assertEquals("DateFieldDescription(YYYY, fr_FR)",
+                data.getDescriptionByIndex().get(1).toString());
+    }
+
+    @Test(expected = MetaCSVParseException.class)
+    public void testDateNoParameter() throws IOException, MetaCSVParseException, MetaCSVDataException {
+        ByteArrayInputStream is = TestHelper.utf8InputStream(
+                "domain,key,value\r\n" +
+                        "data,col/1/type,date\r\n");
+        MetaCSVParser.create(is).parse();
+    }
+
+    @Test(expected = MetaCSVParseException.class)
+    public void testDateTooManyParameters() throws IOException, MetaCSVParseException, MetaCSVDataException {
+        ByteArrayInputStream is = TestHelper.utf8InputStream(
+                "domain,key,value\r\n" +
+                        "data,col/1/type,date/YYYY/fr_FR/foo\r\n");
         MetaCSVParser.create(is).parse();
     }
 }

@@ -21,6 +21,7 @@
 package com.github.jferard.javamcsv.it;
 
 import com.github.jferard.javamcsv.MetaCSVData;
+import com.github.jferard.javamcsv.MetaCSVDataException;
 import com.github.jferard.javamcsv.MetaCSVParseException;
 import com.github.jferard.javamcsv.MetaCSVParser;
 import com.github.jferard.javamcsv.MetaCSVRenderer;
@@ -35,19 +36,23 @@ import java.io.InputStream;
 
 public class MetaCSVParserIT {
     @Test
-    public void testMetaMinimal() throws IOException, MetaCSVParseException {
+    public void testMetaMinimal() throws IOException, MetaCSVParseException, MetaCSVDataException {
         MetaCSVData metaCSVData = getMetaCSVData("meta_csv.mcsv");
         Assert.assertEquals("domain,key,value\r\n" +
                 "data,col/2/type,any\r\n", this.render(metaCSVData, true));
     }
 
     @Test
-    public void testMetaVerbose() throws IOException, MetaCSVParseException {
+    public void testMetaVerbose() throws IOException, MetaCSVParseException, MetaCSVDataException {
         MetaCSVData metaCSVData = getMetaCSVData("meta_csv.mcsv");
         Assert.assertEquals("domain,key,value\r\n" +
                 "file,encoding,UTF-8\r\n" +
                 "file,bom,false\r\n" +
                 "file,line_terminator,\\r\\n\r\n" +
+                "csv,delimiter,\",\"\r\n" +
+                "csv,double_quote,true\r\n" +
+                "csv,quote_char,\"\"\"\"\r\n" +
+                "csv,skip_initial_space,false\r\n" +
                 "data,null_value,\r\n" +
                 "data,col/0/type,text\r\n" +
                 "data,col/1/type,text\r\n" +
@@ -55,7 +60,8 @@ public class MetaCSVParserIT {
     }
 
     @Test
-    public void testMetaExampleMinimal() throws IOException, MetaCSVParseException {
+    public void testMetaExampleMinimal()
+            throws IOException, MetaCSVParseException, MetaCSVDataException {
         MetaCSVData metaCSVData = getMetaCSVData("example.mcsv");
         String actual = render(metaCSVData, true);
         Assert.assertEquals("domain,key,value\r\n" +
@@ -64,26 +70,36 @@ public class MetaCSVParserIT {
     }
 
     @Test
-    public void testMetaExampleVerbose() throws IOException, MetaCSVParseException {
+    public void testMetaExampleVerbose()
+            throws IOException, MetaCSVParseException, MetaCSVDataException {
         MetaCSVData metaCSVData = getMetaCSVData("example.mcsv");
         String actual = render(metaCSVData, false);
         Assert.assertEquals("domain,key,value\r\n" +
                 "file,encoding,UTF-8\r\n" +
                 "file,bom,false\r\n" +
                 "file,line_terminator,\\r\\n\r\n" +
+                "csv,delimiter,\",\"\r\n" +
+                "csv,double_quote,true\r\n" +
+                "csv,quote_char,\"\"\"\"\r\n" +
+                "csv,skip_initial_space,false\r\n" +
                 "data,null_value,\r\n" +
                 "data,col/1/type,date/YYYY-MM-dd\r\n" +
                 "data,col/2/type,integer\r\n", actual);
     }
 
     @Test
-    public void testMetaLongFile() throws IOException, MetaCSVParseException {
+    public void testMetaLongFile() throws IOException, MetaCSVParseException, MetaCSVDataException {
         MetaCSVData metaCSVData = getMetaCSVData("20201001-bal-216402149.mcsv");
         String actual = render(metaCSVData, false);
         Assert.assertEquals("domain,key,value\r\n" +
                 "file,encoding,UTF-8\r\n" +
                 "file,bom,true\r\n" +
                 "file,line_terminator,\\r\\n\r\n" +
+                "csv,delimiter,;\r\n" +
+                "csv,double_quote,false\r\n" +
+                "csv,escape_char,\\\r\n" +
+                "csv,quote_char,\"\"\"\"\r\n" +
+                "csv,skip_initial_space,false\r\n" +
                 "data,null_value,\r\n" +
                 "data,col/3/type,integer\r\n" +
                 "data,col/7/type,float//.\r\n" +
@@ -101,7 +117,7 @@ public class MetaCSVParserIT {
     }
 
     private MetaCSVData getMetaCSVData(String metaCSVFilename)
-            throws IOException, MetaCSVParseException {
+            throws IOException, MetaCSVParseException, MetaCSVDataException {
         InputStream is =
                 MetaCSVParserIT.class.getClassLoader().getResourceAsStream(metaCSVFilename);
         MetaCSVParser parser = MetaCSVParser.create(is);

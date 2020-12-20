@@ -79,7 +79,7 @@ public class MetaCSVData {
 
     @Override
     public String toString() {
-        return "com.github.jferard.javamcsv.MetaCSVData(encoding=" + this.encoding + ", lineTerminator=" + this.lineTerminator +
+        return "MetaCSVData(encoding=" + this.encoding + ", lineTerminator=" + this.lineTerminator +
                 ", delimiter=" + this.delimiter + ", doubleQuote=" + this.doubleQuote +
                 ", escapeChar=" + this.escapeChar + ", quoteChar=" + this.quoteChar +
                 ", skipInitialSpace=" + this.skipInitialSpace +

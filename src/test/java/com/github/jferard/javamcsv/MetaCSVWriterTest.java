@@ -42,7 +42,7 @@ import java.util.Locale;
 
 public class MetaCSVWriterTest {
     @Test
-    public void test() throws IOException, MetaCSVWriteException {
+    public void test() throws IOException, MetaCSVWriteException, MetaCSVDataException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ByteArrayOutputStream metaOut = new ByteArrayOutputStream();
         MetaCSVData data =

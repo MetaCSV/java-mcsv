@@ -45,7 +45,7 @@ public class MetaCSVParser {
         this.metaCSVDataBuilder = new MetaCSVDataBuilder();
     }
 
-    public MetaCSVData parse() throws MetaCSVParseException {
+    public MetaCSVData parse() throws MetaCSVParseException, MetaCSVDataException {
         Iterator<CSVRecord> it = parser.iterator();
         this.checkHeader(it);
         while (it.hasNext()) {
@@ -194,14 +194,16 @@ public class MetaCSVParser {
 
     private FieldDescription<Boolean> parseBoolean(List<String> parameters)
             throws MetaCSVParseException {
-        String trueWord = parameters.get(0);
+        String trueWord;
         String falseWord;
         if (parameters.size() == 1) {
+            trueWord = parameters.get(0);
             falseWord = "";
         } else if (parameters.size() == 2) {
+            trueWord = parameters.get(0);
             falseWord = parameters.get(1);
         } else {
-            throw new MetaCSVParseException("Bad boolean format " + parameters);
+            throw new MetaCSVParseException("Bad boolean format! " + parameters);
         }
         return new BooleanFieldDescription(trueWord, falseWord);
     }
@@ -223,11 +225,13 @@ public class MetaCSVParser {
     }
 
     private FieldDescription<Date> parseDate(List<String> parameters) throws MetaCSVParseException {
-        String format = parameters.get(0);
         if (parameters.size() == 1) {
+            String format = parameters.get(0);
             return DateFieldDescription.create(format);
         } else if (parameters.size() == 2) {
-            return DateFieldDescription.create(format, parameters.get(1));
+            String format = parameters.get(0);
+            String locale = parameters.get(1);
+            return DateFieldDescription.create(format, locale);
         } else {
             throw new MetaCSVParseException("Unknown date field: " + parameters);
         }

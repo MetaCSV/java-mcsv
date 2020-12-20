@@ -60,6 +60,7 @@ public class MetaCSVRenderer {
     }
 
     private void renderMinimal(MetaCSVData data) throws IOException {
+        // file
         Charset encoding = data.getEncoding();
         if (encoding != Util.UTF_8_CHARSET) {
             this.printer.printRecord("file", "encoding", encoding.toString());
@@ -71,6 +72,23 @@ public class MetaCSVRenderer {
         if (!lineTerminator.equals("\r\n")) {
             this.printer.printRecord("file", "line_terminator", Util.escapeLineTerminator(lineTerminator));
         }
+        // csv
+        char delimiter = data.getDelimiter();
+        if (delimiter != ',') {
+            this.printer.printRecord("csv", "delimiter", delimiter);
+        }
+        if (!data.isDoubleQuote()) {
+            this.printer.printRecord("csv", "double_quote", "false");
+            this.printer.printRecord("csv", "escape_char", data.getEscapeChar());
+        }
+        char quoteChar = data.getQuoteChar();
+        if (quoteChar != '"') {
+            this.printer.printRecord("csv", "quote_char", quoteChar);
+        }
+        if (data.isSkipInitialSpace()) {
+            this.printer.printRecord("csv", "skip_initial_space", "true");
+        }
+        // data
         String nullValue = data.getNullValue();
         if (!(nullValue == null || nullValue.isEmpty())) {
             this.printer.printRecord("data", "null_value", nullValue);
@@ -89,9 +107,20 @@ public class MetaCSVRenderer {
     }
 
     private void renderVerbose(MetaCSVData data) throws IOException {
+        // file
         this.printer.printRecord("file", "encoding", data.getEncoding().toString());
         this.printer.printRecord("file", "bom", data.isUtf8BOM());
         this.printer.printRecord("file", "line_terminator", Util.escapeLineTerminator(data.getLineTerminator()));
+        // csv
+        this.printer.printRecord("csv", "delimiter", data.getDelimiter());
+        boolean doubleQuote = data.isDoubleQuote();
+        this.printer.printRecord("csv", "double_quote", doubleQuote);
+        if (!doubleQuote) {
+            this.printer.printRecord("csv", "escape_char", data.getEscapeChar());
+        }
+        this.printer.printRecord("csv", "quote_char", data.getQuoteChar());
+        this.printer.printRecord("csv", "skip_initial_space", data.isSkipInitialSpace());
+        // data
         this.printer.printRecord("data", "null_value", data.getNullValue());
         Map<Integer, FieldDescription<?>> descriptionByIndex = data.getDescriptionByIndex();
         List<Integer> indices = new ArrayList<Integer>(descriptionByIndex.keySet());
