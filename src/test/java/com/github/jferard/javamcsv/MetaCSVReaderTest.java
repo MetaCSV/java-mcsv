@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -45,6 +46,30 @@ public class MetaCSVReaderTest {
     }
 
     @Test
+    public void testBOM()
+            throws IOException, MetaCSVReadException, MetaCSVDataException, MetaCSVParseException {
+        ByteArrayInputStream is = TestHelper.bomUtf8InputStream(
+                "a,b\r\n" +
+                        "1,2\r\n");
+        ByteArrayInputStream metaIs = TestHelper.utf8InputStream(
+                "domain,key,value\r\n" +
+                        "file,bom,true\r\n");
+        MetaCSVReader reader = MetaCSVReader.create(is, metaIs);
+    }
+
+    @Test(expected = MetaCSVReadException.class)
+    public void testBOMMissing()
+            throws IOException, MetaCSVReadException, MetaCSVDataException, MetaCSVParseException {
+        ByteArrayInputStream is = TestHelper.utf8InputStream(
+                "a,b\r\n" +
+                        "1,2\r\n");
+        ByteArrayInputStream metaIs = TestHelper.utf8InputStream(
+                "domain,key,value\r\n" +
+                        "file,bom,true\r\n");
+        MetaCSVReader reader = MetaCSVReader.create(is, metaIs);
+    }
+
+    @Test
     public void test()
             throws IOException, MetaCSVParseException, MetaCSVReadException, MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
@@ -53,14 +78,14 @@ public class MetaCSVReaderTest {
                         "F,\"$-1,900.5\",NULL,2020-12-01 09:30:55,-520.8,-1 000,-12.8%,Bar\r\n");
         ByteArrayInputStream metaIs = TestHelper.utf8InputStream(
                 "domain,key,value\r\n" +
-                "data,null_value,NULL\r\n" +
-                "data,col/0/type,boolean/T/F\r\n" +
-                "data,col/1/type,\"currency/pre/$/float/,/.\"\r\n" +
-                "data,col/2/type,date/dd\\/MM\\/yyyy\r\n" +
-                "data,col/3/type,datetime/yyyy-MM-dd HH:mm:ss\r\n" +
-                "data,col/4/type,\"float/,/.\"\r\n" +
-                "data,col/5/type,\"integer/ \"\r\n" +
-                "data,col/6/type,\"percentage/post/%/float/,/.\"\r\n");
+                        "data,null_value,NULL\r\n" +
+                        "data,col/0/type,boolean/T/F\r\n" +
+                        "data,col/1/type,\"currency/pre/$/float/,/.\"\r\n" +
+                        "data,col/2/type,date/dd\\/MM\\/yyyy\r\n" +
+                        "data,col/3/type,datetime/yyyy-MM-dd HH:mm:ss\r\n" +
+                        "data,col/4/type,\"float/,/.\"\r\n" +
+                        "data,col/5/type,\"integer/ \"\r\n" +
+                        "data,col/6/type,\"percentage/post/%/float/,/.\"\r\n");
         MetaCSVReader reader = MetaCSVReader.create(is, metaIs);
 
         Map<Integer, String> expectedTypes = new HashMap<Integer, String>();
@@ -82,13 +107,15 @@ public class MetaCSVReaderTest {
 
         Calendar c = GregorianCalendar.getInstance(Locale.US);
         c.setTimeInMillis(0);
-        c.set(2020, Calendar.DECEMBER, 1,0,0,0);
+        c.set(2020, Calendar.DECEMBER, 1, 0, 0, 0);
         Assert.assertEquals(
-                Arrays.asList(true, 15.0, c.getTime(), null, 10000.5, 12354, 0.565, "Foo"), toList(iterator.next()));
+                Arrays.asList(true, 15.0, c.getTime(), null, 10000.5, 12354, 0.565, "Foo"),
+                toList(iterator.next()));
         Assert.assertTrue(iterator.hasNext());
-        c.set(2020, Calendar.DECEMBER, 1,9,30,55);
+        c.set(2020, Calendar.DECEMBER, 1, 9, 30, 55);
         Assert.assertEquals(
-                Arrays.asList(false, -1900.5, null, c.getTime(), -520.8, -1000, -0.128, "Bar"), toList(iterator.next()));
+                Arrays.asList(false, -1900.5, null, c.getTime(), -520.8, -1000, -0.128, "Bar"),
+                toList(iterator.next()));
         Assert.assertFalse(iterator.hasNext());
     }
 }

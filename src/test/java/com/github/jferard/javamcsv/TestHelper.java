@@ -40,4 +40,15 @@ public class TestHelper {
             UnsupportedEncodingException {
         return new ByteArrayInputStream(s.getBytes(UTF_8_CHARSET_NAME));
     }
+
+    public static ByteArrayInputStream bomUtf8InputStream(String s) throws
+            UnsupportedEncodingException {
+        byte[] bytes = s.getBytes(UTF_8_CHARSET_NAME);
+        byte[] bomBytes = new byte[bytes.length + 3];
+        bomBytes[0] = (byte) 0xEF;
+        bomBytes[1] = (byte) 0xBB;
+        bomBytes[2] = (byte) 0xBF;
+        System.arraycopy(bytes, 0, bomBytes, 3, bytes.length);
+        return new ByteArrayInputStream(bomBytes);
+    }
 }
