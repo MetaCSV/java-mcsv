@@ -65,7 +65,7 @@ public class MetaCSVParserIT {
         MetaCSVData metaCSVData = getMetaCSVData("example.mcsv");
         String actual = render(metaCSVData, true);
         Assert.assertEquals("domain,key,value\r\n" +
-                "data,col/1/type,date/YYYY-MM-dd\r\n" +
+                "data,col/1/type,date/yyyy-MM-dd\r\n" +
                 "data,col/2/type,integer\r\n", actual);
     }
 
@@ -83,7 +83,7 @@ public class MetaCSVParserIT {
                 "csv,quote_char,\"\"\"\"\r\n" +
                 "csv,skip_initial_space,false\r\n" +
                 "data,null_value,\r\n" +
-                "data,col/1/type,date/YYYY-MM-dd\r\n" +
+                "data,col/1/type,date/yyyy-MM-dd\r\n" +
                 "data,col/2/type,integer\r\n", actual);
     }
 

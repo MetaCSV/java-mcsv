@@ -149,7 +149,7 @@ public class MetaCSVReaderIT {
         MetaCSVReader reader;
         reader = MetaCSVReader.create(f);
         Map<Integer, String> expectedTypes = new HashMap<Integer, String>();
-        expectedTypes.put(1, "date/YYYY-MM-dd");
+        expectedTypes.put(1, "date/yyyy-MM-dd");
         expectedTypes.put(2, "integer");
         Assert.assertEquals(expectedTypes, reader.getTypes());
         Iterator<MetaCSVRecord> iterator = reader.iterator();
@@ -159,10 +159,11 @@ public class MetaCSVReaderIT {
         Assert.assertTrue(iterator.hasNext());
         Calendar c = GregorianCalendar.getInstance(Locale.US);
         c.setTimeInMillis(0);
-        c.set(2019, Calendar.DECEMBER, 30, 0, 0, 0);
+        c.set(2020, Calendar.NOVEMBER, 21, 0, 0, 0);
         Assert.assertEquals(Arrays.asList("foo", c.getTime(), 15), toList(iterator.next()));
         Assert.assertTrue(iterator.hasNext());
-        Assert.assertEquals(Arrays.asList("foo", c.getTime(), -8), toList(iterator.next()));
+        c.set(2020, Calendar.NOVEMBER, 22, 0, 0, 0);
+        Assert.assertEquals(Arrays.asList("bar", c.getTime(), -8), toList(iterator.next()));
         Assert.assertFalse(iterator.hasNext());
     }
 

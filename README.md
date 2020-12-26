@@ -4,6 +4,9 @@ Copyright (C) 2020 J. Férard <https://github.com/jferard>
 
 License: GPLv3
 
+[![Build Status](https://travis-ci.com/jferard/java-mcsv.svg?branch=main)](
+https://travis-ci.com/jferard/java-mcsv)
+
 # Overview
 py-mcsv is a [MetaCSV](https://github.com/jferard/MetaCSV) library for Java.
 I quote the README:
