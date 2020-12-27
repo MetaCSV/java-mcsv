@@ -50,7 +50,7 @@ public class FloatFieldProcessor implements FieldProcessor<Double> {
     }
 
     @Override
-    public String toString(Double f) throws MetaCSVWriteException {
+    public String toString(Double f) {
         if (f == null) {
             return this.nullValue;
         }

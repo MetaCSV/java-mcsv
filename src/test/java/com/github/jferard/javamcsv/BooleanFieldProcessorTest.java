@@ -24,8 +24,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
-
 public class BooleanFieldProcessorTest {
     private FieldProcessor<Boolean> processor;
 
@@ -48,7 +46,7 @@ public class BooleanFieldProcessorTest {
     }
 
     @Test
-    public void testToString() throws MetaCSVWriteException {
+    public void testToString() {
         Assert.assertEquals("NULL", processor.toString(null));
         Assert.assertEquals("T", processor.toString(true));
         Assert.assertEquals("F", processor.toString(false));

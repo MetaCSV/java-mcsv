@@ -51,7 +51,6 @@ interface FieldProcessor<T> {
      * Prepare a value for CSV file.
      * @param value the value
      * @return the String representation of the value in the CSV file
-     * @throws MetaCSVWriteException
      */
-    String toString(T value) throws MetaCSVWriteException;
+    String toString(T value);
 }

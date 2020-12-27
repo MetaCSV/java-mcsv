@@ -18,7 +18,9 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;import java.io.IOException;
+package com.github.jferard.javamcsv;
+
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
@@ -71,7 +73,8 @@ public class MetaCSVData {
     public Map<Integer, FieldProcessor<?>> getProcessorByIndex() {
         Map<Integer, FieldProcessor<?>> processorByIndex =
                 new HashMap<Integer, FieldProcessor<?>>();
-        for (Map.Entry<Integer, FieldDescription<?>> entry : this.descriptionByColIndex.entrySet()) {
+        for (Map.Entry<Integer, FieldDescription<?>> entry : this.descriptionByColIndex
+                .entrySet()) {
             processorByIndex.put(entry.getKey(), entry.getValue().toFieldProcessor(this.nullValue));
         }
         return processorByIndex;
@@ -79,7 +82,8 @@ public class MetaCSVData {
 
     @Override
     public String toString() {
-        return "MetaCSVData(encoding=" + this.encoding + ", lineTerminator=" + this.lineTerminator +
+        return "MetaCSVData(encoding=" + this.encoding + ", lineTerminator=" +
+                Util.escapeLineTerminator(this.lineTerminator) +
                 ", delimiter=" + this.delimiter + ", doubleQuote=" + this.doubleQuote +
                 ", escapeChar=" + this.escapeChar + ", quoteChar=" + this.quoteChar +
                 ", skipInitialSpace=" + this.skipInitialSpace +
@@ -92,7 +96,8 @@ public class MetaCSVData {
 
     public Map<Integer, String> getTypes() throws IOException {
         Map<Integer, String> types = new HashMap<Integer, String>();
-        for (Map.Entry<Integer, FieldDescription<?>> entry: this.descriptionByColIndex.entrySet()) {
+        for (Map.Entry<Integer, FieldDescription<?>> entry : this.descriptionByColIndex
+                .entrySet()) {
             StringBuilder sb = new StringBuilder();
             entry.getValue().render(sb);
             types.put(entry.getKey(), sb.toString());

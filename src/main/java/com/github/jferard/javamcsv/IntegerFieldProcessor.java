@@ -43,14 +43,14 @@ public class IntegerFieldProcessor implements FieldProcessor<Integer> {
     }
 
     @Override
-    public String toString(Integer value) throws MetaCSVWriteException {
+    public String toString(Integer value) {
         if (value == null) {
             return this.nullValue;
         }
         DecimalFormat formatter = new DecimalFormat();
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
         if (this.thousandsSeparator == null || this.thousandsSeparator.isEmpty()) {
-            formatter.setDecimalSeparatorAlwaysShown(false);
+            formatter.setGroupingUsed(false);
         } else {
             symbols.setGroupingSeparator(this.thousandsSeparator.charAt(0));
         }

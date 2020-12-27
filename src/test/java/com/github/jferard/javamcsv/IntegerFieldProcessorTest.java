@@ -24,13 +24,13 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TextFieldProcessorTest {
-
-    private FieldProcessor<String> processor;
+public class IntegerFieldProcessorTest {
+    private FieldProcessor<Integer> processor;
 
     @Before
     public void setUp() {
-        processor = TextFieldDescription.INSTANCE.toFieldProcessor("NULL");
+        String thSep = new StringBuilder().append((char) 0xA0).toString();
+        processor = new IntegerFieldDescription(thSep).toFieldProcessor("NULL");
     }
 
     @Test
@@ -41,12 +41,21 @@ public class TextFieldProcessorTest {
 
     @Test
     public void testToObject() throws MetaCSVReadException {
-        Assert.assertEquals("foo", processor.toObject("foo"));
+        Assert.assertEquals(103, (int) processor.toObject("103"));
+    }
+
+    @Test(expected = MetaCSVReadException.class)
+    public void testWrongToObject() throws MetaCSVReadException {
+        Assert.assertNull(processor.toObject("foo"));
+    }
+
+    @Test
+    public void testNullToString() {
+        Assert.assertEquals("NULL", processor.toString(null));
     }
 
     @Test
     public void testToString() {
-        Assert.assertEquals("NULL", processor.toString(null));
-        Assert.assertEquals("bar", processor.toString("bar"));
+        Assert.assertEquals("1 030", processor.toString(1030));
     }
 }

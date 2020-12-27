@@ -58,7 +58,7 @@ public class CurrencyFieldProcessor implements FieldProcessor<Number> {
     }
 
     @Override
-    public String toString(Number value) throws MetaCSVWriteException {
+    public String toString(Number value) {
         if (value == null) {
             return this.nullValue;
         }

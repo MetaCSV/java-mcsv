@@ -21,6 +21,7 @@
 package com.github.jferard.javamcsv;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.text.SimpleDateFormat;
@@ -30,14 +31,79 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 
 public class DateFieldProcessorTest {
+
+    private FieldProcessor<Date> processor;
+    private FieldProcessor<Date> dtProcessor;
+
+    @Before
+    public void setUp() {
+        processor = new DateFieldDescription(new SimpleDateFormat("yyyy-MM-dd", Locale.US), "en_US")
+                .toFieldProcessor("NULL");
+        dtProcessor = DatetimeFieldDescription.create("yyyy-MM-dd'T'HH:mm:ss", "en_US")
+                .toFieldProcessor("NULL");
+    }
+
     @Test
-    public void test() throws MetaCSVReadException {
-        FieldProcessor<Date> processor =
-                new DateFieldDescription(new SimpleDateFormat("yyyy-MM-dd", Locale.US), "en_US")
-                        .toFieldProcessor(null);
+    public void testNullDateToObject() throws MetaCSVReadException {
+        Assert.assertNull(processor.toObject(null));
+        Assert.assertNull(processor.toObject("NULL"));
+    }
+
+    @Test
+    public void testDateToObject() throws MetaCSVReadException {
         Calendar c = GregorianCalendar.getInstance(Locale.US);
         c.setTimeInMillis(0);
         c.set(2020, Calendar.NOVEMBER, 21, 0, 0, 0);
         Assert.assertEquals(c.getTime(), processor.toObject("2020-11-21"));
+    }
+
+    @Test(expected = MetaCSVReadException.class)
+    public void testWrongDateToObject() throws MetaCSVReadException {
+        processor.toObject("foo");
+    }
+
+    @Test
+    public void testNullDateToString() {
+        Assert.assertEquals("NULL", processor.toString(null));
+    }
+
+    @Test
+    public void testDateToString() {
+        Calendar c = GregorianCalendar.getInstance(Locale.US);
+        c.setTimeInMillis(0);
+        c.set(2020, Calendar.NOVEMBER, 21, 0, 0, 0);
+        Assert.assertEquals("2020-11-21", processor.toString(c.getTime()));
+    }
+
+    @Test
+    public void testNullDatetimeToObject() throws MetaCSVReadException {
+        Assert.assertNull(dtProcessor.toObject(null));
+        Assert.assertNull(dtProcessor.toObject("NULL"));
+    }
+
+    @Test
+    public void testDatetimeToObject() throws MetaCSVReadException {
+        Calendar c = GregorianCalendar.getInstance(Locale.US);
+        c.setTimeInMillis(0);
+        c.set(2020, Calendar.NOVEMBER, 21, 3, 2, 1);
+        Assert.assertEquals(c.getTime(), dtProcessor.toObject("2020-11-21T03:02:01"));
+    }
+
+    @Test(expected = MetaCSVReadException.class)
+    public void testWrongDatetimeToObject() throws MetaCSVReadException {
+        dtProcessor.toObject("bar");
+    }
+
+    @Test
+    public void testNullDatetimeToString() {
+        Assert.assertEquals("NULL", dtProcessor.toString(null));
+    }
+
+    @Test
+    public void testDatetimeToString() {
+        Calendar c = GregorianCalendar.getInstance(Locale.US);
+        c.setTimeInMillis(0);
+        c.set(2020, Calendar.NOVEMBER, 21, 3, 2, 1);
+        Assert.assertEquals("2020-11-21T03:02:01", dtProcessor.toString(c.getTime()));
     }
 }

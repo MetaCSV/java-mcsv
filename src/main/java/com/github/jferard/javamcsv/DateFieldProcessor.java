@@ -46,7 +46,7 @@ public class DateFieldProcessor implements FieldProcessor<Date> {
     }
 
     @Override
-    public String toString(Date date) throws MetaCSVWriteException {
+    public String toString(Date date) {
         if (date == null) {
             return this.nullValue;
         }

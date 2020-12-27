@@ -25,8 +25,6 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.*;
-
 public class AnyFieldProcessorTest {
     @Test
     public void testToObject() throws MetaCSVReadException {
@@ -38,7 +36,7 @@ public class AnyFieldProcessorTest {
     }
 
     @Test
-    public void testToString() throws MetaCSVWriteException {
+    public void testToString() {
         FieldProcessor<Object> processor =
                 new AnyFieldDescription(Arrays.asList("a", "b")).toFieldProcessor("NULL");
         Assert.assertEquals("NULL", processor.toString(null));

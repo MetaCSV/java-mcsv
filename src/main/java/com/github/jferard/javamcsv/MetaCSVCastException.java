@@ -18,7 +18,9 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;public class MetaCSVCastException extends ClassCastException {
+package com.github.jferard.javamcsv;
+
+public class MetaCSVCastException extends ClassCastException {
     public MetaCSVCastException(String message) {
     }
 }

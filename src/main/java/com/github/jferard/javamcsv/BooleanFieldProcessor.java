@@ -45,7 +45,7 @@ package com.github.jferard.javamcsv;public class BooleanFieldProcessor implement
     }
 
     @Override
-    public String toString(Boolean value) throws MetaCSVWriteException {
+    public String toString(Boolean value) {
         if (value == null) {
             return this.nullValue;
         } else if (value) {

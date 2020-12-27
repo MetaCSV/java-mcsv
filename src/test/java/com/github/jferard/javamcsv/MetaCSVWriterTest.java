@@ -18,17 +18,8 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;import com.github.jferard.javamcsv.BooleanFieldDescription;
-import com.github.jferard.javamcsv.CurrencyFieldDescription;
-import com.github.jferard.javamcsv.DateFieldDescription;
-import com.github.jferard.javamcsv.DatetimeFieldDescription;
-import com.github.jferard.javamcsv.FloatFieldDescription;
-import com.github.jferard.javamcsv.IntegerFieldDescription;
-import com.github.jferard.javamcsv.MetaCSVData;
-import com.github.jferard.javamcsv.MetaCSVDataBuilder;
-import com.github.jferard.javamcsv.MetaCSVWriteException;
-import com.github.jferard.javamcsv.MetaCSVWriter;
-import com.github.jferard.javamcsv.PercentageFieldDescription;
+package com.github.jferard.javamcsv;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -42,7 +33,7 @@ import java.util.Locale;
 
 public class MetaCSVWriterTest {
     @Test
-    public void test() throws IOException, MetaCSVWriteException, MetaCSVDataException {
+    public void test() throws IOException, MetaCSVDataException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ByteArrayOutputStream metaOut = new ByteArrayOutputStream();
         MetaCSVData data =

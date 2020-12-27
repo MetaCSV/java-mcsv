@@ -55,7 +55,7 @@ package com.github.jferard.javamcsv;public class PercentageFieldProcessor implem
     }
 
     @Override
-    public String toString(Double value) throws MetaCSVWriteException {
+    public String toString(Double value) {
         if (value == null) {
             return this.nullValue;
         }

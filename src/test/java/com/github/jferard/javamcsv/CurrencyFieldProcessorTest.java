@@ -65,22 +65,22 @@ public class CurrencyFieldProcessorTest {
     }
 
     @Test
-    public void testNullToString() throws MetaCSVWriteException {
+    public void testNullToString() {
         Assert.assertEquals("NULL", processorPre.toString(null));
     }
 
     @Test
-    public void testPreToString() throws MetaCSVWriteException {
+    public void testPreToString() {
         Assert.assertEquals("$17.2", processorPre.toString(17.2));
     }
 
     @Test
-    public void testPostToString() throws MetaCSVWriteException {
+    public void testPostToString() {
         Assert.assertEquals("17,2€", processorPost.toString(17.2));
     }
 
     @Test
-    public void testIntegerToString() throws MetaCSVWriteException {
+    public void testIntegerToString() {
         FieldProcessor<Number> processor = new CurrencyFieldDescription(false, "€",
                 IntegerFieldDescription.INSTANCE).toFieldProcessor("NULL");
         Assert.assertEquals("17€", processor.toString(17.2));

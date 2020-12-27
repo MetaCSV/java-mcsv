@@ -18,10 +18,7 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;import java.text.ParseException;
+package com.github.jferard.javamcsv;
 
 public class MetaCSVWriteException extends Exception {
-    public MetaCSVWriteException(Exception e) {
-        super(e);
-    }
 }

@@ -20,10 +20,17 @@
 
 package com.github.jferard.javamcsv;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.CSVRecord;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 
 public class TestHelper {
     public static String UTF_8_CHARSET_NAME = "UTF-8";
@@ -50,5 +57,18 @@ public class TestHelper {
         bomBytes[2] = (byte) 0xBF;
         System.arraycopy(bytes, 0, bomBytes, 3, bytes.length);
         return new ByteArrayInputStream(bomBytes);
+    }
+
+    public static CSVRecord createRecord(Object... values) throws IOException {
+        CSVFormat format = CSVFormat.DEFAULT;
+        Appendable out = new StringBuilder();
+        CSVPrinter printer = new CSVPrinter(out, format);
+        printer.printRecord(values);
+        CSVParser parser = new CSVParser(new StringReader(out.toString()), format);
+        return parser.iterator().next();
+    }
+
+    public static MetaCSVRecord createMetaRecord(Object... values) throws IOException {
+        return new MetaCSVRecord(TestHelper.createRecord(values), Arrays.<Object>asList(values));
     }
 }

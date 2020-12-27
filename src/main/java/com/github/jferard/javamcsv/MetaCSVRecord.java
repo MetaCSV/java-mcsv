@@ -41,12 +41,21 @@ public class MetaCSVRecord implements Iterable<Object> {
         }
     }
 
+    public double getCurrency(int i) {
+        Object value = this.values.get(i);
+        if (value instanceof Number) {
+            return (Double) value;
+        } else {
+            throw new MetaCSVCastException("Not a currency: " + value);
+        }
+    }
+
+    // TODO: continue
+
     @Override
     public Iterator<Object> iterator() {
         return this.values.iterator();
     }
-
-    // TODO: continue
 
     @Override
     public String toString() {

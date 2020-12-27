@@ -78,7 +78,7 @@ public class MetaCSVWriter implements Closeable {
         printer.printRecord(header);
     }
 
-    public void writeRow(List<Object> values) throws IOException, MetaCSVWriteException {
+    public void writeRow(List<Object> values) throws IOException {
         List<String> formattedValues = new ArrayList<String>(values.size());
         Map<Integer, FieldProcessor<?>> processorByIndex = data.getProcessorByIndex();
         for (int i = 0; i < values.size(); i++) {

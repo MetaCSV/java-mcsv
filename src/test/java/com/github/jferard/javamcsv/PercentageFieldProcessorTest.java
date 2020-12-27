@@ -65,17 +65,17 @@ public class PercentageFieldProcessorTest {
     }
 
     @Test
-    public void testNullToString() throws MetaCSVWriteException {
+    public void testNullToString() {
         Assert.assertEquals("NULL", processorPre.toString(null));
     }
 
     @Test
-    public void testPreToString() throws MetaCSVWriteException {
+    public void testPreToString() {
         Assert.assertEquals("%1720", processorPre.toString(17.2));
     }
 
     @Test
-    public void testPostToString() throws MetaCSVWriteException {
+    public void testPostToString() {
         Assert.assertEquals("1720%", processorPost.toString(17.2));
     }
 }

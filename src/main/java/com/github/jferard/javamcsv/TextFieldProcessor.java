@@ -28,7 +28,7 @@ public class TextFieldProcessor implements FieldProcessor<String> {
     }
 
     @Override
-    public String toObject(String text) throws MetaCSVReadException {
+    public String toObject(String text) {
         if (text == null || text.equals(nullValue)) {
             return null;
         }
@@ -36,7 +36,7 @@ public class TextFieldProcessor implements FieldProcessor<String> {
     }
 
     @Override
-    public String toString(String value) throws MetaCSVWriteException {
+    public String toString(String value) {
         if (value == null) {
             return this.nullValue;
         }
