@@ -57,7 +57,7 @@ public class FloatFieldProcessor implements FieldProcessor<Double> {
         DecimalFormat formatter = new DecimalFormat();
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
         if (this.thousandsSeparator == null || this.thousandsSeparator.isEmpty()) {
-            formatter.setDecimalSeparatorAlwaysShown(false);
+            formatter.setGroupingUsed(false);
         } else {
             symbols.setGroupingSeparator(this.thousandsSeparator.charAt(0));
         }

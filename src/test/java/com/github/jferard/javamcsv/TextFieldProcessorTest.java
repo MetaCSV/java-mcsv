@@ -20,26 +20,33 @@
 
 package com.github.jferard.javamcsv;
 
-public class TextFieldProcessor implements FieldProcessor<String> {
-    private final String nullValue;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-    public TextFieldProcessor(String nullValue) {
-        this.nullValue = nullValue;
+public class TextFieldProcessorTest {
+
+    private FieldProcessor<String> processor;
+
+    @Before
+    public void setUp() {
+        processor = TextFieldDescription.INSTANCE.toFieldProcessor("NULL");
     }
 
-    @Override
-    public String toObject(String text) throws MetaCSVReadException {
-        if (text == null || text.equals(nullValue)) {
-            return null;
-        }
-        return text;
+    @Test
+    public void testNullToObject() throws MetaCSVReadException {
+        Assert.assertNull(processor.toObject(null));
+        Assert.assertNull(processor.toObject("NULL"));
     }
 
-    @Override
-    public String toString(String value) throws MetaCSVWriteException {
-        if (value == null) {
-            return this.nullValue;
-        }
-        return value;
+    @Test
+    public void testToObject() throws MetaCSVReadException {
+        Assert.assertEquals("foo", processor.toObject("foo"));
+    }
+
+    @Test
+    public void testToString() throws MetaCSVWriteException {
+        Assert.assertEquals("NULL", processor.toString(null));
+        Assert.assertEquals("bar", processor.toString("bar"));
     }
 }
