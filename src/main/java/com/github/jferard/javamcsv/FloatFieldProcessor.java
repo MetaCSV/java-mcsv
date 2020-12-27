@@ -18,7 +18,9 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;import java.text.DecimalFormat;
+package com.github.jferard.javamcsv;
+
+import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
 public class FloatFieldProcessor implements FieldProcessor<Double> {
@@ -39,8 +41,9 @@ public class FloatFieldProcessor implements FieldProcessor<Double> {
             return null;
         }
         try {
-            return Double
-                    .parseDouble(text.replace(thousandsSeparator, "").replace(decimalSeparator, "."));
+            String newText = Util.replaceChar(text, thousandsSeparator, "");
+            newText = Util.replaceChar(newText, decimalSeparator, ".");
+            return Double.parseDouble(newText);
         } catch (NumberFormatException e) {
             throw new MetaCSVReadException(e);
         }
@@ -53,7 +56,7 @@ public class FloatFieldProcessor implements FieldProcessor<Double> {
         }
         DecimalFormat formatter = new DecimalFormat();
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-        if (this.thousandsSeparator.isEmpty()) {
+        if (this.thousandsSeparator == null || this.thousandsSeparator.isEmpty()) {
             formatter.setDecimalSeparatorAlwaysShown(false);
         } else {
             symbols.setGroupingSeparator(this.thousandsSeparator.charAt(0));

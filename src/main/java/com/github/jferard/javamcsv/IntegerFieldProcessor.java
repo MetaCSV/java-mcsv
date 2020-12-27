@@ -49,7 +49,7 @@ public class IntegerFieldProcessor implements FieldProcessor<Integer> {
         }
         DecimalFormat formatter = new DecimalFormat();
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-        if (this.thousandsSeparator.isEmpty()) {
+        if (this.thousandsSeparator == null || this.thousandsSeparator.isEmpty()) {
             formatter.setDecimalSeparatorAlwaysShown(false);
         } else {
             symbols.setGroupingSeparator(this.thousandsSeparator.charAt(0));

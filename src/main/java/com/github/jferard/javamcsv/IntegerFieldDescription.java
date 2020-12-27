@@ -23,6 +23,8 @@ package com.github.jferard.javamcsv;
 import java.io.IOException;
 
 public class IntegerFieldDescription implements FieldDescription<Integer> {
+    public static IntegerFieldDescription INSTANCE = new IntegerFieldDescription(null);
+
     private final String thousandsSeparator;
 
     public IntegerFieldDescription(String thousandsSeparator) {

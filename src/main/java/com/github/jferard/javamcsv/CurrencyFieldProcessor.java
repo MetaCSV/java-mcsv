@@ -18,7 +18,9 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;public class CurrencyFieldProcessor implements FieldProcessor<Number> {
+package com.github.jferard.javamcsv;
+
+public class CurrencyFieldProcessor implements FieldProcessor<Number> {
     private final boolean pre;
     private final String symbol;
     private final FieldProcessor<? extends Number> numberProcessor;

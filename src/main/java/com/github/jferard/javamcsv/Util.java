@@ -125,4 +125,12 @@ class Util {
             return new File(absolutePath.substring(0, dotIndex) + newExtension);
         }
     }
+
+    public static String replaceChar(String text, String ch, String newCh) {
+        if (ch == null || ch.isEmpty()) {
+            return text;
+        } else {
+            return text.replace(ch, newCh);
+        }
+    }
 }
