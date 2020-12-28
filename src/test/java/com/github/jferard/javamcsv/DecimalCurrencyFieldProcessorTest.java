@@ -26,17 +26,17 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 
-public class PercentageFieldProcessorTest {
-    private FieldProcessor<Double> processorPre;
-    private FieldProcessor<Double> processorPost;
+public class DecimalCurrencyFieldProcessorTest {
+    private FieldProcessor<BigDecimal> processorPre;
+    private FieldProcessor<BigDecimal> processorPost;
 
     @Before
     public void setUp() {
-        processorPre = new FloatPercentageFieldDescription(true, "%",
-                new FloatFieldDescription(null, ".")
+        processorPre = new DecimalCurrencyFieldDescription(true, "$",
+                new DecimalFieldDescription(null, ".")
         ).toFieldProcessor("NULL");
-        processorPost = new FloatPercentageFieldDescription(false, "%",
-                new FloatFieldDescription(null, ",")
+        processorPost = new DecimalCurrencyFieldDescription(false, "€",
+                new DecimalFieldDescription(null, ",")
         ).toFieldProcessor("NULL");
     }
 
@@ -48,22 +48,22 @@ public class PercentageFieldProcessorTest {
 
     @Test(expected = MetaCSVReadException.class)
     public void testWrongPreToObject() throws MetaCSVReadException {
-        Assert.assertNull(processorPre.toObject("10.0"));
+        Assert.assertNull(processorPre.toObject("€10.0"));
     }
 
     @Test
     public void testRightPreToObject() throws MetaCSVReadException {
-        Assert.assertEquals(0.1, processorPre.toObject("%10.0"), 0.01);
+        Assert.assertEquals(new BigDecimal("10.0"), processorPre.toObject("$10.0"));
     }
 
     @Test(expected = MetaCSVReadException.class)
     public void testWrongPostToObject() throws MetaCSVReadException {
-        Assert.assertNull(processorPost.toObject("%10,0"));
+        Assert.assertNull(processorPost.toObject("10,0$"));
     }
 
     @Test
     public void testRightPostToObject() throws MetaCSVReadException {
-        Assert.assertEquals(0.1, processorPost.toObject("10,0 %"), 0.01);
+        Assert.assertEquals(new BigDecimal("10.0"), processorPost.toObject("10,0 €"));
     }
 
     @Test
@@ -73,11 +73,18 @@ public class PercentageFieldProcessorTest {
 
     @Test
     public void testPreToString() {
-        Assert.assertEquals("%1720", processorPre.toString(17.2));
+        Assert.assertEquals("$17.2", processorPre.toString(new BigDecimal("17.2")));
     }
 
     @Test
     public void testPostToString() {
-        Assert.assertEquals("1720%", processorPost.toString(17.2));
+        Assert.assertEquals("17,2€", processorPost.toString(new BigDecimal("17.2")));
+    }
+
+    @Test
+    public void testIntegerToString() {
+        FieldProcessor<Integer> processor = new IntegerCurrencyFieldDescription(false, "€",
+                IntegerFieldDescription.INSTANCE).toFieldProcessor("NULL");
+        Assert.assertEquals("17€", processor.toString(17));
     }
 }

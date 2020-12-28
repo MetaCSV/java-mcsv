@@ -44,9 +44,11 @@ public class FieldDescriptionTest {
     public void testDate() throws IOException {
         Assert.assertEquals("date/yyyy-MM-ddZ", TestHelper.render(
                 new DateFieldDescription(new SimpleDateFormat("yyyy-MM-ddZ"), null)));
+        String locale = Util.getLocaleString(Locale.US);
         Assert.assertEquals("date/yyyy-MM-ddZ/en_US", TestHelper.render(
-                new DateFieldDescription(new SimpleDateFormat("yyyy-MM-ddZ"),
-                        Locale.US.getLanguage() + "_" + Locale.US.getCountry())));
+                new DateFieldDescription(new SimpleDateFormat("yyyy-MM-ddZ"), locale)));
+        Assert.assertEquals("DateFieldDescription(yyyy-MM-ddZ, en_US)",
+                new DateFieldDescription(new SimpleDateFormat("yyyy-MM-ddZ"), locale).toString());
     }
 
     @Test
@@ -56,7 +58,10 @@ public class FieldDescriptionTest {
                         null)));
         Assert.assertEquals("datetime/yyyy-MM-dd'T'HH:mm:ssZ/en_US", TestHelper.render(
                 new DatetimeFieldDescription(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ"),
-                        Locale.US.getLanguage() + "_" + Locale.US.getCountry())));
+                        Util.getLocaleString(Locale.US))));
+        Assert.assertEquals("DatetimeDescription(yyyy-MM-dd'T'HH:mm:ssZ, en_US)",
+                new DatetimeFieldDescription(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ"),
+                        Util.getLocaleString(Locale.US)).toString());
     }
 
     @Test
@@ -66,6 +71,8 @@ public class FieldDescriptionTest {
                 new DecimalCurrencyFieldDescription(true, "$", numberDescription)));
         Assert.assertEquals("currency/post/€/decimal//.", TestHelper.render(
                 new DecimalCurrencyFieldDescription(false, "€", numberDescription)));
+        Assert.assertEquals("CurrencyFieldDescription(false, €, DecimalFieldDescription(, .))",
+                new DecimalCurrencyFieldDescription(false, "€", numberDescription).toString());
     }
 
     @Test
@@ -75,17 +82,31 @@ public class FieldDescriptionTest {
                 new IntegerCurrencyFieldDescription(true, "$", numberDescription)));
         Assert.assertEquals("currency/post/€/integer", TestHelper.render(
                 new IntegerCurrencyFieldDescription(false, "€", numberDescription)));
+        Assert.assertEquals("CurrencyFieldDescription(false, €, IntegerFieldDescription(null))",
+                new IntegerCurrencyFieldDescription(false, "€", numberDescription).toString());
     }
 
     @Test
     public void testFloat() throws IOException {
         Assert.assertEquals("float/ /,", TestHelper.render(new FloatFieldDescription(" ", ",")));
+        Assert.assertEquals("FloatFieldDescription( , ,)",
+                new FloatFieldDescription(" ", ",").toString());
+    }
+
+    @Test
+    public void testDecimal() throws IOException {
+        Assert.assertEquals("decimal/ /,",
+                TestHelper.render(new DecimalFieldDescription(" ", ",")));
+        Assert.assertEquals("DecimalFieldDescription( , ,)",
+                new DecimalFieldDescription(" ", ",").toString());
     }
 
     @Test
     public void testInteger() throws IOException {
         Assert.assertEquals("integer", TestHelper.render(new IntegerFieldDescription("")));
         Assert.assertEquals("integer/..", TestHelper.render(new IntegerFieldDescription("..")));
+        Assert.assertEquals("IntegerFieldDescription(.)",
+                new IntegerFieldDescription(".").toString());
     }
 
     @Test
@@ -95,6 +116,8 @@ public class FieldDescriptionTest {
                 new DecimalPercentageFieldDescription(true, "%", numberDescription)));
         Assert.assertEquals("percentage/post/%/decimal//.", TestHelper.render(
                 new DecimalPercentageFieldDescription(false, "%", numberDescription)));
+        Assert.assertEquals("PercentageFieldDescription(false, %, DecimalFieldDescription(, .))",
+                new DecimalPercentageFieldDescription(false, "%", numberDescription).toString());
     }
 
     @Test
@@ -104,11 +127,14 @@ public class FieldDescriptionTest {
                 new FloatPercentageFieldDescription(true, "%", numberDescription)));
         Assert.assertEquals("percentage/post/%/float//.", TestHelper.render(
                 new FloatPercentageFieldDescription(false, "%", numberDescription)));
+        Assert.assertEquals("PercentageFieldDescription(false, %, FloatFieldDescription(, .))",
+                new FloatPercentageFieldDescription(false, "%", numberDescription).toString());
     }
 
     @Test
     public void testText() throws IOException {
         Assert.assertEquals("text", TestHelper.render(TextFieldDescription.INSTANCE));
+        Assert.assertEquals("TextFieldDescription()", TextFieldDescription.INSTANCE.toString());
     }
 
     @Test

@@ -245,11 +245,13 @@ public class MetaCSVParser {
 
     private FieldDescription<Date> parseDatetime(List<String> parameters)
             throws MetaCSVParseException {
-        String format = parameters.get(0);
         if (parameters.size() == 1) {
+            String format = parameters.get(0);
             return DatetimeFieldDescription.create(format);
         } else if (parameters.size() == 2) {
-            return DatetimeFieldDescription.create(format, parameters.get(1));
+            String format = parameters.get(0);
+            String locale = parameters.get(1);
+            return DatetimeFieldDescription.create(format, locale);
         } else {
             throw new MetaCSVParseException("Unknown datetime field: " + parameters);
         }
@@ -276,7 +278,7 @@ public class MetaCSVParser {
     private FieldDescription<Integer> parseInteger(List<String> parameters)
             throws MetaCSVParseException {
         if (parameters.size() == 0) {
-            return new IntegerFieldDescription("");
+            return IntegerFieldDescription.INSTANCE;
         } else if (parameters.size() == 1) {
             return new IntegerFieldDescription(parameters.get(0));
         } else {

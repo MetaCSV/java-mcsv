@@ -53,7 +53,7 @@ public class DecimalFieldDescription implements FieldDescription<BigDecimal> {
 
     @Override
     public String toString() {
-        return String.format("FloatFieldDescription(%s, %s)",
+        return String.format("DecimalFieldDescription(%s, %s)",
                 this.thousandsSeparator, this.decimalSeparator);
     }
 }

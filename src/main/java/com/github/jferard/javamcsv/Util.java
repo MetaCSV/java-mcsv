@@ -18,11 +18,14 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;import java.io.File;
+package com.github.jferard.javamcsv;
+
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 class Util {
     public static final String CRLF = "\r\n";
@@ -119,9 +122,9 @@ class Util {
     public static File withExtension(File csvFile, String newExtension) {
         String absolutePath = csvFile.getAbsolutePath();
         int dotIndex = absolutePath.lastIndexOf(".");
-        if (dotIndex == -1)
+        if (dotIndex == -1) {
             return new File(absolutePath + newExtension);
-        else {
+        } else {
             return new File(absolutePath.substring(0, dotIndex) + newExtension);
         }
     }
@@ -132,5 +135,9 @@ class Util {
         } else {
             return text.replace(ch, newCh);
         }
+    }
+
+    public static String getLocaleString(Locale locale) {
+        return locale.getLanguage() + "_" + locale.getCountry();
     }
 }

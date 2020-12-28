@@ -146,33 +146,48 @@ public class MetaCSVParserTest {
                         "data,null_value,NULL\r\n" +
                         "data,col/0/type,boolean/T/F\r\n" +
                         "data,col/1/type,\"currency/pre/$/decimal/,/.\"\r\n" +
-                        "data,col/2/type,date/dd\\/MM\\/yyyy\r\n" +
-                        "data,col/3/type,datetime/yyyy-MM-dd HH:mm:ss\r\n" +
-                        "data,col/4/type,\"float/,/.\"\r\n" +
-                        "data,col/5/type,\"integer/ \"\r\n" +
-                        "data,col/6/type,\"percentage/post/%/float/,/.\"\r\n" +
-                        "data,col/7/type,text\r\n" +
-                        "data,col/8/type,any/foo/bar/baz\r\n"
+                        "data,col/2/type,currency/post/€/integer\r\n" +
+                        "data,col/3/type,date/dd\\/MM\\/yyyy\r\n" +
+                        "data,col/4/type,date/dd\\/MM\\/yyyy/fr_FR\r\n" +
+                        "data,col/5/type,datetime/yyyy-MM-dd HH:mm:ss\r\n" +
+                        "data,col/6/type,datetime/yyyy-MM-dd HH:mm:ss/en_US\r\n" +
+                        "data,col/7/type,\"float/,/.\"\r\n" +
+                        "data,col/8/type,\"decimal//.\"\r\n" +
+                        "data,col/9/type,\"integer/ \"\r\n" +
+                        "data,col/10/type,\"percentage/post/%/float/,/.\"\r\n" +
+                        "data,col/11/type,\"percentage/post/%/decimal//.\"\r\n" +
+                        "data,col/12/type,text\r\n" +
+                        "data,col/13/type,any/foo/bar/baz\r\n"
         );
         MetaCSVData data = MetaCSVParser.create(is).parse();
         Assert.assertEquals("BooleanFieldDescription(T, F)",
                 data.getDescriptionByIndex().get(0).toString());
-        Assert.assertEquals("CurrencyFieldDescription(true, $, FloatFieldDescription(,, .))",
+        Assert.assertEquals("CurrencyFieldDescription(true, $, DecimalFieldDescription(,, .))",
                 data.getDescriptionByIndex().get(1).toString());
-        Assert.assertEquals("DateFieldDescription(dd/MM/yyyy, null)",
+        Assert.assertEquals("CurrencyFieldDescription(false, €, IntegerFieldDescription(null))",
                 data.getDescriptionByIndex().get(2).toString());
-        Assert.assertEquals("DatetimeDescription(yyyy-MM-dd HH:mm:ss, null)",
+        Assert.assertEquals("DateFieldDescription(dd/MM/yyyy, null)",
                 data.getDescriptionByIndex().get(3).toString());
-        Assert.assertEquals("FloatFieldDescription(,, .)",
+        Assert.assertEquals("DateFieldDescription(dd/MM/yyyy, fr_FR)",
                 data.getDescriptionByIndex().get(4).toString());
-        Assert.assertEquals("IntegerFieldDescription( )",
+        Assert.assertEquals("DatetimeDescription(yyyy-MM-dd HH:mm:ss, null)",
                 data.getDescriptionByIndex().get(5).toString());
-        Assert.assertEquals("PercentageFieldDescription(false, %, FloatFieldDescription(,, .))",
+        Assert.assertEquals("DatetimeDescription(yyyy-MM-dd HH:mm:ss, en_US)",
                 data.getDescriptionByIndex().get(6).toString());
-        Assert.assertEquals("TextFieldDescription()",
+        Assert.assertEquals("FloatFieldDescription(,, .)",
                 data.getDescriptionByIndex().get(7).toString());
-        Assert.assertEquals("AnyFieldDescription([foo, bar, baz])",
+        Assert.assertEquals("DecimalFieldDescription(, .)",
                 data.getDescriptionByIndex().get(8).toString());
+        Assert.assertEquals("IntegerFieldDescription( )",
+                data.getDescriptionByIndex().get(9).toString());
+        Assert.assertEquals("PercentageFieldDescription(false, %, FloatFieldDescription(,, .))",
+                data.getDescriptionByIndex().get(10).toString());
+        Assert.assertEquals("PercentageFieldDescription(false, %, DecimalFieldDescription(, .))",
+                data.getDescriptionByIndex().get(11).toString());
+        Assert.assertEquals("TextFieldDescription()",
+                data.getDescriptionByIndex().get(12).toString());
+        Assert.assertEquals("AnyFieldDescription([foo, bar, baz])",
+                data.getDescriptionByIndex().get(13).toString());
     }
 
     @Test(expected = MetaCSVParseException.class)
@@ -259,7 +274,7 @@ public class MetaCSVParserTest {
                 "domain,key,value\r\n" +
                         "data,col/2/type,currency/pre/$/integer\r\n");
         MetaCSVData data = MetaCSVParser.create(is).parse();
-        Assert.assertEquals("CurrencyFieldDescription(true, $, IntegerFieldDescription())",
+        Assert.assertEquals("CurrencyFieldDescription(true, $, IntegerFieldDescription(null))",
                 data.getDescriptionByIndex().get(2).toString());
     }
 
@@ -294,6 +309,62 @@ public class MetaCSVParserTest {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "domain,key,value\r\n" +
                         "data,col/1/type,date/YYYY/fr_FR/foo\r\n");
+        MetaCSVParser.create(is).parse();
+    }
+
+    @Test(expected = MetaCSVParseException.class)
+    public void testDatetimeNoParameter() throws IOException, MetaCSVParseException, MetaCSVDataException {
+        ByteArrayInputStream is = TestHelper.utf8InputStream(
+                "domain,key,value\r\n" +
+                        "data,col/1/type,datetime\r\n");
+        MetaCSVParser.create(is).parse();
+    }
+
+    @Test(expected = MetaCSVParseException.class)
+    public void testDatetimeTooManyParameters() throws IOException, MetaCSVParseException, MetaCSVDataException {
+        ByteArrayInputStream is = TestHelper.utf8InputStream(
+                "domain,key,value\r\n" +
+                        "data,col/1/type,datetime/YYYY/fr_FR/foo\r\n");
+        MetaCSVParser.create(is).parse();
+    }
+
+    @Test(expected = MetaCSVParseException.class)
+    public void testFloatTooManyParameters() throws IOException, MetaCSVParseException, MetaCSVDataException {
+        ByteArrayInputStream is = TestHelper.utf8InputStream(
+                "domain,key,value\r\n" +
+                        "data,col/1/type,float//./foo\r\n");
+        MetaCSVParser.create(is).parse();
+    }
+
+    @Test(expected = MetaCSVParseException.class)
+    public void testDecimalTooManyParameters() throws IOException, MetaCSVParseException, MetaCSVDataException {
+        ByteArrayInputStream is = TestHelper.utf8InputStream(
+                "domain,key,value\r\n" +
+                        "data,col/1/type,decimal//./foo\r\n");
+        MetaCSVParser.create(is).parse();
+    }
+
+    @Test(expected = MetaCSVParseException.class)
+    public void testIntegerTooManyParameters() throws IOException, MetaCSVParseException, MetaCSVDataException {
+        ByteArrayInputStream is = TestHelper.utf8InputStream(
+                "domain,key,value\r\n" +
+                        "data,col/1/type,integer//.\r\n");
+        MetaCSVParser.create(is).parse();
+    }
+
+    @Test(expected = MetaCSVParseException.class)
+    public void testBadPrePost() throws IOException, MetaCSVParseException, MetaCSVDataException {
+        ByteArrayInputStream is = TestHelper.utf8InputStream(
+                "domain,key,value\r\n" +
+                        "data,col/1/type,currency/foo/$/integer\r\n");
+        MetaCSVParser.create(is).parse();
+    }
+
+    @Test(expected = MetaCSVParseException.class)
+    public void testBadPercentageNumber() throws IOException, MetaCSVParseException, MetaCSVDataException {
+        ByteArrayInputStream is = TestHelper.utf8InputStream(
+                "domain,key,value\r\n" +
+                        "data,col/1/type,percentage/post/%/foo\r\n");
         MetaCSVParser.create(is).parse();
     }
 }
