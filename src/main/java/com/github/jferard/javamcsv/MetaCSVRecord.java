@@ -18,7 +18,9 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;import org.apache.commons.csv.CSVRecord;
+package com.github.jferard.javamcsv;
+
+import org.apache.commons.csv.CSVRecord;
 
 import java.util.Iterator;
 import java.util.List;

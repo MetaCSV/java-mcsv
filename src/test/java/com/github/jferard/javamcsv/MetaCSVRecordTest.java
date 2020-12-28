@@ -66,4 +66,11 @@ public class MetaCSVRecordTest {
         MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", 10.5);
         metaRecord.getCurrency(1);
     }
+
+    @Test
+    public void testEquals() throws IOException {
+        Assert.assertEquals(TestHelper.toList(TestHelper.createMetaRecord("foo", "bar", 10.5)),
+                TestHelper.toList(TestHelper.createMetaRecord("foo", "bar", 10.5)));
+
+    }
 }

@@ -42,6 +42,8 @@ public class IntegerFieldProcessorTest {
     @Test
     public void testToObject() throws MetaCSVReadException {
         Assert.assertEquals(103, (int) processor.toObject("103"));
+        Assert.assertEquals(1030, (int) processor.toObject("1030"));
+        Assert.assertEquals(1030, (int) processor.toObject("1 030"));
     }
 
     @Test(expected = MetaCSVReadException.class)

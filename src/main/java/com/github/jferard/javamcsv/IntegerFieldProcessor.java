@@ -18,7 +18,9 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;import java.text.DecimalFormat;
+package com.github.jferard.javamcsv;
+
+import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
 public class IntegerFieldProcessor implements FieldProcessor<Integer> {
@@ -36,7 +38,8 @@ public class IntegerFieldProcessor implements FieldProcessor<Integer> {
             return null;
         }
         try {
-            return Integer.parseInt(text.replace(thousandsSeparator, ""));
+            String newText = Util.replaceChar(text, this.thousandsSeparator, "");
+            return Integer.parseInt(newText);
         } catch (NumberFormatException e) {
             throw new MetaCSVReadException(e);
         }

@@ -38,12 +38,12 @@ public class CSVRecordProcessor {
     public MetaCSVRecord process(CSVRecord record) throws MetaCSVReadException {
         List<Object> values = new ArrayList<Object>(record.size());
         for (int i = 0; i < record.size(); i++) {
-            FieldProcessor<?> description = processorByIndex.get(i);
+            FieldProcessor<?> processor = processorByIndex.get(i);
             String s = record.get(i);
-            if (description == null) {
+            if (processor == null) {
                 values.add(s);
             } else {
-                values.add(description.toObject(s));
+                values.add(processor.toObject(s));
             }
         }
         return new MetaCSVRecord(record, values);

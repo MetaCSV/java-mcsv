@@ -30,7 +30,9 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class TestHelper {
     public static String UTF_8_CHARSET_NAME = "UTF-8";
@@ -70,5 +72,17 @@ public class TestHelper {
 
     public static MetaCSVRecord createMetaRecord(Object... values) throws IOException {
         return new MetaCSVRecord(TestHelper.createRecord(values), Arrays.<Object>asList(values));
+    }
+
+    public static boolean createMetaRecordEquals(MetaCSVRecord r1, MetaCSVRecord r2) {
+        return toList(r1).equals(toList(r2));
+    }
+
+    public static <T> List<T> toList(Iterable<T> iterable) {
+        List<T> list = new ArrayList<T>();
+        for (T e : iterable) {
+            list.add(e);
+        }
+        return list;
     }
 }

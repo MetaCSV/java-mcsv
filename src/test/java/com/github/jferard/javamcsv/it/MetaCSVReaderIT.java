@@ -25,6 +25,7 @@ import com.github.jferard.javamcsv.MetaCSVParseException;
 import com.github.jferard.javamcsv.MetaCSVReadException;
 import com.github.jferard.javamcsv.MetaCSVReader;
 import com.github.jferard.javamcsv.MetaCSVRecord;
+import com.github.jferard.javamcsv.TestHelper;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -41,17 +42,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 
 public class MetaCSVReaderIT {
-    public static <T> List<T> toList(Iterable<T> iterable) {
-        List<T> list = new ArrayList<T>();
-        for (T e : iterable) {
-            list.add(e);
-        }
-        return list;
-    }
-
     public static <T> List<String> toRep(Iterable<T> iterable) {
         List<String> list = new ArrayList<String>();
         for (T e : iterable) {
@@ -76,31 +68,32 @@ public class MetaCSVReaderIT {
         Iterator<MetaCSVRecord> iterator = reader.iterator();
         Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(
-                Arrays.asList("domain", "key", "value"), toList(iterator.next()));
+                Arrays.asList("domain", "key", "value"), TestHelper.toList(iterator.next()));
         Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(
-                Arrays.asList("file", "encoding", "utf-8"), toList(iterator.next()));
+                Arrays.asList("file", "encoding", "utf-8"), TestHelper.toList(iterator.next()));
         Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(
-                Arrays.asList("file", "line_terminator", "\\r\\n"), toList(iterator.next()));
+                Arrays.asList("file", "line_terminator", "\\r\\n"),
+                TestHelper.toList(iterator.next()));
         Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(
-                Arrays.asList("csv", "delimiter", ","), toList(iterator.next()));
+                Arrays.asList("csv", "delimiter", ","), TestHelper.toList(iterator.next()));
         Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(
-                Arrays.asList("csv", "double_quote", "true"), toList(iterator.next()));
+                Arrays.asList("csv", "double_quote", "true"), TestHelper.toList(iterator.next()));
         Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(
-                Arrays.asList("csv", "quote_char", "\""), toList(iterator.next()));
+                Arrays.asList("csv", "quote_char", "\""), TestHelper.toList(iterator.next()));
         Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(
-                Arrays.asList("data", "col/0/type", "text"), toList(iterator.next()));
+                Arrays.asList("data", "col/0/type", "text"), TestHelper.toList(iterator.next()));
         Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(
-                Arrays.asList("data", "col/1/type", "text"), toList(iterator.next()));
+                Arrays.asList("data", "col/1/type", "text"), TestHelper.toList(iterator.next()));
         Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(
-                Arrays.asList("data", "col/2/type", "any"), toList(iterator.next()));
+                Arrays.asList("data", "col/2/type", "any"), TestHelper.toList(iterator.next()));
         Assert.assertFalse(iterator.hasNext());
     }
 
@@ -125,7 +118,7 @@ public class MetaCSVReaderIT {
                 Arrays.asList("cle_interop", "uid_adresse", "voie_nom", "numero", "suffixe",
                         "commune_nom", "position", "x", "y", "long", "lat", "source",
                         "date_der_maj", "refparc", "voie_nom_eu", "complement"),
-                toList(iterator.next()));
+                TestHelper.toList(iterator.next()));
         Assert.assertTrue(iterator.hasNext());
         Calendar c = GregorianCalendar.getInstance(Locale.US);
         c.setTimeInMillis(0);
@@ -135,7 +128,7 @@ public class MetaCSVReaderIT {
                         "Espès-undurein", "entrée", 385432.96, 6250383.75,
                         -0.8748110149745267, 43.28315047649357, "Commune de Espès-undurein",
                         c.getTime(), "ZB0188", "Xiberoko errepidea", ""),
-                toList(iterator.next()));
+                TestHelper.toList(iterator.next()));
         while (iterator.hasNext()) {
             iterator.next();
         }
@@ -155,15 +148,17 @@ public class MetaCSVReaderIT {
         Iterator<MetaCSVRecord> iterator = reader.iterator();
         Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(
-                Arrays.asList("name", "date", "count"), toList(iterator.next()));
+                Arrays.asList("name", "date", "count"), TestHelper.toList(iterator.next()));
         Assert.assertTrue(iterator.hasNext());
         Calendar c = GregorianCalendar.getInstance(Locale.US);
         c.setTimeInMillis(0);
         c.set(2020, Calendar.NOVEMBER, 21, 0, 0, 0);
-        Assert.assertEquals(Arrays.asList("foo", c.getTime(), 15), toList(iterator.next()));
+        Assert.assertEquals(Arrays.asList("foo", c.getTime(), 15),
+                TestHelper.toList(iterator.next()));
         Assert.assertTrue(iterator.hasNext());
         c.set(2020, Calendar.NOVEMBER, 22, 0, 0, 0);
-        Assert.assertEquals(Arrays.asList("bar", c.getTime(), -8), toList(iterator.next()));
+        Assert.assertEquals(Arrays.asList("bar", c.getTime(), -8),
+                TestHelper.toList(iterator.next()));
         Assert.assertFalse(iterator.hasNext());
     }
 

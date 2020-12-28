@@ -25,25 +25,15 @@ import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 public class MetaCSVReaderTest {
-    public static <T> List<T> toList(Iterable<T> iterable) {
-        List<T> list = new ArrayList<T>();
-        for (T e : iterable) {
-            list.add(e);
-        }
-        return list;
-    }
 
     @Test
     public void testBOM()
@@ -102,7 +92,7 @@ public class MetaCSVReaderTest {
         Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(
                 Arrays.asList("boolean", "currency", "date", "datetime", "float", "integer",
-                        "percentage", "text"), toList(iterator.next()));
+                        "percentage", "text"), TestHelper.toList(iterator.next()));
         Assert.assertTrue(iterator.hasNext());
 
         Calendar c = GregorianCalendar.getInstance(Locale.US);
@@ -110,12 +100,12 @@ public class MetaCSVReaderTest {
         c.set(2020, Calendar.DECEMBER, 1, 0, 0, 0);
         Assert.assertEquals(
                 Arrays.asList(true, 15.0, c.getTime(), null, 10000.5, 12354, 0.565, "Foo"),
-                toList(iterator.next()));
+                TestHelper.toList(iterator.next()));
         Assert.assertTrue(iterator.hasNext());
         c.set(2020, Calendar.DECEMBER, 1, 9, 30, 55);
         Assert.assertEquals(
                 Arrays.asList(false, -1900.5, null, c.getTime(), -520.8, -1000, -0.128, "Bar"),
-                toList(iterator.next()));
+                TestHelper.toList(iterator.next()));
         Assert.assertFalse(iterator.hasNext());
     }
 }

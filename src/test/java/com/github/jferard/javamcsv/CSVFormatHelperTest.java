@@ -18,23 +18,23 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;import org.apache.commons.csv.CSVFormat;
+package com.github.jferard.javamcsv;
 
-public class CsvFormatHelper {
-    public static CSVFormat getCSVFormat(MetaCSVData data) {
-        CSVFormat format = CSVFormat.DEFAULT;
-        char delimiter = data.getDelimiter();
-        if (delimiter != ',') {
-            format = format.withDelimiter(delimiter);
-        }
+import org.apache.commons.csv.CSVFormat;
+import org.junit.Assert;
+import org.junit.Test;
 
-        String lineTerminator = data.getLineTerminator();
-        if (!lineTerminator.equals(Util.CRLF)) {
-            format = format.withRecordSeparator(lineTerminator);
-        }
+public class CSVFormatHelperTest {
+    @Test
+    public void test() throws MetaCSVDataException {
+        MetaCSVData data = new MetaCSVDataBuilder().build();
+        Assert.assertEquals(CSVFormat.DEFAULT, CSVFormatHelper.getCSVFormat(data));
+    }
 
-        // TODO: continue...
-
-        return format;
+    @Test
+    public void test2() throws MetaCSVDataException {
+        MetaCSVData data = new MetaCSVDataBuilder().delimiter(';').lineTerminator("\n").build();
+        Assert.assertEquals(CSVFormat.DEFAULT.withDelimiter(';').withRecordSeparator('\n'),
+                CSVFormatHelper.getCSVFormat(data));
     }
 }

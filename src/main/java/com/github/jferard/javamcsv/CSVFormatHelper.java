@@ -20,29 +20,21 @@
 
 package com.github.jferard.javamcsv;import org.apache.commons.csv.CSVFormat;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.util.Map;
+public class CSVFormatHelper {
+    public static CSVFormat getCSVFormat(MetaCSVData data) {
+        CSVFormat format = CSVFormat.DEFAULT;
+        char delimiter = data.getDelimiter();
+        if (delimiter != ',') {
+            format = format.withDelimiter(delimiter);
+        }
 
-public class MetaCSVReaderFactory {
+        String lineTerminator = data.getLineTerminator();
+        if (!lineTerminator.equals(Util.CRLF)) {
+            format = format.withRecordSeparator(lineTerminator);
+        }
 
-    private final MetaCSVData data;
+        // TODO: continue...
 
-    private final Reader reader;
-
-    public MetaCSVReaderFactory(MetaCSVData data, Reader reader) {
-        this.data = data;
-        this.reader = reader;
-    }
-
-    public MetaCSVReader build() throws IOException {
-        CSVFormat format = CSVFormatHelper.getCSVFormat(data);
-        CSVRecordProcessor processor = getProcessor();
-        return new MetaCSVReader(format.parse(reader), processor, this.data.getTypes());
-    }
-
-    private CSVRecordProcessor getProcessor() {
-        Map<Integer, FieldProcessor<?>> processorByIndex = this.data.getProcessorByIndex();
-        return new CSVRecordProcessor(processorByIndex);
+        return format;
     }
 }
