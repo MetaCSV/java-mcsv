@@ -21,39 +21,35 @@
 package com.github.jferard.javamcsv;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 
-public class FloatFieldDescription implements FieldDescription<Double> {
-    public static final FieldDescription<Double> INSTANCE = new FloatFieldDescription("", ".");
+public class FloatPercentageFieldDescription implements FieldDescription<Double> {
+    private final boolean pre;
+    private final String symbol;
+    private final FieldDescription<Double> numberDescription;
 
-    private String thousandsSeparator;
-    private String decimalSeparator;
-    private String nullValue;
-
-    public FloatFieldDescription(String thousandsSeparator, String decimalSeparator) {
-        this.thousandsSeparator = thousandsSeparator;
-        this.decimalSeparator = decimalSeparator;
-        this.nullValue = "";
+    public FloatPercentageFieldDescription(boolean pre, String symbol,
+                                           FieldDescription<Double> numberDescription) {
+        this.pre = pre;
+        this.symbol = symbol;
+        this.numberDescription = numberDescription;
     }
 
     @Override
     public void render(Appendable out) throws IOException {
-        if (this.thousandsSeparator.isEmpty()) {
-            out.append("float//");
-        } else {
-            out.append("float/").append(this.thousandsSeparator).append('/');
-        }
-        out.append(this.decimalSeparator);
+        Util.render(out, "percentage", this.pre ? "pre" : "post", symbol);
+        out.append('/');
+        this.numberDescription.render(out);
     }
 
     @Override
     public FieldProcessor<Double> toFieldProcessor(String nullValue) {
-        return new FloatFieldProcessor(this.thousandsSeparator, this.decimalSeparator, nullValue);
+        return new FloatPercentageFieldProcessor(this.pre, this.symbol,
+                this.numberDescription.toFieldProcessor(nullValue), nullValue);
     }
 
     @Override
     public String toString() {
-        return String.format("FloatFieldDescription(%s, %s)",
-                this.thousandsSeparator, this.decimalSeparator);
+        return String.format("PercentageFieldDescription(%b, %s, %s)",
+                this.pre, this.symbol, this.numberDescription.toString());
     }
 }

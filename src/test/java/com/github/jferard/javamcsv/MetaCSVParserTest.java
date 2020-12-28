@@ -145,7 +145,7 @@ public class MetaCSVParserTest {
                 "domain,key,value\r\n" +
                         "data,null_value,NULL\r\n" +
                         "data,col/0/type,boolean/T/F\r\n" +
-                        "data,col/1/type,\"currency/pre/$/float/,/.\"\r\n" +
+                        "data,col/1/type,\"currency/pre/$/decimal/,/.\"\r\n" +
                         "data,col/2/type,date/dd\\/MM\\/yyyy\r\n" +
                         "data,col/3/type,datetime/yyyy-MM-dd HH:mm:ss\r\n" +
                         "data,col/4/type,\"float/,/.\"\r\n" +

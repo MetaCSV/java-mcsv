@@ -24,16 +24,18 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.math.BigDecimal;
+
 public class PercentageFieldProcessorTest {
     private FieldProcessor<Double> processorPre;
     private FieldProcessor<Double> processorPost;
 
     @Before
     public void setUp() {
-        processorPre = new PercentageFieldDescription(true, "%",
+        processorPre = new FloatPercentageFieldDescription(true, "%",
                 new FloatFieldDescription(null, ".")
         ).toFieldProcessor("NULL");
-        processorPost = new PercentageFieldDescription(false, "%",
+        processorPost = new FloatPercentageFieldDescription(false, "%",
                 new FloatFieldDescription(null, ",")
         ).toFieldProcessor("NULL");
     }
@@ -51,7 +53,7 @@ public class PercentageFieldProcessorTest {
 
     @Test
     public void testRightPreToObject() throws MetaCSVReadException {
-        Assert.assertEquals(0.1, (double) processorPre.toObject("%10.0"), 0.001);
+        Assert.assertEquals(0.1, processorPre.toObject("%10.0"), 0.01);
     }
 
     @Test(expected = MetaCSVReadException.class)
@@ -61,7 +63,7 @@ public class PercentageFieldProcessorTest {
 
     @Test
     public void testRightPostToObject() throws MetaCSVReadException {
-        Assert.assertEquals(0.1, (double) processorPost.toObject("10,0 %"), 0.001);
+        Assert.assertEquals(0.1, processorPost.toObject("10,0 %"), 0.01);
     }
 
     @Test

@@ -20,15 +20,17 @@
 
 package com.github.jferard.javamcsv;
 
-public class CurrencyFieldProcessor implements FieldProcessor<Number> {
+import java.math.BigDecimal;
+
+public class IntegerCurrencyFieldProcessor implements FieldProcessor<Integer> {
     private final boolean pre;
     private final String symbol;
-    private final FieldProcessor<? extends Number> numberProcessor;
+    private final FieldProcessor<Integer> numberProcessor;
     private final String nullValue;
 
-    public CurrencyFieldProcessor(boolean pre, String symbol,
-                                  FieldProcessor<? extends Number> numberProcessor,
-                                  String nullValue) {
+    public IntegerCurrencyFieldProcessor(boolean pre, String symbol,
+                                         FieldProcessor<Integer> numberProcessor,
+                                         String nullValue) {
         this.pre = pre;
         this.symbol = symbol;
         this.numberProcessor = numberProcessor;
@@ -36,7 +38,7 @@ public class CurrencyFieldProcessor implements FieldProcessor<Number> {
     }
 
     @Override
-    public Number toObject(String text) throws MetaCSVReadException {
+    public Integer toObject(String text) throws MetaCSVReadException {
         if (text == null || text.equals(this.nullValue)) {
             return null;
         }
@@ -58,19 +60,11 @@ public class CurrencyFieldProcessor implements FieldProcessor<Number> {
     }
 
     @Override
-    public String toString(Number value) {
+    public String toString(Integer value) {
         if (value == null) {
             return this.nullValue;
         }
-        String valueAsString;
-        if (this.numberProcessor instanceof IntegerFieldProcessor) {
-            valueAsString =
-                    ((IntegerFieldProcessor) this.numberProcessor).toString(value.intValue());
-        } else {
-            valueAsString =
-                    ((FloatFieldProcessor) this.numberProcessor).toString(value.doubleValue());
-        }
-
+        String valueAsString = this.numberProcessor.toString(value);
         if (this.pre) {
             return this.symbol + valueAsString;
         } else {

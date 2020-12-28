@@ -23,37 +23,36 @@ package com.github.jferard.javamcsv;
 import java.io.IOException;
 import java.math.BigDecimal;
 
-public class FloatFieldDescription implements FieldDescription<Double> {
-    public static final FieldDescription<Double> INSTANCE = new FloatFieldDescription("", ".");
+public class DecimalCurrencyFieldDescription implements FieldDescription<BigDecimal> {
+    private final boolean pre;
+    private final String symbol;
+    private final FieldDescription<BigDecimal> numberDescription;
+    private final String nullValue;
 
-    private String thousandsSeparator;
-    private String decimalSeparator;
-    private String nullValue;
-
-    public FloatFieldDescription(String thousandsSeparator, String decimalSeparator) {
-        this.thousandsSeparator = thousandsSeparator;
-        this.decimalSeparator = decimalSeparator;
+    public DecimalCurrencyFieldDescription(boolean pre, String symbol,
+                                           FieldDescription<BigDecimal> numberDescription) {
+        this.pre = pre;
+        this.symbol = symbol;
+        this.numberDescription = numberDescription;
         this.nullValue = "";
     }
 
     @Override
     public void render(Appendable out) throws IOException {
-        if (this.thousandsSeparator.isEmpty()) {
-            out.append("float//");
-        } else {
-            out.append("float/").append(this.thousandsSeparator).append('/');
-        }
-        out.append(this.decimalSeparator);
+        Util.render(out, "currency", this.pre ? "pre" : "post", symbol);
+        out.append('/');
+        this.numberDescription.render(out);
     }
 
     @Override
-    public FieldProcessor<Double> toFieldProcessor(String nullValue) {
-        return new FloatFieldProcessor(this.thousandsSeparator, this.decimalSeparator, nullValue);
+    public FieldProcessor<BigDecimal> toFieldProcessor(String nullValue) {
+        return new DecimalCurrencyFieldProcessor(this.pre, this.symbol,
+                this.numberDescription.toFieldProcessor(nullValue), nullValue);
     }
 
     @Override
     public String toString() {
-        return String.format("FloatFieldDescription(%s, %s)",
-                this.thousandsSeparator, this.decimalSeparator);
+        return String.format("CurrencyFieldDescription(%b, %s, %s)",
+                this.pre, this.symbol, this.numberDescription.toString());
     }
 }

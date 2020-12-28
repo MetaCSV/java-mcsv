@@ -43,8 +43,7 @@ public class CSVRecordIteratorTest {
         Iterator<MetaCSVRecord> it =
                 new CSVRecordIterator(wrappedIterator, new CSVRecordProcessor(processorByIndex));
         Assert.assertTrue(it.hasNext());
-        Assert.assertEquals(TestHelper.toList(TestHelper.createMetaRecord("foo", "bar", "baz")),
-                TestHelper.toList(it.next()));
+        TestHelper.assertMetaEquals(TestHelper.createMetaRecord("foo", "bar", "baz"), it.next());
         Assert.assertTrue(it.hasNext());
         it.next();
     }
@@ -60,12 +59,11 @@ public class CSVRecordIteratorTest {
         Iterator<MetaCSVRecord> it =
                 new CSVRecordIterator(wrappedIterator, new CSVRecordProcessor(processorByIndex));
         Assert.assertTrue(it.hasNext());
-        Assert.assertEquals(TestHelper.toList(TestHelper.createMetaRecord("foo", "bar", "baz")),
-                TestHelper.toList(it.next()));
+        TestHelper.assertMetaEquals(TestHelper.createMetaRecord("foo", "bar", "baz"),
+                it.next());
         Assert.assertTrue(it.hasNext());
-        Assert.assertEquals(
-                TestHelper.toList(TestHelper.createMetaRecord("foo value", 1, "baz value")),
-                TestHelper.toList(it.next()));
+        TestHelper.assertMetaEquals(TestHelper.createMetaRecord("foo value", 1, "baz value"),
+                it.next());
         Assert.assertFalse(it.hasNext());
     }
 

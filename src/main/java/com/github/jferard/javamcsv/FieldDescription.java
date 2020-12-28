@@ -20,7 +20,7 @@
 
 package com.github.jferard.javamcsv;import java.io.IOException;
 
-interface FieldDescription<T> {
+public interface FieldDescription<T> {
     void render(Appendable out) throws IOException;
 
     FieldProcessor<T> toFieldProcessor(String nullValue);

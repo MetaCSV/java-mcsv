@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -70,7 +71,7 @@ public class MetaCSVReaderTest {
                 "domain,key,value\r\n" +
                         "data,null_value,NULL\r\n" +
                         "data,col/0/type,boolean/T/F\r\n" +
-                        "data,col/1/type,\"currency/pre/$/float/,/.\"\r\n" +
+                        "data,col/1/type,\"currency/pre/$/decimal/,/.\"\r\n" +
                         "data,col/2/type,date/dd\\/MM\\/yyyy\r\n" +
                         "data,col/3/type,datetime/yyyy-MM-dd HH:mm:ss\r\n" +
                         "data,col/4/type,\"float/,/.\"\r\n" +
@@ -80,7 +81,7 @@ public class MetaCSVReaderTest {
 
         Map<Integer, String> expectedTypes = new HashMap<Integer, String>();
         expectedTypes.put(0, "boolean/T/F");
-        expectedTypes.put(1, "currency/pre/$/float/,/.");
+        expectedTypes.put(1, "currency/pre/$/decimal/,/.");
         expectedTypes.put(2, "date/dd\\/MM\\/yyyy");
         expectedTypes.put(3, "datetime/yyyy-MM-dd HH:mm:ss");
         expectedTypes.put(4, "float/,/.");
@@ -99,12 +100,12 @@ public class MetaCSVReaderTest {
         c.setTimeInMillis(0);
         c.set(2020, Calendar.DECEMBER, 1, 0, 0, 0);
         Assert.assertEquals(
-                Arrays.asList(true, 15.0, c.getTime(), null, 10000.5, 12354, 0.565, "Foo"),
+                Arrays.asList(true, new BigDecimal("15"), c.getTime(), null, 10000.5, 12354, 0.565, "Foo"),
                 TestHelper.toList(iterator.next()));
         Assert.assertTrue(iterator.hasNext());
         c.set(2020, Calendar.DECEMBER, 1, 9, 30, 55);
         Assert.assertEquals(
-                Arrays.asList(false, -1900.5, null, c.getTime(), -520.8, -1000, -0.128, "Bar"),
+                Arrays.asList(false, new BigDecimal("-1900.5"), null, c.getTime(), -520.8, -1000, -0.128, "Bar"),
                 TestHelper.toList(iterator.next()));
         Assert.assertFalse(iterator.hasNext());
     }

@@ -34,7 +34,7 @@ public class MetaCSVDataBuilder {
     private String nullValue;
     private boolean bom;
 
-    MetaCSVDataBuilder() {
+    public MetaCSVDataBuilder() {
         this.encoding = Util.UTF_8_CHARSET_NAME;
         this.lineTerminator = Util.CRLF;
         this.descriptionByColIndex = new HashMap<Integer, FieldDescription<?>>();

@@ -24,17 +24,19 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.math.BigDecimal;
+
 public class CurrencyFieldProcessorTest {
-    private FieldProcessor<Number> processorPre;
-    private FieldProcessor<Number> processorPost;
+    private FieldProcessor<BigDecimal> processorPre;
+    private FieldProcessor<BigDecimal> processorPost;
 
     @Before
     public void setUp() {
-        processorPre = new CurrencyFieldDescription(true, "$",
-                new FloatFieldDescription(null, ".")
+        processorPre = new DecimalCurrencyFieldDescription(true, "$",
+                new DecimalFieldDescription(null, ".")
         ).toFieldProcessor("NULL");
-        processorPost = new CurrencyFieldDescription(false, "€",
-                new FloatFieldDescription(null, ",")
+        processorPost = new DecimalCurrencyFieldDescription(false, "€",
+                new DecimalFieldDescription(null, ",")
         ).toFieldProcessor("NULL");
     }
 
@@ -51,7 +53,7 @@ public class CurrencyFieldProcessorTest {
 
     @Test
     public void testRightPreToObject() throws MetaCSVReadException {
-        Assert.assertEquals(10.0, processorPre.toObject("$10.0"));
+        Assert.assertEquals(new BigDecimal("10.0"), processorPre.toObject("$10.0"));
     }
 
     @Test(expected = MetaCSVReadException.class)
@@ -61,7 +63,7 @@ public class CurrencyFieldProcessorTest {
 
     @Test
     public void testRightPostToObject() throws MetaCSVReadException {
-        Assert.assertEquals(10.0, processorPost.toObject("10,0 €"));
+        Assert.assertEquals(new BigDecimal("10.0"), processorPost.toObject("10,0 €"));
     }
 
     @Test
@@ -71,18 +73,18 @@ public class CurrencyFieldProcessorTest {
 
     @Test
     public void testPreToString() {
-        Assert.assertEquals("$17.2", processorPre.toString(17.2));
+        Assert.assertEquals("$17.2", processorPre.toString(new BigDecimal("17.2")));
     }
 
     @Test
     public void testPostToString() {
-        Assert.assertEquals("17,2€", processorPost.toString(17.2));
+        Assert.assertEquals("17,2€", processorPost.toString(new BigDecimal("17.2")));
     }
 
     @Test
     public void testIntegerToString() {
-        FieldProcessor<Number> processor = new CurrencyFieldDescription(false, "€",
+        FieldProcessor<Integer> processor = new IntegerCurrencyFieldDescription(false, "€",
                 IntegerFieldDescription.INSTANCE).toFieldProcessor("NULL");
-        Assert.assertEquals("17€", processor.toString(17.2));
+        Assert.assertEquals("17€", processor.toString(17));
     }
 }

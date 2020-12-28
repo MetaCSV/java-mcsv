@@ -19,35 +19,36 @@
  */
 
 package com.github.jferard.javamcsv;import java.io.IOException;
+import java.math.BigDecimal;
 
-public class PercentageFieldDescription implements FieldDescription<Double> {
+public class DecimalPercentageFieldDescription implements FieldDescription<BigDecimal> {
     private final boolean pre;
     private final String symbol;
-    private final FieldDescription<Double> floatDescription;
+    private final FieldDescription<BigDecimal> numberDescription;
 
-    public PercentageFieldDescription(boolean pre, String symbol,
-                                      FieldDescription<Double> floatDescription) {
+    public DecimalPercentageFieldDescription(boolean pre, String symbol,
+                                             FieldDescription<BigDecimal> numberDescription) {
         this.pre = pre;
         this.symbol = symbol;
-        this.floatDescription = floatDescription;
+        this.numberDescription = numberDescription;
     }
 
     @Override
     public void render(Appendable out) throws IOException {
         Util.render(out, "percentage", this.pre ? "pre" : "post", symbol);
         out.append('/');
-        this.floatDescription.render(out);
+        this.numberDescription.render(out);
     }
 
     @Override
-    public FieldProcessor<Double> toFieldProcessor(String nullValue) {
-        return new PercentageFieldProcessor(this.pre, this.symbol,
-                this.floatDescription.toFieldProcessor(nullValue), nullValue);
+    public FieldProcessor<BigDecimal> toFieldProcessor(String nullValue) {
+        return new DecimalPercentageFieldProcessor(this.pre, this.symbol,
+                this.numberDescription.toFieldProcessor(nullValue), nullValue);
     }
 
     @Override
     public String toString() {
         return String.format("PercentageFieldDescription(%b, %s, %s)",
-                this.pre, this.symbol, this.floatDescription.toString());
+                this.pre, this.symbol, this.numberDescription.toString());
     }
 }

@@ -26,12 +26,12 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 
-public class FloatFieldProcessorTest {
-    private FieldProcessor<Double> processor;
+public class DecimalFieldProcessorTest {
+    private FieldProcessor<BigDecimal> processor;
 
     @Before
     public void setUp() {
-        processor = new FloatFieldDescription(null, ",").toFieldProcessor("NULL");
+        processor = new DecimalFieldDescription(null, ",").toFieldProcessor("NULL");
     }
 
     @Test
@@ -42,7 +42,7 @@ public class FloatFieldProcessorTest {
 
     @Test
     public void testToObject() throws MetaCSVReadException {
-        Assert.assertEquals(10.0, (double) processor.toObject("10,0"), 0.001);
+        Assert.assertEquals(BigDecimal.valueOf(10.0), processor.toObject("10,0"));
     }
 
     @Test(expected = MetaCSVReadException.class)
@@ -57,6 +57,6 @@ public class FloatFieldProcessorTest {
 
     @Test
     public void testToString() {
-        Assert.assertEquals("17,2", processor.toString(17.2));
+        Assert.assertEquals("17,2", processor.toString(new BigDecimal("17.2")));
     }
 }

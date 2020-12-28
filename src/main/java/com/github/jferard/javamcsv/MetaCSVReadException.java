@@ -18,7 +18,9 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;public class MetaCSVReadException extends Exception {
+package com.github.jferard.javamcsv;
+
+public class MetaCSVReadException extends Exception {
     public MetaCSVReadException(Exception e) {
         super(e);
     }

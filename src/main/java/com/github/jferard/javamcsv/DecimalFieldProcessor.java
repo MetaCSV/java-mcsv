@@ -20,37 +20,38 @@
 
 package com.github.jferard.javamcsv;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
-public class FloatFieldProcessor implements FieldProcessor<Double> {
+public class DecimalFieldProcessor implements FieldProcessor<BigDecimal> {
     private final String thousandsSeparator;
     private final String decimalSeparator;
     private final String nullValue;
 
-    public FloatFieldProcessor(String thousandsSeparator, String decimalSeparator,
-                               String nullValue) {
+    public DecimalFieldProcessor(String thousandsSeparator, String decimalSeparator,
+                                 String nullValue) {
         this.thousandsSeparator = thousandsSeparator;
         this.decimalSeparator = decimalSeparator;
         this.nullValue = nullValue;
     }
 
     @Override
-    public Double toObject(String text) throws MetaCSVReadException {
+    public BigDecimal toObject(String text) throws MetaCSVReadException {
         if (text == null || text.equals(this.nullValue)) {
             return null;
         }
         try {
             String newText = Util.replaceChar(text, thousandsSeparator, "");
             newText = Util.replaceChar(newText, decimalSeparator, ".");
-            return Double.parseDouble(newText);
+            return new BigDecimal(newText);
         } catch (NumberFormatException e) {
             throw new MetaCSVReadException(e);
         }
     }
 
     @Override
-    public String toString(Double f) {
+    public String toString(BigDecimal f) {
         if (f == null) {
             return this.nullValue;
         }

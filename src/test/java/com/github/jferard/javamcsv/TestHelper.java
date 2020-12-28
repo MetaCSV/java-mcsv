@@ -24,9 +24,15 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
+import org.junit.Assert;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
@@ -74,15 +80,33 @@ public class TestHelper {
         return new MetaCSVRecord(TestHelper.createRecord(values), Arrays.<Object>asList(values));
     }
 
-    public static boolean createMetaRecordEquals(MetaCSVRecord r1, MetaCSVRecord r2) {
-        return toList(r1).equals(toList(r2));
-    }
-
     public static <T> List<T> toList(Iterable<T> iterable) {
         List<T> list = new ArrayList<T>();
         for (T e : iterable) {
             list.add(e);
         }
         return list;
+    }
+
+    public static String toString(final File file) throws IOException {
+        StringBuilder ret = new StringBuilder();
+        char[] buf = new char[1024];
+
+        Reader reader = new BufferedReader(
+                new InputStreamReader(new FileInputStream(file), Util.UTF_8_CHARSET));
+        try {
+            int r = reader.read(buf);
+            while (r != -1) {
+                ret.append(buf, 0, r);
+                r = reader.read(buf);
+            }
+        } finally {
+            reader.close();
+        }
+        return ret.toString();
+    }
+
+    public static void assertMetaEquals(MetaCSVRecord r1, MetaCSVRecord r2) {
+        Assert.assertEquals(toList(r1), toList(r2));
     }
 }

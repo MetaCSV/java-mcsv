@@ -18,7 +18,9 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;import org.apache.commons.csv.CSVFormat;
+package com.github.jferard.javamcsv;
+
+import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
@@ -26,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -85,7 +88,7 @@ public class MetaCSVParser {
         if (key.equals("encoding")) {
             this.metaCSVDataBuilder.encoding(value);
         } else if (key.equals("bom")) {
-                this.metaCSVDataBuilder.bom(this.parseBoolean(value));
+            this.metaCSVDataBuilder.bom(this.parseBoolean(value));
         } else if (key.equals("line_terminator")) {
             this.metaCSVDataBuilder.lineTerminator(value);
         } else {
@@ -123,8 +126,7 @@ public class MetaCSVParser {
         if (value.length() != 1) {
             throw new MetaCSVParseException("Expected one char, got: " + value);
         }
-        char ret = value.charAt(0);
-        return ret;
+        return value.charAt(0);
     }
 
     private void parseDataRow(String key, String value) throws MetaCSVParseException {
@@ -176,6 +178,8 @@ public class MetaCSVParser {
             fieldDescription = parseDate(parameters);
         } else if (valueType.equals("datetime")) {
             fieldDescription = parseDatetime(parameters);
+        } else if (valueType.equals("decimal")) {
+            fieldDescription = parseDecimal(parameters);
         } else if (valueType.equals("float")) {
             fieldDescription = parseFloat(parameters);
         } else if (valueType.equals("integer")) {
@@ -208,20 +212,22 @@ public class MetaCSVParser {
         return new BooleanFieldDescription(trueWord, falseWord);
     }
 
-    private FieldDescription<Number> parseCurrency(List<String> parameters)
+    private FieldDescription<? extends Number> parseCurrency(List<String> parameters)
             throws MetaCSVParseException {
         boolean pre = parsePre(parameters.get(0));
         String symbol = parameters.get(1);
         String numberType = parameters.get(2);
-        FieldDescription<? extends Number> numberDescription;
         if (numberType.equals("integer")) {
-            numberDescription = parseInteger(parameters.subList(3, parameters.size()));
-        } else if (numberType.equals("float")) {
-            numberDescription = parseFloat(parameters.subList(3, parameters.size()));
+            FieldDescription<Integer> numberDescription =
+                    parseInteger(parameters.subList(3, parameters.size()));
+            return new IntegerCurrencyFieldDescription(pre, symbol, numberDescription);
+        } else if (numberType.equals("decimal")) {
+            FieldDescription<BigDecimal> numberDescription =
+                    parseDecimal(parameters.subList(3, parameters.size()));
+            return new DecimalCurrencyFieldDescription(pre, symbol, numberDescription);
         } else {
             throw new MetaCSVParseException("Unknown currency number type: " + parameters);
         }
-        return new CurrencyFieldDescription(pre, symbol, numberDescription);
     }
 
     private FieldDescription<Date> parseDate(List<String> parameters) throws MetaCSVParseException {
@@ -258,6 +264,15 @@ public class MetaCSVParser {
         }
     }
 
+    private FieldDescription<BigDecimal> parseDecimal(List<String> parameters)
+            throws MetaCSVParseException {
+        if (parameters.size() == 2) {
+            return new DecimalFieldDescription(parameters.get(0), parameters.get(1));
+        } else {
+            throw new MetaCSVParseException("Unknown integer field: " + parameters);
+        }
+    }
+
     private FieldDescription<Integer> parseInteger(List<String> parameters)
             throws MetaCSVParseException {
         if (parameters.size() == 0) {
@@ -279,17 +294,21 @@ public class MetaCSVParser {
         }
     }
 
-    private FieldDescription<Double> parsePercentage(List<String> parameters)
+    private FieldDescription<? extends Number> parsePercentage(List<String> parameters)
             throws MetaCSVParseException {
         boolean pre = parsePre(parameters.get(0));
         String symbol = parameters.get(1);
         String numberType = parameters.get(2);
-        FieldDescription<Double> floatDescription;
         if (numberType.equals("float")) {
-            floatDescription = parseFloat(parameters.subList(3, parameters.size()));
+            FieldDescription<Double> numberDescription =
+                    parseFloat(parameters.subList(3, parameters.size()));
+            return new FloatPercentageFieldDescription(pre, symbol, numberDescription);
+        } else if (numberType.equals("decimal")) {
+            FieldDescription<BigDecimal> numberDescription =
+                    parseDecimal(parameters.subList(3, parameters.size()));
+            return new DecimalPercentageFieldDescription(pre, symbol, numberDescription);
         } else {
             throw new MetaCSVParseException("Unknown currency number type: " + parameters);
         }
-        return new PercentageFieldDescription(pre, symbol, floatDescription);
     }
 }

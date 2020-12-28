@@ -18,17 +18,19 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;public class PercentageFieldProcessor implements FieldProcessor<Double> {
+package com.github.jferard.javamcsv;
+
+public class FloatPercentageFieldProcessor implements FieldProcessor<Double> {
     private final boolean pre;
     private final String symbol;
-    private final FieldProcessor<Double> floatProcessor;
+    private final FieldProcessor<Double> numberProcessor;
     private final String nullValue;
 
-    public PercentageFieldProcessor(boolean pre, String symbol,
-                                    FieldProcessor<Double> floatProcessor, String nullValue) {
+    public FloatPercentageFieldProcessor(boolean pre, String symbol,
+                                         FieldProcessor<Double> numberProcessor, String nullValue) {
         this.pre = pre;
         this.symbol = symbol;
-        this.floatProcessor = floatProcessor;
+        this.numberProcessor = numberProcessor;
         this.nullValue = nullValue;
     }
 
@@ -51,7 +53,7 @@ package com.github.jferard.javamcsv;public class PercentageFieldProcessor implem
                 throw new MetaCSVReadException("");
             }
         }
-        return this.floatProcessor.toObject(text)/100.0;
+        return this.numberProcessor.toObject(text) / 100.0;
     }
 
     @Override
@@ -59,7 +61,8 @@ package com.github.jferard.javamcsv;public class PercentageFieldProcessor implem
         if (value == null) {
             return this.nullValue;
         }
-        String valueAsString = this.floatProcessor.toString(value*100);
+        String valueAsString =
+                this.numberProcessor.toString(value * 100.0);
         if (this.pre) {
             return this.symbol + valueAsString;
         } else {

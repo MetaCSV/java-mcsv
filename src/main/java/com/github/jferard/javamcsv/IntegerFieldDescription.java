@@ -33,7 +33,7 @@ public class IntegerFieldDescription implements FieldDescription<Integer> {
 
     @Override
     public void render(Appendable out) throws IOException {
-        if (this.thousandsSeparator.isEmpty()) {
+        if (this.thousandsSeparator == null || this.thousandsSeparator.isEmpty()) {
             out.append("integer");
         } else {
             out.append("integer/").append(this.thousandsSeparator);

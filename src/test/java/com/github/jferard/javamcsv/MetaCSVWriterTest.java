@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -39,8 +40,8 @@ public class MetaCSVWriterTest {
         MetaCSVData data =
                 new MetaCSVDataBuilder().nullValue("NULL").
                         colType(0, new BooleanFieldDescription("T", "F")).
-                        colType(1, new CurrencyFieldDescription(true, "$",
-                                new FloatFieldDescription(",", "."))).
+                        colType(1, new DecimalCurrencyFieldDescription(true, "$",
+                                new DecimalFieldDescription(",", "."))).
                         colType(2,
                                 new DateFieldDescription(new SimpleDateFormat("dd/MM/yyyy"), null)).
                         colType(3,
@@ -51,7 +52,7 @@ public class MetaCSVWriterTest {
                         colType(5,
                                 new IntegerFieldDescription(" ")).
                         colType(6,
-                                new PercentageFieldDescription(false, "%",
+                                new FloatPercentageFieldDescription(false, "%",
                                         new FloatFieldDescription(",", "."))).
                         build();
         MetaCSVWriter writer = MetaCSVWriter.create(out, metaOut, data);
@@ -60,18 +61,22 @@ public class MetaCSVWriterTest {
 
         writer.writeHeader(Arrays.<String>asList("boolean", "currency", "date", "datetime", "float",
                 "integer", "percentage", "text"));
-        writer.writeRow(Arrays.<Object>asList(true, 15.0, c.getTime(), null, 10000.5, 12354, 0.565, "Foo"));
-        writer.writeRow(Arrays.<Object>asList(false, -1900.5, null, c.getTime(), -520.8, -1000, -0.128, "Bar"));
+        writer.writeRow(
+                Arrays.<Object>asList(true, new BigDecimal("15.0"), c.getTime(), null, 10000.5,
+                        12354, 0.565, "Foo"));
+        writer.writeRow(
+                Arrays.<Object>asList(false, new BigDecimal("-1900.5"), null, c.getTime(), -520.8,
+                        -1000, -0.128, "Bar"));
         writer.close();
 
         Assert.assertEquals("boolean,currency,date,datetime,float,integer,percentage,text\r\n" +
-                        "T,$15,01/12/2020,NULL,\"10,000.5\",12 354,56.5%,Foo\r\n" +
+                        "T,$15,01/12/2020,NULL,\"10,000.5\",12 354,56.49999999999999%,Foo\r\n" +
                         "F,\"$-1,900.5\",NULL,2020-12-01 09:30:55,-520.8,-1 000,-12.8%,Bar\r\n",
                 new String(out.toByteArray()));
         Assert.assertEquals("domain,key,value\r\n" +
                         "data,null_value,NULL\r\n" +
                         "data,col/0/type,boolean/T/F\r\n" +
-                        "data,col/1/type,\"currency/pre/$/float/,/.\"\r\n" +
+                        "data,col/1/type,\"currency/pre/$/decimal/,/.\"\r\n" +
                         "data,col/2/type,date/dd\\/MM\\/yyyy\r\n" +
                         "data,col/3/type,datetime/yyyy-MM-dd HH:mm:ss\r\n" +
                         "data,col/4/type,\"float/,/.\"\r\n" +

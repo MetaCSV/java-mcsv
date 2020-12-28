@@ -69,8 +69,8 @@ public class MetaCSVRecordTest {
 
     @Test
     public void testEquals() throws IOException {
-        Assert.assertEquals(TestHelper.toList(TestHelper.createMetaRecord("foo", "bar", 10.5)),
-                TestHelper.toList(TestHelper.createMetaRecord("foo", "bar", 10.5)));
+        TestHelper.assertMetaEquals(TestHelper.createMetaRecord("foo", "bar", 10.5),
+                TestHelper.createMetaRecord("foo", "bar", 10.5));
 
     }
 }

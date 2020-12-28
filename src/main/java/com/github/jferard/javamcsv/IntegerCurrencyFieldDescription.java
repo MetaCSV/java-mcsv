@@ -22,14 +22,14 @@ package com.github.jferard.javamcsv;
 
 import java.io.IOException;
 
-public class CurrencyFieldDescription implements FieldDescription<Number> {
+public class IntegerCurrencyFieldDescription implements FieldDescription<Integer> {
     private final boolean pre;
     private final String symbol;
-    private final FieldDescription<? extends Number> numberDescription;
+    private final FieldDescription<Integer> numberDescription;
     private final String nullValue;
 
-    public CurrencyFieldDescription(boolean pre, String symbol,
-                                    FieldDescription<? extends Number> numberDescription) {
+    public IntegerCurrencyFieldDescription(boolean pre, String symbol,
+                                           FieldDescription<Integer> numberDescription) {
         this.pre = pre;
         this.symbol = symbol;
         this.numberDescription = numberDescription;
@@ -44,8 +44,8 @@ public class CurrencyFieldDescription implements FieldDescription<Number> {
     }
 
     @Override
-    public FieldProcessor<Number> toFieldProcessor(String nullValue) {
-        return new CurrencyFieldProcessor(this.pre, this.symbol,
+    public FieldProcessor<Integer> toFieldProcessor(String nullValue) {
+        return new IntegerCurrencyFieldProcessor(this.pre, this.symbol,
                 this.numberDescription.toFieldProcessor(nullValue), nullValue);
     }
 
