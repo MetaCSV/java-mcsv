@@ -27,8 +27,8 @@ import org.junit.Test;
 import java.math.BigDecimal;
 
 public class IntegerCurrencyFieldProcessorTest {
-    private FieldProcessor<Integer> processorPre;
-    private FieldProcessor<Integer> processorPost;
+    private FieldProcessor<Long> processorPre;
+    private FieldProcessor<Long> processorPost;
 
     @Before
     public void setUp() {
@@ -53,7 +53,7 @@ public class IntegerCurrencyFieldProcessorTest {
 
     @Test
     public void testRightPreToObject() throws MetaCSVReadException {
-        Assert.assertEquals(10, (int) processorPre.toObject("$10"));
+        Assert.assertEquals(10, (long) processorPre.toObject("$10"));
     }
 
     @Test(expected = MetaCSVReadException.class)
@@ -63,7 +63,7 @@ public class IntegerCurrencyFieldProcessorTest {
 
     @Test
     public void testRightPostToObject() throws MetaCSVReadException {
-        Assert.assertEquals(10, (int) processorPost.toObject("10 €"));
+        Assert.assertEquals(10, (long) processorPost.toObject("10 €"));
     }
 
     @Test
@@ -73,18 +73,18 @@ public class IntegerCurrencyFieldProcessorTest {
 
     @Test
     public void testPreToString() {
-        Assert.assertEquals("$2560", processorPre.toString(2560));
+        Assert.assertEquals("$2560", processorPre.toString(2560L));
     }
 
     @Test
     public void testPostToString() {
-        Assert.assertEquals("2560€", processorPost.toString(2560));
+        Assert.assertEquals("2560€", processorPost.toString(2560L));
     }
 
     @Test
     public void testIntegerToString() {
-        FieldProcessor<Integer> processor = new IntegerCurrencyFieldDescription(false, "€",
+        FieldProcessor<Long> processor = new IntegerCurrencyFieldDescription(false, "€",
                 IntegerFieldDescription.INSTANCE).toFieldProcessor("NULL");
-        Assert.assertEquals("17€", processor.toString(17));
+        Assert.assertEquals("17€", processor.toString(17L));
     }
 }

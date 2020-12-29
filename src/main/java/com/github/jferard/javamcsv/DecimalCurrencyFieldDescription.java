@@ -51,6 +51,16 @@ public class DecimalCurrencyFieldDescription implements FieldDescription<BigDeci
     }
 
     @Override
+    public Class<BigDecimal> getType() {
+        return BigDecimal.class;
+    }
+
+    @Override
+    public String getTypeName() {
+        return "currency/decimal";
+    }
+
+    @Override
     public String toString() {
         return String.format("CurrencyFieldDescription(%b, %s, %s)",
                 this.pre, this.symbol, this.numberDescription.toString());

@@ -19,6 +19,7 @@
  */
 
 package com.github.jferard.javamcsv;import java.io.IOException;
+import java.sql.DatabaseMetaData;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -55,6 +56,16 @@ public class DateFieldDescription implements FieldDescription<Date> {
     @Override
     public FieldProcessor<Date> toFieldProcessor(String nullValue) {
         return new DateFieldProcessor(this.simpleDateFormat, this.locale, nullValue);
+    }
+
+    @Override
+    public Class<Date> getType() {
+        return Date.class;
+    }
+
+    @Override
+    public String getTypeName() {
+        return "date";
     }
 
     @Override

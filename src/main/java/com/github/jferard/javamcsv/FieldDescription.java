@@ -24,4 +24,8 @@ public interface FieldDescription<T> {
     void render(Appendable out) throws IOException;
 
     FieldProcessor<T> toFieldProcessor(String nullValue);
+
+    Class<T> getType();
+
+    String getTypeName();
 }

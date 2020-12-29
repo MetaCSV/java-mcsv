@@ -63,10 +63,10 @@ public class MetaCSVWriterTest {
                 "integer", "percentage", "text"));
         writer.writeRow(
                 Arrays.<Object>asList(true, new BigDecimal("15.0"), c.getTime(), null, 10000.5,
-                        12354, 0.565, "Foo"));
+                        12354L, 0.565, "Foo"));
         writer.writeRow(
                 Arrays.<Object>asList(false, new BigDecimal("-1900.5"), null, c.getTime(), -520.8,
-                        -1000, -0.128, "Bar"));
+                        -1000L, -0.128, "Bar"));
         writer.close();
 
         Assert.assertEquals("boolean,currency,date,datetime,float,integer,percentage,text\r\n" +

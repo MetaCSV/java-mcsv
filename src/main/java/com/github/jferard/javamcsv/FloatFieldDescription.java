@@ -52,6 +52,16 @@ public class FloatFieldDescription implements FieldDescription<Double> {
     }
 
     @Override
+    public Class<Double> getType() {
+        return Double.class;
+    }
+
+    @Override
+    public String getTypeName() {
+        return "float";
+    }
+
+    @Override
     public String toString() {
         return String.format("FloatFieldDescription(%s, %s)",
                 this.thousandsSeparator, this.decimalSeparator);

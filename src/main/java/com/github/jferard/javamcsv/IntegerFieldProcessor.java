@@ -23,7 +23,7 @@ package com.github.jferard.javamcsv;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
-public class IntegerFieldProcessor implements FieldProcessor<Integer> {
+public class IntegerFieldProcessor implements FieldProcessor<Long> {
     private final String thousandsSeparator;
     private final String nullValue;
 
@@ -33,20 +33,20 @@ public class IntegerFieldProcessor implements FieldProcessor<Integer> {
     }
 
     @Override
-    public Integer toObject(String text) throws MetaCSVReadException {
+    public Long toObject(String text) throws MetaCSVReadException {
         if (text == null || text.equals(this.nullValue)) {
             return null;
         }
         try {
             String newText = Util.replaceChar(text, this.thousandsSeparator, "");
-            return Integer.parseInt(newText);
+            return Long.parseLong(newText);
         } catch (NumberFormatException e) {
             throw new MetaCSVReadException(e);
         }
     }
 
     @Override
-    public String toString(Integer value) {
+    public String toString(Long value) {
         if (value == null) {
             return this.nullValue;
         }
@@ -58,6 +58,6 @@ public class IntegerFieldProcessor implements FieldProcessor<Integer> {
             symbols.setGroupingSeparator(this.thousandsSeparator.charAt(0));
         }
         formatter.setDecimalFormatSymbols(symbols);
-        return formatter.format(value.intValue());
+        return formatter.format(value.longValue());
     }
 }

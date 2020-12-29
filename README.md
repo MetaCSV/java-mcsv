@@ -44,7 +44,7 @@ The code is:
 
     File f = getResourceAsFile("example.csv");
     com.github.jferard.javamcsv.MetaCSVReader reader = com.github.jferard.javamcsv.MetaCSVReader.create(f);
-    System.out.println(reader.getTypes());
+    System.out.println(reader.getDescriptions());
     for (com.github.jferard.javamcsv.MetaCSVRecord record : reader) {
         System.out.println(record);
     }

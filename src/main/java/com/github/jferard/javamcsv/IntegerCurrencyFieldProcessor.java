@@ -22,14 +22,14 @@ package com.github.jferard.javamcsv;
 
 import java.math.BigDecimal;
 
-public class IntegerCurrencyFieldProcessor implements FieldProcessor<Integer> {
+public class IntegerCurrencyFieldProcessor implements FieldProcessor<Long> {
     private final boolean pre;
     private final String symbol;
-    private final FieldProcessor<Integer> numberProcessor;
+    private final FieldProcessor<Long> numberProcessor;
     private final String nullValue;
 
     public IntegerCurrencyFieldProcessor(boolean pre, String symbol,
-                                         FieldProcessor<Integer> numberProcessor,
+                                         FieldProcessor<Long> numberProcessor,
                                          String nullValue) {
         this.pre = pre;
         this.symbol = symbol;
@@ -38,7 +38,7 @@ public class IntegerCurrencyFieldProcessor implements FieldProcessor<Integer> {
     }
 
     @Override
-    public Integer toObject(String text) throws MetaCSVReadException {
+    public Long toObject(String text) throws MetaCSVReadException {
         if (text == null || text.equals(this.nullValue)) {
             return null;
         }
@@ -60,7 +60,7 @@ public class IntegerCurrencyFieldProcessor implements FieldProcessor<Integer> {
     }
 
     @Override
-    public String toString(Integer value) {
+    public String toString(Long value) {
         if (value == null) {
             return this.nullValue;
         }

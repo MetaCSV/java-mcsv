@@ -63,12 +63,10 @@ public class WriteThenReadIT {
                 "data,col/1/type,decimal//.\r\n", TestHelper.toString(meta));
 
         MetaCSVReader reader = MetaCSVReader.create(csv, meta);
-        Map<Integer, String> m = new HashMap<Integer, String>();
         FieldDescription<BigDecimal> instance = DecimalFieldDescription.INSTANCE;
         Appendable sb = new StringBuilder();
         instance.render(sb);
-        m.put(1, sb.toString());
-        Assert.assertEquals(m, reader.getTypes());
+        Assert.assertEquals(sb.toString(), reader.getMetaData().getDescription(1));
         Iterator<MetaCSVRecord> it = reader.iterator();
         Assert.assertTrue(it.hasNext());
         TestHelper.assertMetaEquals(TestHelper.createMetaRecord("foo", "bar"), it.next());

@@ -43,6 +43,16 @@ public class BooleanFieldDescription implements FieldDescription<Boolean> {
     }
 
     @Override
+    public Class<Boolean> getType() {
+        return Boolean.class;
+    }
+
+    @Override
+    public String getTypeName() {
+        return "boolean";
+    }
+
+    @Override
     public String toString() {
         return String.format("BooleanFieldDescription(%s, %s)", this.trueWord, this.falseWord);
     }

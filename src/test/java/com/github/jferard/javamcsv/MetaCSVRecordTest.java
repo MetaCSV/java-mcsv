@@ -35,6 +35,12 @@ public class MetaCSVRecordTest {
     }
 
     @Test
+    public void testSize() throws IOException {
+        MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", 1);
+        Assert.assertEquals(3, metaRecord.size());
+    }
+
+    @Test
     public void testBoolean() throws IOException {
         MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", true);
         Assert.assertTrue(
@@ -65,6 +71,19 @@ public class MetaCSVRecordTest {
     public void testNotCurrency() throws IOException {
         MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", 10.5);
         metaRecord.getCurrency(1);
+    }
+
+    @Test
+    public void testText() throws IOException {
+        MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", 10.5);
+        Assert.assertEquals("foo",
+                metaRecord.getText(0));
+    }
+
+    @Test(expected = MetaCSVCastException.class)
+    public void testNotText() throws IOException {
+        MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", 10.5);
+        metaRecord.getText(2);
     }
 
     @Test

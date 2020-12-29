@@ -20,6 +20,8 @@
 
 package com.github.jferard.javamcsv;
 
+import com.github.jferard.javamcsv.tool.MetaCSVResultSetMetaData;
+
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.HashMap;
@@ -94,17 +96,6 @@ public class MetaCSVData {
         return utf8BOM;
     }
 
-    public Map<Integer, String> getTypes() throws IOException {
-        Map<Integer, String> types = new HashMap<Integer, String>();
-        for (Map.Entry<Integer, FieldDescription<?>> entry : this.descriptionByColIndex
-                .entrySet()) {
-            StringBuilder sb = new StringBuilder();
-            entry.getValue().render(sb);
-            types.put(entry.getKey(), sb.toString());
-        }
-        return types;
-    }
-
     public FieldProcessor<?> getDefaultProcessor() {
         return new TextFieldProcessor(this.nullValue);
     }
@@ -127,5 +118,9 @@ public class MetaCSVData {
 
     public boolean isSkipInitialSpace() {
         return this.skipInitialSpace;
+    }
+
+    public MetaCSVMetaData getMetaData() throws IOException {
+        return MetaCSVMetaData.create(this.descriptionByColIndex);
     }
 }

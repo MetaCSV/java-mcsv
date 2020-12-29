@@ -36,6 +36,10 @@ import java.util.List;
 public class MetaCSVParser {
     public static MetaCSVParser create(InputStream is) throws IOException {
         Reader reader = new InputStreamReader(is);
+        return create(reader);
+    }
+
+    public static MetaCSVParser create(Reader reader) throws IOException {
         CSVParser parser = new CSVParser(reader, CSVFormat.DEFAULT);
         return new MetaCSVParser(parser);
     }
@@ -218,7 +222,7 @@ public class MetaCSVParser {
         String symbol = parameters.get(1);
         String numberType = parameters.get(2);
         if (numberType.equals("integer")) {
-            FieldDescription<Integer> numberDescription =
+            FieldDescription<Long> numberDescription =
                     parseInteger(parameters.subList(3, parameters.size()));
             return new IntegerCurrencyFieldDescription(pre, symbol, numberDescription);
         } else if (numberType.equals("decimal")) {
@@ -275,7 +279,7 @@ public class MetaCSVParser {
         }
     }
 
-    private FieldDescription<Integer> parseInteger(List<String> parameters)
+    private FieldDescription<Long> parseInteger(List<String> parameters)
             throws MetaCSVParseException {
         if (parameters.size() == 0) {
             return IntegerFieldDescription.INSTANCE;

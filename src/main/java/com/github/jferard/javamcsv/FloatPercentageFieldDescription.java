@@ -48,6 +48,16 @@ public class FloatPercentageFieldDescription implements FieldDescription<Double>
     }
 
     @Override
+    public Class<Double> getType() {
+        return Double.class;
+    }
+
+    @Override
+    public String getTypeName() {
+        return "percentage/float";
+    }
+
+    @Override
     public String toString() {
         return String.format("PercentageFieldDescription(%b, %s, %s)",
                 this.pre, this.symbol, this.numberDescription.toString());

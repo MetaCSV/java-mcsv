@@ -22,7 +22,7 @@ package com.github.jferard.javamcsv;
 
 import java.io.IOException;
 
-public class IntegerFieldDescription implements FieldDescription<Integer> {
+public class IntegerFieldDescription implements FieldDescription<Long> {
     public static IntegerFieldDescription INSTANCE = new IntegerFieldDescription(null);
 
     private final String thousandsSeparator;
@@ -41,8 +41,18 @@ public class IntegerFieldDescription implements FieldDescription<Integer> {
     }
 
     @Override
-    public FieldProcessor<Integer> toFieldProcessor(String nullValue) {
+    public FieldProcessor<Long> toFieldProcessor(String nullValue) {
         return new IntegerFieldProcessor(this.thousandsSeparator, nullValue);
+    }
+
+    @Override
+    public Class<Long> getType() {
+        return Long.class;
+    }
+
+    @Override
+    public String getTypeName() {
+        return "integer";
     }
 
     @Override

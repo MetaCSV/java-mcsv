@@ -77,7 +77,7 @@ public class FieldDescriptionTest {
 
     @Test
     public void testIntegerCurrency() throws IOException {
-        FieldDescription<Integer> numberDescription = new IntegerFieldDescription(null);
+        FieldDescription<Long> numberDescription = new IntegerFieldDescription(null);
         Assert.assertEquals("currency/pre/$/integer", TestHelper.render(
                 new IntegerCurrencyFieldDescription(true, "$", numberDescription)));
         Assert.assertEquals("currency/post/€/integer", TestHelper.render(

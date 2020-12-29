@@ -83,8 +83,8 @@ public class DecimalCurrencyFieldProcessorTest {
 
     @Test
     public void testIntegerToString() {
-        FieldProcessor<Integer> processor = new IntegerCurrencyFieldDescription(false, "€",
+        FieldProcessor<Long> processor = new IntegerCurrencyFieldDescription(false, "€",
                 IntegerFieldDescription.INSTANCE).toFieldProcessor("NULL");
-        Assert.assertEquals("17€", processor.toString(17));
+        Assert.assertEquals("17€", processor.toString(17L));
     }
 }

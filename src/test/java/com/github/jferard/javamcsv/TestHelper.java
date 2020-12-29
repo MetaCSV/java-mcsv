@@ -31,10 +31,12 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -108,5 +110,14 @@ public class TestHelper {
 
     public static void assertMetaEquals(MetaCSVRecord r1, MetaCSVRecord r2) {
         Assert.assertEquals(toList(r1), toList(r2));
+    }
+
+    public static InputStream getResourceAsStream(String name) {
+        return TestHelper.class.getClassLoader().getResourceAsStream(name);
+    }
+
+    public static File getResourceAsFile(String name) throws URISyntaxException {
+        return new File(
+                TestHelper.class.getClassLoader().getResource(name).toURI().getPath());
     }
 }

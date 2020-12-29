@@ -38,7 +38,7 @@ public class MetaCSVReaderFactory {
     public MetaCSVReader build() throws IOException {
         CSVFormat format = CSVFormatHelper.getCSVFormat(data);
         CSVRecordProcessor processor = getProcessor();
-        return new MetaCSVReader(format.parse(reader), processor, this.data.getTypes());
+        return new MetaCSVReader(format.parse(reader), processor, this.data.getMetaData());
     }
 
     private CSVRecordProcessor getProcessor() {

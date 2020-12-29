@@ -58,6 +58,16 @@ public class DatetimeFieldDescription implements FieldDescription<Date> {
     }
 
     @Override
+    public Class<Date> getType() {
+        return Date.class;
+    }
+
+    @Override
+    public String getTypeName() {
+        return "datetime";
+    }
+
+    @Override
     public String toString() {
         return String.format("DatetimeDescription(%s, %s)",
                 this.simpleDateFormat.toPattern(), this.locale);

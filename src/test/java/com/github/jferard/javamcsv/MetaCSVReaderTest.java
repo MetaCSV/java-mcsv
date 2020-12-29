@@ -29,10 +29,8 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.Map;
 
 public class MetaCSVReaderTest {
 
@@ -79,16 +77,14 @@ public class MetaCSVReaderTest {
                         "data,col/6/type,\"percentage/post/%/float/,/.\"\r\n");
         MetaCSVReader reader = MetaCSVReader.create(is, metaIs);
 
-        Map<Integer, String> expectedTypes = new HashMap<Integer, String>();
-        expectedTypes.put(0, "boolean/T/F");
-        expectedTypes.put(1, "currency/pre/$/decimal/,/.");
-        expectedTypes.put(2, "date/dd\\/MM\\/yyyy");
-        expectedTypes.put(3, "datetime/yyyy-MM-dd HH:mm:ss");
-        expectedTypes.put(4, "float/,/.");
-        expectedTypes.put(5, "integer/ ");
-        expectedTypes.put(6, "percentage/post/%/float/,/.");
-
-        Assert.assertEquals(expectedTypes, reader.getTypes());
+        MetaCSVMetaData metaData = reader.getMetaData();
+        Assert.assertEquals(metaData.getDescription(0), "boolean/T/F");
+        Assert.assertEquals(metaData.getDescription(1), "currency/pre/$/decimal/,/.");
+        Assert.assertEquals(metaData.getDescription(2), "date/dd\\/MM\\/yyyy");
+        Assert.assertEquals(metaData.getDescription(3), "datetime/yyyy-MM-dd HH:mm:ss");
+        Assert.assertEquals(metaData.getDescription(4), "float/,/.");
+        Assert.assertEquals(metaData.getDescription(5), "integer/ ");
+        Assert.assertEquals(metaData.getDescription(6), "percentage/post/%/float/,/.");
         Iterator<MetaCSVRecord> iterator = reader.iterator();
         Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(
@@ -100,12 +96,60 @@ public class MetaCSVReaderTest {
         c.setTimeInMillis(0);
         c.set(2020, Calendar.DECEMBER, 1, 0, 0, 0);
         Assert.assertEquals(
-                Arrays.asList(true, new BigDecimal("15"), c.getTime(), null, 10000.5, 12354, 0.565, "Foo"),
+                Arrays.asList(true, new BigDecimal("15"), c.getTime(), null, 10000.5, 12354L, 0.565,
+                        "Foo"),
                 TestHelper.toList(iterator.next()));
         Assert.assertTrue(iterator.hasNext());
         c.set(2020, Calendar.DECEMBER, 1, 9, 30, 55);
         Assert.assertEquals(
-                Arrays.asList(false, new BigDecimal("-1900.5"), null, c.getTime(), -520.8, -1000, -0.128, "Bar"),
+                Arrays.asList(false, new BigDecimal("-1900.5"), null, c.getTime(), -520.8, -1000L,
+                        -0.128, "Bar"),
+                TestHelper.toList(iterator.next()));
+        Assert.assertFalse(iterator.hasNext());
+    }
+
+    @Test
+    public void test2()
+            throws IOException, MetaCSVReadException, MetaCSVDataException, MetaCSVParseException {
+        ByteArrayInputStream is = TestHelper.utf8InputStream(
+                "boolean,currency,date,datetime,float,integer,percentage,text\r\n" +
+                        "T,$15,01/12/2020,NULL,\"10,000.5\",12 354,56.5%,Foo\r\n" +
+                        "F,\"$-1,900.5\",NULL,2020-12-01 09:30:55,-520.8,-1 000,-12.8%,Bar\r\n");
+        MetaCSVReader reader = MetaCSVReader
+                .create(is, "data,null_value,NULL", "data,col/0/type,boolean/T/F",
+                        "data,col/1/type,\"currency/pre/$/decimal/,/.\"",
+                        "data,col/2/type,date/dd\\/MM\\/yyyy",
+                        "data,col/3/type,datetime/yyyy-MM-dd HH:mm:ss",
+                        "data,col/4/type,\"float/,/.\"", "data,col/5/type,\"integer/ \"",
+                        "data,col/6/type,\"percentage/post/%/float/,/.\"");
+
+        MetaCSVMetaData metaData = reader.getMetaData();
+        Assert.assertEquals(metaData.getDescription(0), "boolean/T/F");
+        Assert.assertEquals(metaData.getDescription(1), "currency/pre/$/decimal/,/.");
+        Assert.assertEquals(metaData.getDescription(2), "date/dd\\/MM\\/yyyy");
+        Assert.assertEquals(metaData.getDescription(3), "datetime/yyyy-MM-dd HH:mm:ss");
+        Assert.assertEquals(metaData.getDescription(4), "float/,/.");
+        Assert.assertEquals(metaData.getDescription(5), "integer/ ");
+        Assert.assertEquals(metaData.getDescription(6), "percentage/post/%/float/,/.");
+        Iterator<MetaCSVRecord> iterator = reader.iterator();
+        Assert.assertTrue(iterator.hasNext());
+        Assert.assertEquals(
+                Arrays.asList("boolean", "currency", "date", "datetime", "float", "integer",
+                        "percentage", "text"), TestHelper.toList(iterator.next()));
+        Assert.assertTrue(iterator.hasNext());
+
+        Calendar c = GregorianCalendar.getInstance(Locale.US);
+        c.setTimeInMillis(0);
+        c.set(2020, Calendar.DECEMBER, 1, 0, 0, 0);
+        Assert.assertEquals(
+                Arrays.asList(true, new BigDecimal("15"), c.getTime(), null, 10000.5, 12354L, 0.565,
+                        "Foo"),
+                TestHelper.toList(iterator.next()));
+        Assert.assertTrue(iterator.hasNext());
+        c.set(2020, Calendar.DECEMBER, 1, 9, 30, 55);
+        Assert.assertEquals(
+                Arrays.asList(false, new BigDecimal("-1900.5"), null, c.getTime(), -520.8, -1000L,
+                        -0.128, "Bar"),
                 TestHelper.toList(iterator.next()));
         Assert.assertFalse(iterator.hasNext());
     }

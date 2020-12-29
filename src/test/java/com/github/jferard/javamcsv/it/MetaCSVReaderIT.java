@@ -21,6 +21,7 @@
 package com.github.jferard.javamcsv.it;
 
 import com.github.jferard.javamcsv.MetaCSVDataException;
+import com.github.jferard.javamcsv.MetaCSVMetaData;
 import com.github.jferard.javamcsv.MetaCSVParseException;
 import com.github.jferard.javamcsv.MetaCSVReadException;
 import com.github.jferard.javamcsv.MetaCSVReader;
@@ -37,11 +38,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 public class MetaCSVReaderIT {
     public static <T> List<String> toRep(Iterable<T> iterable) {
@@ -56,15 +55,14 @@ public class MetaCSVReaderIT {
     public void testMeta()
             throws IOException, MetaCSVParseException, MetaCSVReadException, MetaCSVDataException {
         InputStream is =
-                getResourceAsStream("meta_csv.mcsv");
+                TestHelper.getResourceAsStream("meta_csv.mcsv");
         InputStream metaIs =
-                getResourceAsStream("meta_csv.mcsv");
+                TestHelper.getResourceAsStream("meta_csv.mcsv");
         MetaCSVReader reader = MetaCSVReader.create(is, metaIs);
-        Map<Integer, String> expectedTypes = new HashMap<Integer, String>();
-        expectedTypes.put(0, "text");
-        expectedTypes.put(1, "text");
-        expectedTypes.put(2, "any");
-        Assert.assertEquals(expectedTypes, reader.getTypes());
+        MetaCSVMetaData metaData = reader.getMetaData();
+        Assert.assertEquals(metaData.getDescription(0), "text");
+        Assert.assertEquals(metaData.getDescription(1), "text");
+        Assert.assertEquals(metaData.getDescription(2), "any");
         Iterator<MetaCSVRecord> iterator = reader.iterator();
         Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(
@@ -101,17 +99,16 @@ public class MetaCSVReaderIT {
     public void testLongFile()
             throws IOException, MetaCSVParseException, URISyntaxException, MetaCSVReadException,
             MetaCSVDataException {
-        File f = getResourceAsFile("20201001-bal-216402149.csv");
+        File f = TestHelper.getResourceAsFile("20201001-bal-216402149.csv");
         MetaCSVReader reader;
         reader = MetaCSVReader.create(f);
-        Map<Integer, String> expectedTypes = new HashMap<Integer, String>();
-        expectedTypes.put(3, "integer");
-        expectedTypes.put(7, "float//.");
-        expectedTypes.put(8, "float//.");
-        expectedTypes.put(9, "float//.");
-        expectedTypes.put(10, "float//.");
-        expectedTypes.put(12, "date/yyyy-MM-dd");
-        Assert.assertEquals(expectedTypes, reader.getTypes());
+        MetaCSVMetaData metaData = reader.getMetaData();
+        Assert.assertEquals(metaData.getDescription(3), "integer");
+        Assert.assertEquals(metaData.getDescription(7), "float//.");
+        Assert.assertEquals(metaData.getDescription(8), "float//.");
+        Assert.assertEquals(metaData.getDescription(9), "float//.");
+        Assert.assertEquals(metaData.getDescription(10), "float//.");
+        Assert.assertEquals(metaData.getDescription(12), "date/yyyy-MM-dd");
         Iterator<MetaCSVRecord> iterator = reader.iterator();
         Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(
@@ -124,7 +121,7 @@ public class MetaCSVReaderIT {
         c.setTimeInMillis(0);
         c.set(2020, Calendar.JUNE, 11, 0, 0, 0);
         Assert.assertEquals(
-                Arrays.asList("64214_0010_00700", "", "Route du Pays de Soule", 700, "",
+                Arrays.asList("64214_0010_00700", "", "Route du Pays de Soule", 700L, "",
                         "Espès-undurein", "entrée", 385432.96, 6250383.75,
                         -0.8748110149745267, 43.28315047649357, "Commune de Espès-undurein",
                         c.getTime(), "ZB0188", "Xiberoko errepidea", ""),
@@ -138,13 +135,12 @@ public class MetaCSVReaderIT {
     public void testExample()
             throws IOException, MetaCSVParseException, URISyntaxException, MetaCSVReadException,
             MetaCSVDataException {
-        File f = getResourceAsFile("example.csv");
+        File f = TestHelper.getResourceAsFile("example.csv");
         MetaCSVReader reader;
         reader = MetaCSVReader.create(f);
-        Map<Integer, String> expectedTypes = new HashMap<Integer, String>();
-        expectedTypes.put(1, "date/yyyy-MM-dd");
-        expectedTypes.put(2, "integer");
-        Assert.assertEquals(expectedTypes, reader.getTypes());
+        MetaCSVMetaData metaData = reader.getMetaData();
+        Assert.assertEquals(metaData.getDescription(1), "date/yyyy-MM-dd");
+        Assert.assertEquals(metaData.getDescription(2), "integer");
         Iterator<MetaCSVRecord> iterator = reader.iterator();
         Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(
@@ -153,21 +149,13 @@ public class MetaCSVReaderIT {
         Calendar c = GregorianCalendar.getInstance(Locale.US);
         c.setTimeInMillis(0);
         c.set(2020, Calendar.NOVEMBER, 21, 0, 0, 0);
-        Assert.assertEquals(Arrays.asList("foo", c.getTime(), 15),
+        Assert.assertEquals(Arrays.asList("foo", c.getTime(), 15L),
                 TestHelper.toList(iterator.next()));
         Assert.assertTrue(iterator.hasNext());
         c.set(2020, Calendar.NOVEMBER, 22, 0, 0, 0);
-        Assert.assertEquals(Arrays.asList("bar", c.getTime(), -8),
+        Assert.assertEquals(Arrays.asList("bar", c.getTime(), -8L),
                 TestHelper.toList(iterator.next()));
         Assert.assertFalse(iterator.hasNext());
     }
 
-    private InputStream getResourceAsStream(String name) {
-        return MetaCSVParserIT.class.getClassLoader().getResourceAsStream(name);
-    }
-
-    private File getResourceAsFile(String name) throws URISyntaxException {
-        return new File(
-                MetaCSVParserIT.class.getClassLoader().getResource(name).toURI().getPath());
-    }
 }

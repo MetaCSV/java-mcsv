@@ -47,6 +47,16 @@ public class DecimalPercentageFieldDescription implements FieldDescription<BigDe
     }
 
     @Override
+    public Class<BigDecimal> getType() {
+        return BigDecimal.class;
+    }
+
+    @Override
+    public String getTypeName() {
+        return "percentage/decimal";
+    }
+
+    @Override
     public String toString() {
         return String.format("PercentageFieldDescription(%b, %s, %s)",
                 this.pre, this.symbol, this.numberDescription.toString());

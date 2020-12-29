@@ -25,7 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class IntegerFieldProcessorTest {
-    private FieldProcessor<Integer> processor;
+    private FieldProcessor<Long> processor;
 
     @Before
     public void setUp() {
@@ -41,9 +41,9 @@ public class IntegerFieldProcessorTest {
 
     @Test
     public void testToObject() throws MetaCSVReadException {
-        Assert.assertEquals(103, (int) processor.toObject("103"));
-        Assert.assertEquals(1030, (int) processor.toObject("1030"));
-        Assert.assertEquals(1030, (int) processor.toObject("1 030"));
+        Assert.assertEquals(103L, (long) processor.toObject("103"));
+        Assert.assertEquals(1030L, (long) processor.toObject("1030"));
+        Assert.assertEquals(1030L, (long) processor.toObject("1 030"));
     }
 
     @Test(expected = MetaCSVReadException.class)
@@ -58,6 +58,6 @@ public class IntegerFieldProcessorTest {
 
     @Test
     public void testToString() {
-        Assert.assertEquals("1 030", processor.toString(1030));
+        Assert.assertEquals("1 030", processor.toString(1030L));
     }
 }

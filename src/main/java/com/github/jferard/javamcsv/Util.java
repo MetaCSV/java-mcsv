@@ -27,8 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-class Util {
+public class Util {
     public static final String CRLF = "\r\n";
+    public static final Charset ASCII_CHARSET = Charset.forName("US-ASCII");
     public static Charset UTF_8_CHARSET = Charset.forName("UTF-8");
     public static String UTF_8_CHARSET_NAME = "UTF-8";
 
@@ -139,5 +140,27 @@ class Util {
 
     public static String getLocaleString(Locale locale) {
         return locale.getLanguage() + "_" + locale.getCountry();
+    }
+
+    public static List<String> header(MetaCSVRecord headerRecord) {
+        List<String> ret = new ArrayList<String>(headerRecord.size());
+        for (Object f : headerRecord) {
+            ret.add(f.toString());
+        }
+        return ret;
+    }
+
+    public static String join(String[] chunks, String delimiter) {
+        if (chunks.length == 0) {
+            return "";
+        } else if (chunks.length == 1) {
+            return chunks[0];
+        } else {
+            StringBuilder sb = new StringBuilder(chunks[0]);
+            for (int i = 1; i < chunks.length; i++) {
+                sb.append(delimiter).append(chunks[i]);
+            }
+            return sb.toString();
+        }
     }
 }

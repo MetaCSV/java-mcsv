@@ -18,33 +18,19 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;import java.io.IOException;
+package com.github.jferard.javamcsv.tool;
 
-public class TextFieldDescription implements FieldDescription<String> {
-    public static final FieldDescription<String> INSTANCE = new TextFieldDescription();
+import com.github.jferard.javamcsv.MetaCSVReader;
+import com.github.jferard.javamcsv.MetaCSVWriter;
 
-    @Override
-    public void render(Appendable out) throws IOException {
-        out.append("text");
+import java.sql.ResultSet;
+
+public class Tool {
+    public static ResultSet readerToResultSet(MetaCSVReader reader) {
+        return new MetaCSVReaderResultSet(reader);
     }
 
-    @Override
-    public FieldProcessor<String> toFieldProcessor(String nullValue) {
-        return new TextFieldProcessor(nullValue);
-    }
+    public static void writeResultSet(MetaCSVWriter writer, ResultSet resultSet) {
 
-    @Override
-    public Class<String> getType() {
-        return String.class;
-    }
-
-    @Override
-    public String getTypeName() {
-        return "text";
-    }
-
-    @Override
-    public String toString() {
-        return "TextFieldDescription()";
     }
 }

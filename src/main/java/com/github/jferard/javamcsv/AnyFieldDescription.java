@@ -46,6 +46,16 @@ public class AnyFieldDescription implements FieldDescription<Object> {
     }
 
     @Override
+    public Class<Object> getType() {
+        return Object.class;
+    }
+
+    @Override
+    public String getTypeName() {
+        return "any";
+    }
+
+    @Override
     public String toString() {
         return String.format("AnyFieldDescription(%s)", this.parameters);
     }

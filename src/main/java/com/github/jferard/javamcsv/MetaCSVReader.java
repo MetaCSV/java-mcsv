@@ -28,8 +28,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.Iterator;
-import java.util.Map;
 
 public class MetaCSVReader implements Iterable<MetaCSVRecord> {
     public static MetaCSVReader create(File csvFile)
@@ -45,41 +45,61 @@ public class MetaCSVReader implements Iterable<MetaCSVRecord> {
         return create(in, metaIn);
     }
 
-    public static MetaCSVReader create(InputStream is, InputStream metaIs)
+    public static MetaCSVReader create(File csvFile, String... metaCSVdirectives)
             throws IOException, MetaCSVParseException, MetaCSVReadException, MetaCSVDataException {
-        MetaCSVData data = MetaCSVParser.create(metaIs).parse();
+        InputStream in = new FileInputStream(csvFile);
+        return create(in, metaCSVdirectives);
+    }
+
+    public static MetaCSVReader create(InputStream in, String... metaCSVdirectives)
+            throws IOException, MetaCSVParseException, MetaCSVDataException, MetaCSVReadException {
+        String metaString = Util.join(metaCSVdirectives, "\r\n");
+        Reader metaReader = new StringReader("domain,key,value\r\n"+metaString);
+        MetaCSVParser parser = MetaCSVParser.create(metaReader);
+        return create(in, parser);
+    }
+
+    public static MetaCSVReader create(InputStream in, InputStream metaIn)
+            throws IOException, MetaCSVParseException, MetaCSVReadException, MetaCSVDataException {
+        MetaCSVParser parser = MetaCSVParser.create(metaIn);
+        return create(in, parser);
+    }
+
+    private static MetaCSVReader create(InputStream in, MetaCSVParser parser)
+            throws MetaCSVParseException, MetaCSVDataException, IOException, MetaCSVReadException {
+        MetaCSVData data = parser.parse();
         if (data.isUtf8BOM()) {
             byte[] buffer = new byte[3];
             int count = 0;
             while (count < 3) {
-                count = is.read(buffer, count, 3);
+                count = in.read(buffer, count, 3-count);
             }
             if ((buffer[0] & 0xFF) != 0xEF || (buffer[1] & 0xFF) != 0xBB ||
                     (buffer[2] & 0xFF) != 0xBF) {
                 throw new MetaCSVReadException("BOM expected");
             }
         }
-        Reader reader = new InputStreamReader(is, data.getEncoding());
+        Reader reader = new InputStreamReader(in, data.getEncoding());
         return new MetaCSVReaderFactory(data, reader).build();
     }
 
     private final CSVParser parser;
     private final CSVRecordProcessor processor;
-    private Map<Integer, String> types;
+    private MetaCSVMetaData metaData;
 
     public MetaCSVReader(CSVParser parser, CSVRecordProcessor processor,
-                         Map<Integer, String> types) {
+                         MetaCSVMetaData metaData) {
         this.parser = parser;
         this.processor = processor;
-        this.types = types;
-    }
-
-    public Map<Integer, String> getTypes() throws IOException {
-        return this.types;
+        this.metaData = metaData;
     }
 
     @Override
     public Iterator<MetaCSVRecord> iterator() {
         return new CSVRecordIterator(this.parser.iterator(), this.processor);
+    }
+
+    public MetaCSVMetaData getMetaData() {
+        return this.metaData;
     }
 }

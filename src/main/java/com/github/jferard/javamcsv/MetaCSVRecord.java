@@ -52,11 +52,26 @@ public class MetaCSVRecord implements Iterable<Object> {
         }
     }
 
-    // TODO: continue
+    public CharSequence getText(int i) {
+        Object value = this.values.get(i);
+        if (value instanceof CharSequence) {
+            return (CharSequence) value;
+        } else {
+            throw new MetaCSVCastException("Not a text: " + value);
+        }
+    }
+
+    public Object getAny(int i) {
+        return this.values.get(i);
+    }
 
     @Override
     public Iterator<Object> iterator() {
         return this.values.iterator();
+    }
+
+    public int size() {
+        return this.record.size();
     }
 
     @Override

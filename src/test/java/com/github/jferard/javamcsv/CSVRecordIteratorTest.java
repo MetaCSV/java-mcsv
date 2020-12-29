@@ -62,7 +62,7 @@ public class CSVRecordIteratorTest {
         TestHelper.assertMetaEquals(TestHelper.createMetaRecord("foo", "bar", "baz"),
                 it.next());
         Assert.assertTrue(it.hasNext());
-        TestHelper.assertMetaEquals(TestHelper.createMetaRecord("foo value", 1, "baz value"),
+        TestHelper.assertMetaEquals(TestHelper.createMetaRecord("foo value", 1L, "baz value"),
                 it.next());
         Assert.assertFalse(it.hasNext());
     }
