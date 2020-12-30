@@ -21,11 +21,9 @@
 package com.github.jferard.javamcsv.tool;
 
 import com.github.jferard.javamcsv.MetaCSVDataException;
-import com.github.jferard.javamcsv.MetaCSVMetaData;
 import com.github.jferard.javamcsv.MetaCSVParseException;
 import com.github.jferard.javamcsv.MetaCSVReadException;
 import com.github.jferard.javamcsv.MetaCSVReader;
-import com.github.jferard.javamcsv.MetaCSVRecord;
 import com.github.jferard.javamcsv.TestHelper;
 import org.junit.Assert;
 import org.junit.Before;
@@ -35,21 +33,23 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
 public class MetaCSVReaderResultSetTest {
     private ResultSet rs;
+    private Calendar c;
 
     @Before
     public void setUp()
             throws MetaCSVReadException, MetaCSVDataException, MetaCSVParseException, IOException {
+        c = GregorianCalendar.getInstance(Locale.US);
+        c.setTimeInMillis(0);
+        c.set(2020, Calendar.DECEMBER, 1, 0, 0, 0);
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "boolean,currency,date,datetime,float,integer,percentage,text\r\n" +
                         "T,$15,01/12/2020,NULL,\"10,000.5\",12 354,56.5%,Foo\r\n" +
@@ -71,28 +71,36 @@ public class MetaCSVReaderResultSetTest {
     @Test
     public void testFirstColObj() throws SQLException {
         Assert.assertTrue(rs.next());
-        Calendar c = GregorianCalendar.getInstance(Locale.US);
-        c.setTimeInMillis(0);
-        c.set(2020, Calendar.DECEMBER, 1, 0, 0, 0);
         List<Object> firstCol =
                 Arrays.<Object>asList(null, true, new BigDecimal("15"), c.getTime(), null, 10000.5,
-                        12354L,
-                        0.565, "Foo");
+                        12354L, 0.565, "Foo");
         for (int i = 1; i <= 8; i++) {
             Assert.assertEquals(firstCol.get(i), rs.getObject(i));
         }
     }
 
     @Test
-    public void testFirstCol() throws SQLException {
+    public void testFirstColByIndex() throws SQLException {
         Assert.assertTrue(rs.next());
-        Calendar c = GregorianCalendar.getInstance(Locale.US);
-        c.setTimeInMillis(0);
-        c.set(2020, Calendar.DECEMBER, 1, 0, 0, 0);
         Assert.assertTrue(rs.getBoolean(1));
-        Assert.assertTrue(rs.getBoolean("boolean"));
         Assert.assertEquals(BigDecimal.valueOf(15L), rs.getBigDecimal(2));
+        Assert.assertEquals(c.getTime(), rs.getDate(3));
+        Assert.assertEquals(null, rs.getDate(4));
+        Assert.assertEquals(10000.5, rs.getDouble(5), 0.001);
+        Assert.assertEquals(12354L, rs.getLong(6));
+        Assert.assertEquals(0.565, rs.getDouble(7), 0.001);
+    }
+
+    @Test
+    public void testFirstColByName() throws SQLException {
+        Assert.assertTrue(rs.next());
+        Assert.assertTrue(rs.getBoolean("boolean"));
         Assert.assertEquals(BigDecimal.valueOf(15L), rs.getBigDecimal("currency"));
+        Assert.assertEquals(c.getTime(), rs.getDate("date"));
+        Assert.assertEquals(null, rs.getDate("datetime"));
+        Assert.assertEquals(10000.5, rs.getDouble("float"), 0.001);
+        Assert.assertEquals(12354L, rs.getLong("integer"));
+        Assert.assertEquals(0.565, rs.getDouble("percentage"), 0.001);
     }
 
     @Test

@@ -324,100 +324,100 @@ public abstract class AbstractResultSet implements ResultSet {
 
     @Override
     public void updateNull(String columnLabel) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        updateNull(this.findColumn(columnLabel));
     }
 
     @Override
     public void updateBoolean(String columnLabel, boolean x) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        updateBoolean(this.findColumn(columnLabel), x);
     }
 
     @Override
     public void updateByte(String columnLabel, byte x) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        updateByte(this.findColumn(columnLabel), x);
     }
 
     @Override
     public void updateShort(String columnLabel, short x) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        updateShort(this.findColumn(columnLabel), x);
     }
 
     @Override
     public void updateInt(String columnLabel, int x) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        updateInt(this.findColumn(columnLabel), x);
     }
 
     @Override
     public void updateLong(String columnLabel, long x) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        updateLong(this.findColumn(columnLabel), x);
     }
 
     @Override
     public void updateFloat(String columnLabel, float x) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        updateFloat(this.findColumn(columnLabel), x);
     }
 
     @Override
     public void updateDouble(String columnLabel, double x) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        updateDouble(this.findColumn(columnLabel), x);
     }
 
     @Override
     public void updateBigDecimal(String columnLabel, BigDecimal x) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        updateBigDecimal(this.findColumn(columnLabel), x);
     }
 
     @Override
     public void updateString(String columnLabel, String x) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        updateString(this.findColumn(columnLabel), x);
     }
 
     @Override
     public void updateBytes(String columnLabel, byte[] x) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        updateBytes(this.findColumn(columnLabel), x);
     }
 
     @Override
     public void updateDate(String columnLabel, Date x) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        updateDate(this.findColumn(columnLabel), x);
     }
 
     @Override
     public void updateTime(String columnLabel, Time x) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        updateTime(this.findColumn(columnLabel), x);
     }
 
     @Override
     public void updateTimestamp(String columnLabel, Timestamp x) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        updateTimestamp(this.findColumn(columnLabel), x);
     }
 
     @Override
     public void updateAsciiStream(String columnLabel, InputStream x, int length)
             throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        updateAsciiStream(this.findColumn(columnLabel), x);
     }
 
     @Override
     public void updateBinaryStream(String columnLabel, InputStream x, int length)
             throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        updateBinaryStream(this.findColumn(columnLabel), x, length);
     }
 
     @Override
     public void updateCharacterStream(String columnLabel, Reader reader, int length)
             throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        updateCharacterStream(this.findColumn(columnLabel), reader, length);
     }
 
     @Override
     public void updateObject(String columnLabel, Object x, int scaleOrLength) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        updateObject(this.findColumn(columnLabel), x, scaleOrLength);
     }
 
     @Override
     public void updateObject(String columnLabel, Object x) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        updateObject(this.findColumn(columnLabel), x);
     }
 
     @Override

@@ -218,7 +218,11 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
 
     @Override
     public Date getDate(int columnIndex) throws SQLException {
-        return new Date(getDate("Date", columnIndex).getTime());
+        java.util.Date date = getDate("Date", columnIndex);
+        if (date == null) {
+            return null;
+        }
+        return new Date(date.getTime());
     }
 
     private java.util.Date getDate(String typeName, int columnIndex) throws SQLException {
@@ -387,6 +391,11 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
     @Override
     public boolean isClosed() throws SQLException {
         return !iterator.hasNext();
+    }
+
+    @Override
+    public int getRow() throws SQLException {
+        return (int) this.reader.getRow();
     }
 
     @Override

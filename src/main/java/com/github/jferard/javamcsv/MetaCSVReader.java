@@ -99,6 +99,10 @@ public class MetaCSVReader implements Iterable<MetaCSVRecord> {
         return new CSVRecordIterator(this.parser.iterator(), this.processor);
     }
 
+    public long getRow() {
+        return this.parser.getRecordNumber() - 1;
+    }
+
     public MetaCSVMetaData getMetaData() {
         return this.metaData;
     }
