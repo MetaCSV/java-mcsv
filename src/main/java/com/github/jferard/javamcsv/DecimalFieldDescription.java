@@ -52,13 +52,13 @@ public class DecimalFieldDescription implements FieldDescription<BigDecimal> {
     }
 
     @Override
-    public Class<BigDecimal> getType() {
+    public Class<BigDecimal> getJavaType() {
         return BigDecimal.class;
     }
 
     @Override
-    public String getTypeName() {
-        return "decimal";
+    public DataType getDataType() {
+        return DataType.DECIMAL;
     }
 
     @Override

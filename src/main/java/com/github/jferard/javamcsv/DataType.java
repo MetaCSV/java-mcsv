@@ -18,14 +18,9 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;import java.io.IOException;
+package com.github.jferard.javamcsv;
 
-public interface FieldDescription<T> {
-    void render(Appendable out) throws IOException;
-
-    FieldProcessor<T> toFieldProcessor(String nullValue);
-
-    Class<T> getJavaType();
-
-    DataType getDataType();
+public enum DataType {
+    ANY, BOOLEAN, CURRENCY_DECIMAL, CURRENCY_INTEGER, DATE, DATETIME, DECIMAL, FLOAT, INTEGER,
+    PERCENTAGE_DECIMAL, PERCENTAGE_FLOAT, TEXT;
 }

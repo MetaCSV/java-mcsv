@@ -40,7 +40,7 @@ public class MetaCSVWriterTest {
         MetaCSVData data =
                 new MetaCSVDataBuilder().nullValue("NULL").
                         colType(0, new BooleanFieldDescription("T", "F")).
-                        colType(1, new DecimalCurrencyFieldDescription(true, "$",
+                        colType(1, new CurrencyDecimalFieldDescription(true, "$",
                                 new DecimalFieldDescription(",", "."))).
                         colType(2,
                                 new DateFieldDescription(new SimpleDateFormat("dd/MM/yyyy"), null)).
@@ -52,7 +52,7 @@ public class MetaCSVWriterTest {
                         colType(5,
                                 new IntegerFieldDescription(" ")).
                         colType(6,
-                                new FloatPercentageFieldDescription(false, "%",
+                                new PercentageFloatFieldDescription(false, "%",
                                         new FloatFieldDescription(",", "."))).
                         build();
         MetaCSVWriter writer = MetaCSVWriter.create(out, metaOut, data);

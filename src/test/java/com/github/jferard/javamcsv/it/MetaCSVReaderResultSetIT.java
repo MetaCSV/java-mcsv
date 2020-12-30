@@ -52,13 +52,13 @@ public class MetaCSVReaderResultSetIT {
         reader = MetaCSVReader.create(f);
         ResultSet rs = Tool.readerToResultSet(reader);
         ResultSetMetaData metaData = rs.getMetaData();
-        Assert.assertEquals("text", metaData.getColumnTypeName(1));
-        Assert.assertEquals("integer", metaData.getColumnTypeName(4));
-        Assert.assertEquals("float", metaData.getColumnTypeName(8));
-        Assert.assertEquals("float", metaData.getColumnTypeName(9));
-        Assert.assertEquals("float", metaData.getColumnTypeName(10));
-        Assert.assertEquals("float", metaData.getColumnTypeName(11));
-        Assert.assertEquals("date", metaData.getColumnTypeName(13));
+        Assert.assertEquals("TEXT", metaData.getColumnTypeName(1));
+        Assert.assertEquals("INTEGER", metaData.getColumnTypeName(4));
+        Assert.assertEquals("FLOAT", metaData.getColumnTypeName(8));
+        Assert.assertEquals("FLOAT", metaData.getColumnTypeName(9));
+        Assert.assertEquals("FLOAT", metaData.getColumnTypeName(10));
+        Assert.assertEquals("FLOAT", metaData.getColumnTypeName(11));
+        Assert.assertEquals("DATE", metaData.getColumnTypeName(13));
 
         Assert.assertEquals(Types.VARCHAR, metaData.getColumnType(1));
         Assert.assertEquals(Types.INTEGER, metaData.getColumnType(4));

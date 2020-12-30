@@ -22,13 +22,13 @@ package com.github.jferard.javamcsv;
 
 import java.math.BigDecimal;
 
-public class DecimalCurrencyFieldProcessor implements FieldProcessor<BigDecimal> {
+public class CurrencyDecimalFieldProcessor implements FieldProcessor<BigDecimal> {
     private final boolean pre;
     private final String symbol;
     private final FieldProcessor<BigDecimal> numberProcessor;
     private final String nullValue;
 
-    public DecimalCurrencyFieldProcessor(boolean pre, String symbol,
+    public CurrencyDecimalFieldProcessor(boolean pre, String symbol,
                                          FieldProcessor<BigDecimal> numberProcessor,
                                          String nullValue) {
         this.pre = pre;

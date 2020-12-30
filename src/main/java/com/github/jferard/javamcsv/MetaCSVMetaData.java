@@ -27,30 +27,31 @@ import java.util.Map;
 public class MetaCSVMetaData {
     public static MetaCSVMetaData create(Map<Integer, FieldDescription<?>> descriptionByColIndex)
             throws IOException {
-        Map<Integer, Class<?>> types = new HashMap<Integer, Class<?>>();
-        Map<Integer, String> typeNames = new HashMap<Integer, String>();
+        Map<Integer, Class<?>> javaTypes = new HashMap<Integer, Class<?>>();
+        Map<Integer, DataType> dataTypes = new HashMap<Integer, DataType>();
         Map<Integer, String> descriptions = new HashMap<Integer, String>();
         for (Map.Entry<Integer, FieldDescription<?>> entry : descriptionByColIndex
                 .entrySet()) {
             Integer i = entry.getKey();
             FieldDescription<?> description = entry.getValue();
-            types.put(i, description.getType());
-            typeNames.put(i, description.getTypeName());
+            javaTypes.put(i, description.getJavaType());
+            dataTypes.put(i, description.getDataType());
             StringBuilder sb = new StringBuilder();
             description.render(sb);
             descriptions.put(i, sb.toString());
         }
-        return new MetaCSVMetaData(descriptions, types, typeNames);
+        return new MetaCSVMetaData(descriptions, javaTypes, dataTypes);
     }
 
     private final Map<Integer, String> descriptions;
-    private final Map<Integer, Class<?>> types;
-    private final Map<Integer, String> typeNames;
+    private final Map<Integer, Class<?>> javaTypes;
+    private final Map<Integer, DataType> dataTypes;
 
-    public MetaCSVMetaData(Map<Integer, String> descriptions, Map<Integer, Class<?>> types, Map<Integer, String> typeNames) {
+    public MetaCSVMetaData(Map<Integer, String> descriptions, Map<Integer, Class<?>> javaTypes,
+                           Map<Integer, DataType> dataTypes) {
         this.descriptions = descriptions;
-        this.types = types;
-        this.typeNames = typeNames;
+        this.javaTypes = javaTypes;
+        this.dataTypes = dataTypes;
     }
 
     public String getDescription(int c) {
@@ -61,18 +62,18 @@ public class MetaCSVMetaData {
         return ret;
     }
 
-    public Class<?> getType(int c) {
-        Class<?> ret = this.types.get(c);
+    public Class<?> getJavaType(int c) {
+        Class<?> ret = this.javaTypes.get(c);
         if (ret == null) {
             return String.class;
         }
         return ret;
     }
 
-    public String getTypeName(int c) {
-        String ret = this.typeNames.get(c);
+    public DataType getDataType(int c) {
+        DataType ret = this.dataTypes.get(c);
         if (ret == null) {
-            return "text";
+            return DataType.TEXT;
         }
         return ret;
     }

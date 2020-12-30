@@ -68,22 +68,22 @@ public class FieldDescriptionTest {
     public void testDecimalCurrency() throws IOException {
         FieldDescription<BigDecimal> numberDescription = new DecimalFieldDescription("", ".");
         Assert.assertEquals("currency/pre/$/decimal//.", TestHelper.render(
-                new DecimalCurrencyFieldDescription(true, "$", numberDescription)));
+                new CurrencyDecimalFieldDescription(true, "$", numberDescription)));
         Assert.assertEquals("currency/post/€/decimal//.", TestHelper.render(
-                new DecimalCurrencyFieldDescription(false, "€", numberDescription)));
+                new CurrencyDecimalFieldDescription(false, "€", numberDescription)));
         Assert.assertEquals("CurrencyFieldDescription(false, €, DecimalFieldDescription(, .))",
-                new DecimalCurrencyFieldDescription(false, "€", numberDescription).toString());
+                new CurrencyDecimalFieldDescription(false, "€", numberDescription).toString());
     }
 
     @Test
     public void testIntegerCurrency() throws IOException {
         FieldDescription<Long> numberDescription = new IntegerFieldDescription(null);
         Assert.assertEquals("currency/pre/$/integer", TestHelper.render(
-                new IntegerCurrencyFieldDescription(true, "$", numberDescription)));
+                new CurrencyIntegerFieldDescription(true, "$", numberDescription)));
         Assert.assertEquals("currency/post/€/integer", TestHelper.render(
-                new IntegerCurrencyFieldDescription(false, "€", numberDescription)));
+                new CurrencyIntegerFieldDescription(false, "€", numberDescription)));
         Assert.assertEquals("CurrencyFieldDescription(false, €, IntegerFieldDescription(null))",
-                new IntegerCurrencyFieldDescription(false, "€", numberDescription).toString());
+                new CurrencyIntegerFieldDescription(false, "€", numberDescription).toString());
     }
 
     @Test
@@ -113,22 +113,22 @@ public class FieldDescriptionTest {
     public void testDecimalPercentage() throws IOException {
         FieldDescription<BigDecimal> numberDescription = new DecimalFieldDescription("", ".");
         Assert.assertEquals("percentage/pre/%/decimal//.", TestHelper.render(
-                new DecimalPercentageFieldDescription(true, "%", numberDescription)));
+                new PercentageDecimalFieldDescription(true, "%", numberDescription)));
         Assert.assertEquals("percentage/post/%/decimal//.", TestHelper.render(
-                new DecimalPercentageFieldDescription(false, "%", numberDescription)));
+                new PercentageDecimalFieldDescription(false, "%", numberDescription)));
         Assert.assertEquals("PercentageFieldDescription(false, %, DecimalFieldDescription(, .))",
-                new DecimalPercentageFieldDescription(false, "%", numberDescription).toString());
+                new PercentageDecimalFieldDescription(false, "%", numberDescription).toString());
     }
 
     @Test
     public void testFloatPercentage() throws IOException {
         FieldDescription<Double> numberDescription = new FloatFieldDescription("", ".");
         Assert.assertEquals("percentage/pre/%/float//.", TestHelper.render(
-                new FloatPercentageFieldDescription(true, "%", numberDescription)));
+                new PercentageFloatFieldDescription(true, "%", numberDescription)));
         Assert.assertEquals("percentage/post/%/float//.", TestHelper.render(
-                new FloatPercentageFieldDescription(false, "%", numberDescription)));
+                new PercentageFloatFieldDescription(false, "%", numberDescription)));
         Assert.assertEquals("PercentageFieldDescription(false, %, FloatFieldDescription(, .))",
-                new FloatPercentageFieldDescription(false, "%", numberDescription).toString());
+                new PercentageFloatFieldDescription(false, "%", numberDescription).toString());
     }
 
     @Test

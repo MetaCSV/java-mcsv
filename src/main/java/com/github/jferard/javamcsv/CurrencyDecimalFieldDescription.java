@@ -21,45 +21,48 @@
 package com.github.jferard.javamcsv;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 
-public class FloatPercentageFieldDescription implements FieldDescription<Double> {
+public class CurrencyDecimalFieldDescription implements FieldDescription<BigDecimal> {
     private final boolean pre;
     private final String symbol;
-    private final FieldDescription<Double> numberDescription;
+    private final FieldDescription<BigDecimal> numberDescription;
+    private final String nullValue;
 
-    public FloatPercentageFieldDescription(boolean pre, String symbol,
-                                           FieldDescription<Double> numberDescription) {
+    public CurrencyDecimalFieldDescription(boolean pre, String symbol,
+                                           FieldDescription<BigDecimal> numberDescription) {
         this.pre = pre;
         this.symbol = symbol;
         this.numberDescription = numberDescription;
+        this.nullValue = "";
     }
 
     @Override
     public void render(Appendable out) throws IOException {
-        Util.render(out, "percentage", this.pre ? "pre" : "post", symbol);
+        Util.render(out, "currency", this.pre ? "pre" : "post", symbol);
         out.append('/');
         this.numberDescription.render(out);
     }
 
     @Override
-    public FieldProcessor<Double> toFieldProcessor(String nullValue) {
-        return new FloatPercentageFieldProcessor(this.pre, this.symbol,
+    public FieldProcessor<BigDecimal> toFieldProcessor(String nullValue) {
+        return new CurrencyDecimalFieldProcessor(this.pre, this.symbol,
                 this.numberDescription.toFieldProcessor(nullValue), nullValue);
     }
 
     @Override
-    public Class<Double> getType() {
-        return Double.class;
+    public Class<BigDecimal> getJavaType() {
+        return BigDecimal.class;
     }
 
     @Override
-    public String getTypeName() {
-        return "percentage/float";
+    public DataType getDataType() {
+        return DataType.CURRENCY_DECIMAL;
     }
 
     @Override
     public String toString() {
-        return String.format("PercentageFieldDescription(%b, %s, %s)",
+        return String.format("CurrencyFieldDescription(%b, %s, %s)",
                 this.pre, this.symbol, this.numberDescription.toString());
     }
 }

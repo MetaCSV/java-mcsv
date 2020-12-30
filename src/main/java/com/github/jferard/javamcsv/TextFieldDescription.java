@@ -34,13 +34,13 @@ public class TextFieldDescription implements FieldDescription<String> {
     }
 
     @Override
-    public Class<String> getType() {
+    public Class<String> getJavaType() {
         return String.class;
     }
 
     @Override
-    public String getTypeName() {
-        return "text";
+    public DataType getDataType() {
+        return DataType.TEXT;
     }
 
     @Override

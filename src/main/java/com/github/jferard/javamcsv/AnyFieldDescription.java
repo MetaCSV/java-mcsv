@@ -46,13 +46,13 @@ public class AnyFieldDescription implements FieldDescription<Object> {
     }
 
     @Override
-    public Class<Object> getType() {
+    public Class<Object> getJavaType() {
         return Object.class;
     }
 
     @Override
-    public String getTypeName() {
-        return "any";
+    public DataType getDataType() {
+        return DataType.ANY;
     }
 
     @Override

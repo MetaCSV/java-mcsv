@@ -24,18 +24,16 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.math.BigDecimal;
-
 public class IntegerCurrencyFieldProcessorTest {
     private FieldProcessor<Long> processorPre;
     private FieldProcessor<Long> processorPost;
 
     @Before
     public void setUp() {
-        processorPre = new IntegerCurrencyFieldDescription(true, "$",
+        processorPre = new CurrencyIntegerFieldDescription(true, "$",
                 new IntegerFieldDescription(null)
         ).toFieldProcessor("NULL");
-        processorPost = new IntegerCurrencyFieldDescription(false, "€",
+        processorPost = new CurrencyIntegerFieldDescription(false, "€",
                 new IntegerFieldDescription(null)
         ).toFieldProcessor("NULL");
     }
@@ -83,7 +81,7 @@ public class IntegerCurrencyFieldProcessorTest {
 
     @Test
     public void testIntegerToString() {
-        FieldProcessor<Long> processor = new IntegerCurrencyFieldDescription(false, "€",
+        FieldProcessor<Long> processor = new CurrencyIntegerFieldDescription(false, "€",
                 IntegerFieldDescription.INSTANCE).toFieldProcessor("NULL");
         Assert.assertEquals("17€", processor.toString(17L));
     }

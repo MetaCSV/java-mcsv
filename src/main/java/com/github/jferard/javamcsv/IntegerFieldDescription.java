@@ -46,13 +46,13 @@ public class IntegerFieldDescription implements FieldDescription<Long> {
     }
 
     @Override
-    public Class<Long> getType() {
+    public Class<Long> getJavaType() {
         return Long.class;
     }
 
     @Override
-    public String getTypeName() {
-        return "integer";
+    public DataType getDataType() {
+        return DataType.INTEGER;
     }
 
     @Override

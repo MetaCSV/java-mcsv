@@ -32,10 +32,10 @@ public class DecimalCurrencyFieldProcessorTest {
 
     @Before
     public void setUp() {
-        processorPre = new DecimalCurrencyFieldDescription(true, "$",
+        processorPre = new CurrencyDecimalFieldDescription(true, "$",
                 new DecimalFieldDescription(null, ".")
         ).toFieldProcessor("NULL");
-        processorPost = new DecimalCurrencyFieldDescription(false, "€",
+        processorPost = new CurrencyDecimalFieldDescription(false, "€",
                 new DecimalFieldDescription(null, ",")
         ).toFieldProcessor("NULL");
     }
@@ -83,7 +83,7 @@ public class DecimalCurrencyFieldProcessorTest {
 
     @Test
     public void testIntegerToString() {
-        FieldProcessor<Long> processor = new IntegerCurrencyFieldDescription(false, "€",
+        FieldProcessor<Long> processor = new CurrencyIntegerFieldDescription(false, "€",
                 IntegerFieldDescription.INSTANCE).toFieldProcessor("NULL");
         Assert.assertEquals("17€", processor.toString(17L));
     }

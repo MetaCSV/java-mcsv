@@ -22,14 +22,14 @@ package com.github.jferard.javamcsv;
 
 import java.math.BigDecimal;
 
-public class DecimalPercentageFieldProcessor implements FieldProcessor<BigDecimal> {
+public class PercentageDecimalFieldProcessor implements FieldProcessor<BigDecimal> {
     public static final BigDecimal HUNDRED = BigDecimal.valueOf(100);
     private final boolean pre;
     private final String symbol;
     private final FieldProcessor<BigDecimal> numberProcessor;
     private final String nullValue;
 
-    public DecimalPercentageFieldProcessor(boolean pre, String symbol,
+    public PercentageDecimalFieldProcessor(boolean pre, String symbol,
                                            FieldProcessor<BigDecimal> numberProcessor, String nullValue) {
         this.pre = pre;
         this.symbol = symbol;

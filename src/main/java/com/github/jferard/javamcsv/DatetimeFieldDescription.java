@@ -58,13 +58,13 @@ public class DatetimeFieldDescription implements FieldDescription<Date> {
     }
 
     @Override
-    public Class<Date> getType() {
+    public Class<Date> getJavaType() {
         return Date.class;
     }
 
     @Override
-    public String getTypeName() {
-        return "datetime";
+    public DataType getDataType() {
+        return DataType.DATETIME;
     }
 
     @Override

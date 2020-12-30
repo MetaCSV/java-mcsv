@@ -224,11 +224,11 @@ public class MetaCSVParser {
         if (numberType.equals("integer")) {
             FieldDescription<Long> numberDescription =
                     parseInteger(parameters.subList(3, parameters.size()));
-            return new IntegerCurrencyFieldDescription(pre, symbol, numberDescription);
+            return new CurrencyIntegerFieldDescription(pre, symbol, numberDescription);
         } else if (numberType.equals("decimal")) {
             FieldDescription<BigDecimal> numberDescription =
                     parseDecimal(parameters.subList(3, parameters.size()));
-            return new DecimalCurrencyFieldDescription(pre, symbol, numberDescription);
+            return new CurrencyDecimalFieldDescription(pre, symbol, numberDescription);
         } else {
             throw new MetaCSVParseException("Unknown currency number type: " + parameters);
         }
@@ -308,11 +308,11 @@ public class MetaCSVParser {
         if (numberType.equals("float")) {
             FieldDescription<Double> numberDescription =
                     parseFloat(parameters.subList(3, parameters.size()));
-            return new FloatPercentageFieldDescription(pre, symbol, numberDescription);
+            return new PercentageFloatFieldDescription(pre, symbol, numberDescription);
         } else if (numberType.equals("decimal")) {
             FieldDescription<BigDecimal> numberDescription =
                     parseDecimal(parameters.subList(3, parameters.size()));
-            return new DecimalPercentageFieldDescription(pre, symbol, numberDescription);
+            return new PercentageDecimalFieldDescription(pre, symbol, numberDescription);
         } else {
             throw new MetaCSVParseException("Unknown currency number type: " + parameters);
         }

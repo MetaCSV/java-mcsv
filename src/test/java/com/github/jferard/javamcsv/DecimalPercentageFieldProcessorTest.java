@@ -32,10 +32,10 @@ public class DecimalPercentageFieldProcessorTest {
 
     @Before
     public void setUp() {
-        processorPre = new DecimalPercentageFieldDescription(true, "%",
+        processorPre = new PercentageDecimalFieldDescription(true, "%",
                 new DecimalFieldDescription(null, ".")
         ).toFieldProcessor("NULL");
-        processorPost = new DecimalPercentageFieldDescription(false, "%",
+        processorPost = new PercentageDecimalFieldDescription(false, "%",
                 new DecimalFieldDescription(null, ",")
         ).toFieldProcessor("NULL");
     }

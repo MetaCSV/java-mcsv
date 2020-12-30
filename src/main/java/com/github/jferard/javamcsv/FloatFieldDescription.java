@@ -52,13 +52,13 @@ public class FloatFieldDescription implements FieldDescription<Double> {
     }
 
     @Override
-    public Class<Double> getType() {
+    public Class<Double> getJavaType() {
         return Double.class;
     }
 
     @Override
-    public String getTypeName() {
-        return "float";
+    public DataType getDataType() {
+        return DataType.FLOAT;
     }
 
     @Override

@@ -24,18 +24,16 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.math.BigDecimal;
-
 public class FloatPercentageFieldProcessorTest {
     private FieldProcessor<Double> processorPre;
     private FieldProcessor<Double> processorPost;
 
     @Before
     public void setUp() {
-        processorPre = new FloatPercentageFieldDescription(true, "%",
+        processorPre = new PercentageFloatFieldDescription(true, "%",
                 new FloatFieldDescription(null, ".")
         ).toFieldProcessor("NULL");
-        processorPost = new FloatPercentageFieldDescription(false, "%",
+        processorPost = new PercentageFloatFieldDescription(false, "%",
                 new FloatFieldDescription(null, ",")
         ).toFieldProcessor("NULL");
     }

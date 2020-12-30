@@ -43,13 +43,13 @@ public class BooleanFieldDescription implements FieldDescription<Boolean> {
     }
 
     @Override
-    public Class<Boolean> getType() {
+    public Class<Boolean> getJavaType() {
         return Boolean.class;
     }
 
     @Override
-    public String getTypeName() {
-        return "boolean";
+    public DataType getDataType() {
+        return DataType.BOOLEAN;
     }
 
     @Override

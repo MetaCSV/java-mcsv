@@ -20,8 +20,10 @@
 
 package com.github.jferard.javamcsv.tool;
 
+import com.github.jferard.javamcsv.DataType;
 import com.github.jferard.javamcsv.MetaCSVMetaData;
 
+import java.math.BigDecimal;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -63,11 +65,11 @@ public class MetaCSVResultSetMetaData implements ResultSetMetaData {
 
     @Override
     public boolean isCurrency(int column) throws SQLException {
-        String s = this.metaData.getTypeName(column - 1);
-        if (s == null) {
+        DataType d = this.metaData.getDataType(column - 1);
+        if (d == null) {
             return false;
         }
-        return s.startsWith("currency");
+        return d == DataType.CURRENCY_DECIMAL || d == DataType.CURRENCY_INTEGER;
     }
 
     @Override
@@ -77,7 +79,11 @@ public class MetaCSVResultSetMetaData implements ResultSetMetaData {
 
     @Override
     public boolean isSigned(int column) throws SQLException {
-        return true;
+        Class<?> s = this.metaData.getJavaType(column - 1);
+        if (s == null) {
+            return false;
+        }
+        return s == Integer.class || s == Double.class || s == BigDecimal.class;
     }
 
     @Override
@@ -122,28 +128,28 @@ public class MetaCSVResultSetMetaData implements ResultSetMetaData {
 
     @Override
     public int getColumnType(int column) throws SQLException {
-        String type = metaData.getTypeName(column - 1);
-        if (type == null || type.equals("any")) {
-            return Types.JAVA_OBJECT;
-        } else if (type.equals("text")) {
-            return Types.VARCHAR;
-        } else if (type.equals("boolean")) {
-            return Types.BOOLEAN;
-        } else if (type.endsWith("decimal")) {
-            return Types.DECIMAL;
-        } else if (type.endsWith("float")) {
-            return Types.DOUBLE;
-        } else if (type.equals("date") || type.equals("datetime")) {
-            return Types.DATE;
-        } else if (type.endsWith("integer")) {
-            return Types.INTEGER;
+        switch (metaData.getDataType(column - 1)) {
+            case ANY:
+                return Types.JAVA_OBJECT;
+            case TEXT:
+                return Types.VARCHAR;
+            case BOOLEAN:
+                return Types.BOOLEAN;
+            case CURRENCY_DECIMAL: case DECIMAL: case PERCENTAGE_DECIMAL:
+                return Types.DECIMAL;
+            case FLOAT: case PERCENTAGE_FLOAT:
+                return Types.DOUBLE;
+            case DATE: case DATETIME:
+                return Types.DATE;
+            case CURRENCY_INTEGER: case INTEGER:
+                return Types.INTEGER;
         }
         throw new SQLException();
     }
 
     @Override
     public String getColumnTypeName(int column) throws SQLException {
-        return metaData.getTypeName(column - 1);
+        return metaData.getDataType(column - 1).toString();
     }
 
     @Override
@@ -163,7 +169,7 @@ public class MetaCSVResultSetMetaData implements ResultSetMetaData {
 
     @Override
     public String getColumnClassName(int column) throws SQLException {
-        return metaData.getType(column - 1).getCanonicalName();
+        return metaData.getJavaType(column - 1).getCanonicalName();
     }
 
     @Override

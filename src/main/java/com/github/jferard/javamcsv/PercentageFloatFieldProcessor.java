@@ -20,17 +20,14 @@
 
 package com.github.jferard.javamcsv;
 
-import java.math.BigDecimal;
-
-public class IntegerCurrencyFieldProcessor implements FieldProcessor<Long> {
+public class PercentageFloatFieldProcessor implements FieldProcessor<Double> {
     private final boolean pre;
     private final String symbol;
-    private final FieldProcessor<Long> numberProcessor;
+    private final FieldProcessor<Double> numberProcessor;
     private final String nullValue;
 
-    public IntegerCurrencyFieldProcessor(boolean pre, String symbol,
-                                         FieldProcessor<Long> numberProcessor,
-                                         String nullValue) {
+    public PercentageFloatFieldProcessor(boolean pre, String symbol,
+                                         FieldProcessor<Double> numberProcessor, String nullValue) {
         this.pre = pre;
         this.symbol = symbol;
         this.numberProcessor = numberProcessor;
@@ -38,7 +35,7 @@ public class IntegerCurrencyFieldProcessor implements FieldProcessor<Long> {
     }
 
     @Override
-    public Long toObject(String text) throws MetaCSVReadException {
+    public Double toObject(String text) throws MetaCSVReadException {
         if (text == null || text.equals(this.nullValue)) {
             return null;
         }
@@ -56,15 +53,16 @@ public class IntegerCurrencyFieldProcessor implements FieldProcessor<Long> {
                 throw new MetaCSVReadException("");
             }
         }
-        return this.numberProcessor.toObject(text);
+        return this.numberProcessor.toObject(text) / 100.0;
     }
 
     @Override
-    public String toString(Long value) {
+    public String toString(Double value) {
         if (value == null) {
             return this.nullValue;
         }
-        String valueAsString = this.numberProcessor.toString(value);
+        String valueAsString =
+                this.numberProcessor.toString(value * 100.0);
         if (this.pre) {
             return this.symbol + valueAsString;
         } else {

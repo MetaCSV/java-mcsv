@@ -20,14 +20,17 @@
 
 package com.github.jferard.javamcsv;
 
-public class FloatPercentageFieldProcessor implements FieldProcessor<Double> {
+import java.math.BigDecimal;
+
+public class CurrencyIntegerFieldProcessor implements FieldProcessor<Long> {
     private final boolean pre;
     private final String symbol;
-    private final FieldProcessor<Double> numberProcessor;
+    private final FieldProcessor<Long> numberProcessor;
     private final String nullValue;
 
-    public FloatPercentageFieldProcessor(boolean pre, String symbol,
-                                         FieldProcessor<Double> numberProcessor, String nullValue) {
+    public CurrencyIntegerFieldProcessor(boolean pre, String symbol,
+                                         FieldProcessor<Long> numberProcessor,
+                                         String nullValue) {
         this.pre = pre;
         this.symbol = symbol;
         this.numberProcessor = numberProcessor;
@@ -35,7 +38,7 @@ public class FloatPercentageFieldProcessor implements FieldProcessor<Double> {
     }
 
     @Override
-    public Double toObject(String text) throws MetaCSVReadException {
+    public Long toObject(String text) throws MetaCSVReadException {
         if (text == null || text.equals(this.nullValue)) {
             return null;
         }
@@ -53,16 +56,15 @@ public class FloatPercentageFieldProcessor implements FieldProcessor<Double> {
                 throw new MetaCSVReadException("");
             }
         }
-        return this.numberProcessor.toObject(text) / 100.0;
+        return this.numberProcessor.toObject(text);
     }
 
     @Override
-    public String toString(Double value) {
+    public String toString(Long value) {
         if (value == null) {
             return this.nullValue;
         }
-        String valueAsString =
-                this.numberProcessor.toString(value * 100.0);
+        String valueAsString = this.numberProcessor.toString(value);
         if (this.pre) {
             return this.symbol + valueAsString;
         } else {
