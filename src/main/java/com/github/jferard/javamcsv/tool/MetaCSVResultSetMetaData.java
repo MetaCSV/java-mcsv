@@ -23,7 +23,6 @@ package com.github.jferard.javamcsv.tool;
 import com.github.jferard.javamcsv.DataType;
 import com.github.jferard.javamcsv.MetaCSVMetaData;
 
-import java.math.BigDecimal;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -79,11 +78,13 @@ public class MetaCSVResultSetMetaData implements ResultSetMetaData {
 
     @Override
     public boolean isSigned(int column) throws SQLException {
-        Class<?> s = this.metaData.getJavaType(column - 1);
+        DataType s = this.metaData.getDataType(column - 1);
         if (s == null) {
             return false;
         }
-        return s == Integer.class || s == Double.class || s == BigDecimal.class;
+        return s == DataType.CURRENCY_DECIMAL || s == DataType.CURRENCY_INTEGER ||
+                s == DataType.DECIMAL || s == DataType.FLOAT || s == DataType.INTEGER ||
+                s == DataType.PERCENTAGE_DECIMAL || s == DataType.PERCENTAGE_FLOAT;
     }
 
     @Override
@@ -135,13 +136,18 @@ public class MetaCSVResultSetMetaData implements ResultSetMetaData {
                 return Types.VARCHAR;
             case BOOLEAN:
                 return Types.BOOLEAN;
-            case CURRENCY_DECIMAL: case DECIMAL: case PERCENTAGE_DECIMAL:
+            case CURRENCY_DECIMAL:
+            case DECIMAL:
+            case PERCENTAGE_DECIMAL:
                 return Types.DECIMAL;
-            case FLOAT: case PERCENTAGE_FLOAT:
+            case FLOAT:
+            case PERCENTAGE_FLOAT:
                 return Types.DOUBLE;
-            case DATE: case DATETIME:
+            case DATE:
+            case DATETIME:
                 return Types.DATE;
-            case CURRENCY_INTEGER: case INTEGER:
+            case CURRENCY_INTEGER:
+            case INTEGER:
                 return Types.INTEGER;
         }
         throw new SQLException();

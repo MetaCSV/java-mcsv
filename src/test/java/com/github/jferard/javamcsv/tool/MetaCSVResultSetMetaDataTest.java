@@ -34,10 +34,10 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.*;
 public class MetaCSVResultSetMetaDataTest {
     private ResultSetMetaData metaData;
 
@@ -76,6 +76,58 @@ public class MetaCSVResultSetMetaDataTest {
                         "percentage", "text");
         for (int i = 1; i <= 8; i++) {
             Assert.assertEquals(header.get(i), metaData.getColumnName(i));
+            Assert.assertEquals(header.get(i), metaData.getColumnLabel(i));
+        }
+    }
+
+    @Test
+    public void testColumnTypeName() throws SQLException {
+        List<String> typeNames =
+                Arrays.asList(null, "BOOLEAN", "CURRENCY_DECIMAL", "DATE", "DATETIME", "FLOAT",
+                        "INTEGER",
+                        "PERCENTAGE_FLOAT", "TEXT");
+        for (int i = 1; i <= 8; i++) {
+            Assert.assertEquals(typeNames.get(i), metaData.getColumnTypeName(i));
+        }
+    }
+
+    @Test
+    public void testColumnType() throws SQLException {
+        List<Integer> types =
+                Arrays.asList(null, Types.BOOLEAN, Types.DECIMAL, Types.DATE, Types.DATE,
+                        Types.DOUBLE, Types.INTEGER,
+                        Types.DOUBLE, Types.VARCHAR);
+        for (int i = 1; i <= 8; i++) {
+            Assert.assertEquals((long) types.get(i), metaData.getColumnType(i));
+        }
+    }
+
+    @Test
+    public void testColumnClassName() throws SQLException {
+        List<String> classNames =
+                Arrays.asList(null, "java.lang.Boolean", "java.math.BigDecimal", "java.util.Date",
+                        "java.util.Date", "java.lang.Double", "java.lang.Long", "java.lang.Double",
+                        "java.lang.String");
+        for (int i = 1; i <= 8; i++) {
+            Assert.assertEquals(classNames.get(i), metaData.getColumnClassName(i));
+        }
+    }
+
+    @Test
+    public void testIsCurrency() throws SQLException {
+        List<Boolean> cs =
+                Arrays.asList(null, false, true, false, false, false, false, false, false);
+        for (int i = 1; i <= 8; i++) {
+            Assert.assertEquals(cs.get(i), metaData.isCurrency(i));
+        }
+    }
+
+    @Test
+    public void testIsSigned() throws SQLException {
+        List<Boolean> cs =
+                Arrays.asList(null, false, true, false, false, true, true, true, false);
+        for (int i = 1; i <= 8; i++) {
+            Assert.assertEquals(cs.get(i), metaData.isSigned(i));
         }
     }
 
@@ -94,5 +146,21 @@ public class MetaCSVResultSetMetaDataTest {
         Assert.assertTrue(metaData.isReadOnly(1));
         Assert.assertFalse(metaData.isWritable(1));
         Assert.assertFalse(metaData.isDefinitelyWritable(1));
+    }
+
+    @Test
+    public void testUnwrap() throws SQLException {
+        metaData.unwrap(MetaCSVResultSetMetaData.class);
+        metaData.isWrapperFor(MetaCSVResultSetMetaData.class);
+    }
+
+    @Test(expected = SQLException.class)
+    public void testWrongUnwrap() throws SQLException {
+        metaData.unwrap(String.class);
+    }
+
+    @Test
+    public void testWrongWrapperFor() throws SQLException {
+        Assert.assertFalse(metaData.isWrapperFor(String.class));
     }
 }
