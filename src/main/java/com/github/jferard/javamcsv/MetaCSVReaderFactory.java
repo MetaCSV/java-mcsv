@@ -43,6 +43,6 @@ public class MetaCSVReaderFactory {
 
     private CSVRecordProcessor getProcessor() {
         Map<Integer, FieldProcessor<?>> processorByIndex = this.data.getProcessorByIndex();
-        return new CSVRecordProcessor(processorByIndex);
+        return new CSVRecordProcessor(processorByIndex, data.getNullValue());
     }
 }

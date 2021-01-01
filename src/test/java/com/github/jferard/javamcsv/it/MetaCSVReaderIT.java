@@ -121,10 +121,10 @@ public class MetaCSVReaderIT {
         c.setTimeInMillis(0);
         c.set(2020, Calendar.JUNE, 11, 0, 0, 0);
         Assert.assertEquals(
-                Arrays.asList("64214_0010_00700", "", "Route du Pays de Soule", 700L, "",
+                Arrays.asList("64214_0010_00700", null, "Route du Pays de Soule", 700L, null,
                         "Espès-undurein", "entrée", 385432.96, 6250383.75,
                         -0.8748110149745267, 43.28315047649357, "Commune de Espès-undurein",
-                        c.getTime(), "ZB0188", "Xiberoko errepidea", ""),
+                        c.getTime(), "ZB0188", "Xiberoko errepidea", null),
                 TestHelper.toList(iterator.next()));
         while (iterator.hasNext()) {
             iterator.next();

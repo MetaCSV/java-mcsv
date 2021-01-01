@@ -112,8 +112,8 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
             } else if (o.equals("0")) {
                 return false;
             }
-        } else if (o instanceof Integer) {
-            int i = (Integer) o;
+        } else if (o instanceof Long) {
+            long i = (Long) o;
             if (i == 1) {
                 return true;
             } else if (i == 0) {
@@ -178,7 +178,7 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
         if (o instanceof Long) {
             return (Long) o;
         }
-        throw new SQLException("Bad " + typeName + ": " + o);
+        throw new SQLException("Bad " + typeName + ": `" + o + "`");
     }
 
     @Override

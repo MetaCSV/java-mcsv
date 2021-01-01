@@ -28,6 +28,7 @@ import com.github.jferard.javamcsv.TestHelper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.function.ThrowingRunnable;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -92,6 +93,54 @@ public class MetaCSVReaderResultSetTest {
     }
 
     @Test
+    public void testInteger() throws SQLException {
+        Assert.assertTrue(rs.next());
+        Assert.assertThrows(SQLException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.getByte(6);
+            }
+        });
+        Assert.assertEquals(12354L, rs.getShort(6));
+        Assert.assertEquals(12354L, rs.getInt(6));
+        Assert.assertEquals(12354L, rs.getLong(6));
+    }
+
+    @Test
+    public void testInteger2()
+            throws SQLException, IOException, MetaCSVReadException, MetaCSVDataException,
+            MetaCSVParseException {
+        ByteArrayInputStream is = TestHelper.utf8InputStream(
+                "integer,text\r\n" +
+                        "1,\r\n");
+        ByteArrayInputStream metaIs = TestHelper.utf8InputStream(
+                "domain,key,value\r\n" +
+                        "data,col/0/type,\"integer/ \"\r\n"
+        );
+        MetaCSVReader reader = MetaCSVReader.create(is, metaIs);
+        rs = Tool.readerToResultSet(reader);
+        rs.next();
+        Assert.assertEquals(1, rs.getByte(1));
+        Assert.assertFalse(rs.wasNull());
+        Assert.assertEquals(1, rs.getShort(1));
+        Assert.assertFalse(rs.wasNull());
+        Assert.assertEquals(1, rs.getInt(1));
+        Assert.assertFalse(rs.wasNull());
+        Assert.assertEquals(1, rs.getLong(1));
+        Assert.assertFalse(rs.wasNull());
+
+        Assert.assertNull(rs.getObject(2));
+        Assert.assertEquals(0, rs.getByte(2));
+        Assert.assertTrue(rs.wasNull());
+        Assert.assertEquals(0, rs.getShort(2));
+        Assert.assertTrue(rs.wasNull());
+        Assert.assertEquals(0, rs.getInt(2));
+        Assert.assertTrue(rs.wasNull());
+        Assert.assertEquals(0L, rs.getLong(2));
+        Assert.assertTrue(rs.wasNull());
+    }
+
+    @Test
     public void testFirstColByName() throws SQLException {
         Assert.assertTrue(rs.next());
         Assert.assertTrue(rs.getBoolean("boolean"));
@@ -119,4 +168,70 @@ public class MetaCSVReaderResultSetTest {
         }
         Assert.assertFalse(rs.next());
     }
+
+    @Test
+    public void testBoolean()
+            throws MetaCSVReadException, MetaCSVDataException, MetaCSVParseException, IOException,
+            SQLException {
+        ByteArrayInputStream is = TestHelper.utf8InputStream(
+                "boolean,integer,float,decimal,text\r\n" +
+                        "T,1,1,1,1\r\n" +
+                        "F,0,0,0,0\r\n" +
+                        ",2,2,2,foo\r\n");
+        ByteArrayInputStream metaIs = TestHelper.utf8InputStream(
+                "domain,key,value\r\n" +
+                        "data,null_value,\r\n" +
+                        "data,col/0/type,boolean/T/F\r\n" +
+                        "data,col/1/type,\"integer/ \"\r\n" +
+                        "data,col/2/type,float//.\r\n" +
+                        "data,col/3/type,decimal//.\r\n"
+        );
+        MetaCSVReader reader = MetaCSVReader.create(is, metaIs);
+        rs = Tool.readerToResultSet(reader);
+        rs.next();
+        Assert.assertTrue(rs.getBoolean("boolean"));
+        Assert.assertTrue(rs.getBoolean("integer"));
+        Assert.assertTrue(rs.getBoolean("float"));
+        Assert.assertTrue(rs.getBoolean("decimal"));
+        Assert.assertTrue(rs.getBoolean("text"));
+        rs.next();
+        Assert.assertFalse(rs.getBoolean("boolean"));
+        Assert.assertFalse(rs.wasNull());
+        Assert.assertFalse(rs.getBoolean("integer"));
+        Assert.assertFalse(rs.wasNull());
+        Assert.assertFalse(rs.getBoolean("float"));
+        Assert.assertFalse(rs.wasNull());
+        Assert.assertFalse(rs.getBoolean("decimal"));
+        Assert.assertFalse(rs.wasNull());
+        Assert.assertFalse(rs.getBoolean("text"));
+        Assert.assertFalse(rs.wasNull());
+        rs.next();
+        Assert.assertFalse(rs.getBoolean("boolean"));
+        Assert.assertTrue(rs.wasNull());
+        Assert.assertThrows(SQLException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.getBoolean("integer");
+            }
+        });
+        Assert.assertThrows(SQLException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.getBoolean("float");
+            }
+        });
+        Assert.assertThrows(SQLException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.getBoolean("decimal");
+            }
+        });
+        Assert.assertThrows(SQLException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.getBoolean("text");
+            }
+        });
+    }
+
 }

@@ -81,10 +81,10 @@ public class MetaCSVReaderResultSetIT {
         c.setTimeInMillis(0);
         c.set(2020, Calendar.JUNE, 11, 0, 0, 0);
         Assert.assertEquals("64214_0010_00700", rs.getString(1));
-        Assert.assertEquals("", rs.getString(2));
+        Assert.assertNull(rs.getString(2));
         Assert.assertEquals("Route du Pays de Soule", rs.getString(3));
         Assert.assertEquals(700, rs.getInt(4));
-        Assert.assertEquals("", rs.getString(5));
+        Assert.assertNull(rs.getString(5));
         Assert.assertEquals("Espès-undurein", rs.getString(6));
         Assert.assertEquals("entrée", rs.getString(7));
         Assert.assertEquals(385432.96, rs.getDouble(8), 0.001);
@@ -95,6 +95,6 @@ public class MetaCSVReaderResultSetIT {
         Assert.assertEquals(c.getTime(), rs.getDate(13));
         Assert.assertEquals("ZB0188", rs.getString(14));
         Assert.assertEquals("Xiberoko errepidea", rs.getString(15));
-        Assert.assertEquals("", rs.getString(16));
+        Assert.assertNull(rs.getString(16));
     }
 }

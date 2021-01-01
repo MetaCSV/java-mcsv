@@ -41,7 +41,8 @@ public class CSVRecordIteratorTest {
                 new HashMap<Integer, FieldProcessor<?>>();
         processorByIndex.put(1, IntegerFieldDescription.INSTANCE.toFieldProcessor(null));
         Iterator<MetaCSVRecord> it =
-                new CSVRecordIterator(wrappedIterator, new CSVRecordProcessor(processorByIndex));
+                new CSVRecordIterator(wrappedIterator, new CSVRecordProcessor(processorByIndex,
+                        ""));
         Assert.assertTrue(it.hasNext());
         TestHelper.assertMetaEquals(TestHelper.createMetaRecord("foo", "bar", "baz"), it.next());
         Assert.assertTrue(it.hasNext());
@@ -57,7 +58,8 @@ public class CSVRecordIteratorTest {
                 new HashMap<Integer, FieldProcessor<?>>();
         processorByIndex.put(1, IntegerFieldDescription.INSTANCE.toFieldProcessor(null));
         Iterator<MetaCSVRecord> it =
-                new CSVRecordIterator(wrappedIterator, new CSVRecordProcessor(processorByIndex));
+                new CSVRecordIterator(wrappedIterator, new CSVRecordProcessor(processorByIndex,
+                        ""));
         Assert.assertTrue(it.hasNext());
         TestHelper.assertMetaEquals(TestHelper.createMetaRecord("foo", "bar", "baz"),
                 it.next());

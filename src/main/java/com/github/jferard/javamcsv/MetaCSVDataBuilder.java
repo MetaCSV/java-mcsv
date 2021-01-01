@@ -41,7 +41,7 @@ public class MetaCSVDataBuilder {
         this.delimiter = ',';
         this.doubleQuote = true;
         this.quoteChar = '"';
-        this.nullValue = null;
+        this.nullValue = "";
         this.bom = false;
     }
 

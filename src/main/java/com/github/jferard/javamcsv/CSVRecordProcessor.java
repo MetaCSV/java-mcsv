@@ -27,12 +27,14 @@ import java.util.Map;
 
 public class CSVRecordProcessor {
     public static CSVRecordProcessor TEXT_PROCESSOR =
-            new CSVRecordProcessor(new HashMap<Integer, FieldProcessor<?>>());
+            new CSVRecordProcessor(new HashMap<Integer, FieldProcessor<?>>(), null);
 
     private Map<Integer, FieldProcessor<?>> processorByIndex;
+    private String nullValue;
 
-    CSVRecordProcessor(Map<Integer, FieldProcessor<?>> processorByIndex) {
+    CSVRecordProcessor(Map<Integer, FieldProcessor<?>> processorByIndex, String nullValue) {
         this.processorByIndex = processorByIndex;
+        this.nullValue = nullValue;
     }
 
     public MetaCSVRecord process(CSVRecord record) throws MetaCSVReadException {
@@ -41,7 +43,11 @@ public class CSVRecordProcessor {
             FieldProcessor<?> processor = processorByIndex.get(i);
             String s = record.get(i);
             if (processor == null) {
-                values.add(s);
+                if (s == null || s.equals(this.nullValue)) {
+                    values.add(null);
+                } else {
+                    values.add(s);
+                }
             } else {
                 values.add(processor.toObject(s));
             }

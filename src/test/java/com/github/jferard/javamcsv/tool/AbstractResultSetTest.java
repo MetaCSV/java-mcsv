@@ -32,6 +32,8 @@ import org.junit.function.ThrowingRunnable;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -75,31 +77,137 @@ public class AbstractResultSetTest {
     }
 
     @Test
-    public void testFeatureNotSupported0Arg()
-            throws NoSuchMethodException, IllegalAccessException, SQLException {
+    public void testGetLabel() throws SQLException {
         rs.next();
-        for (String methodName : new String[]{"getCursorName", "isBeforeFirst",
-                "isAfterLast", "isFirst", "isLast", "beforeFirst", "afterLast", "first", "last",
-                "previous", "rowUpdated", "rowDeleted", "rowInserted"}) {
-            final Method m = ResultSet.class.getMethod(methodName);
-            try {
-                m.invoke(rs);
-                Assert.assertFalse(true);
-            } catch (InvocationTargetException e) {
-                Assert.assertEquals(SQLFeatureNotSupportedException.class,
-                        e.getTargetException().getClass());
-            }
-        }
+        Assert.assertTrue(rs.getBoolean("boolean"));
+        Assert.assertTrue((Boolean) rs.getObject("boolean"));
+        Assert.assertEquals("true", rs.getString("boolean"));
+        Assert.assertEquals(12354, rs.getShort("integer"));
+        Assert.assertEquals(12354, rs.getInt("integer"));
+        Assert.assertEquals(12354, rs.getInt("integer"));
+        Assert.assertEquals(12354L, rs.getLong("integer"));
+        Assert.assertEquals(12354L, rs.getObject("integer"));
+    }
+
+    @Test(expected = SQLException.class)
+    public void testGetByteOverflow() throws SQLException {
+        rs.next();
+        rs.getByte("integer");
     }
 
     @Test
-    public void testFeatureNotSupported1Arg()
+    public void testFeatureNotSupported0Arg()
             throws NoSuchMethodException, IllegalAccessException, SQLException {
-        rs.next();
-        for (String methodName : new String[]{"getUnicodeStream", "absolute", "relative", "updateNull"}) {
-            final Method m = ResultSet.class.getMethod(methodName, int.class);
+        Class<?>[] parameterTypes = {};
+        Object[] args = {};
+        String[] methodNames = {"getCursorName", "isBeforeFirst",
+                "isAfterLast", "isFirst", "isLast", "beforeFirst", "afterLast", "first", "last",
+                "previous", "rowUpdated", "rowDeleted", "rowInserted", "insertRow", "updateRow",
+                "deleteRow", "refreshRow", "cancelRowUpdates", "moveToInsertRow",
+                "moveToCurrentRow"};
+        testFeatureNotSupported(methodNames, parameterTypes, args);
+    }
+
+    @Test
+    public void testFeatureNotSupported1ArgInt()
+            throws NoSuchMethodException, IllegalAccessException, SQLException {
+        Class<?>[] parameterTypes = {int.class};
+        Object[] args = {1};
+        String[] methodNames = {"getUnicodeStream", "absolute", "relative",
+                "updateNull", "getRef", "getBlob", "getClob", "getArray", "getURL", "getRowId",
+                "getNClob", "getSQLXML", "getNString", "getNCharacterStream"};
+        testFeatureNotSupported(methodNames, parameterTypes, args);
+    }
+
+    @Test
+    public void testFeatureNotSupported1ArgString()
+            throws NoSuchMethodException, IllegalAccessException, SQLException {
+        Class<?>[] parameterTypes = {String.class};
+        Object[] args = {"boolean"};
+        String[] methodNames =
+                {"getUnicodeStream", "updateNull", "getRef", "getBlob", "getClob", "getArray",
+                        "getURL", "getRowId", "getNClob", "getSQLXML", "getNString",
+                        "getNCharacterStream"};
+        testFeatureNotSupported(methodNames, parameterTypes, args);
+    }
+
+    @Test
+    public void testFeatureNotSupported1ArgLabel()
+            throws NoSuchMethodException, IllegalAccessException, SQLException {
+        Class<?>[] parameterTypes = {String.class};
+        Object[] args = {"boolean"};
+        String[] methodNames = {"getUnicodeStream",
+                "updateNull", "getRef", "getBlob", "getClob", "getArray", "getURL",
+                "getNClob", "getSQLXML", "getNString", "getNCharacterStream"};
+        testFeatureNotSupported(methodNames, parameterTypes, args);
+    }
+
+    @Test
+    public void testFeatureNotSupported2ArgsIntReader()
+            throws NoSuchMethodException, IllegalAccessException, SQLException {
+        Class<?>[] parameterTypes = {int.class, Reader.class};
+        Object[] args = {1, new StringReader("")};
+        String[] methodNames =
+                {"updateCharacterStream", "updateClob", "updateNClob", "updateNCharacterStream"};
+        testFeatureNotSupported(methodNames, parameterTypes, args);
+    }
+
+    @Test
+    public void testFeatureNotSupported2ArgsIntInputStream()
+            throws NoSuchMethodException, IllegalAccessException, SQLException {
+        Class<?>[] parameterTypes = {int.class, InputStream.class};
+        Object[] args = {1, new ByteArrayInputStream(new byte[]{})};
+        String[] methodNames =
+                {"updateAsciiStream", "updateBinaryStream", "updateBlob"};
+        testFeatureNotSupported(methodNames, parameterTypes, args);
+    }
+
+    @Test
+    public void testFeatureNotSupported3ArgsIntReaderInt()
+            throws NoSuchMethodException, IllegalAccessException, SQLException {
+        Class<?>[] parameterTypes = {int.class, Reader.class, int.class};
+        Object[] args = {1, new StringReader(""), 0};
+        String[] methodNames = {"updateCharacterStream"};
+        testFeatureNotSupported(methodNames, parameterTypes, args);
+    }
+
+    @Test
+    public void testFeatureNotSupported3ArgsIntReaderLong()
+            throws NoSuchMethodException, IllegalAccessException, SQLException {
+        Class<?>[] parameterTypes = {int.class, Reader.class, long.class};
+        Object[] args = {1, new StringReader(""), 0L};
+        String[] methodNames =
+                {"updateNClob", "updateClob", "updateNCharacterStream", "updateCharacterStream"};
+        testFeatureNotSupported(methodNames, parameterTypes, args);
+    }
+
+    @Test
+    public void testFeatureNotSupported2ArgsIntInputStreamLong()
+            throws NoSuchMethodException, IllegalAccessException, SQLException {
+        Class<?>[] parameterTypes = {int.class, InputStream.class, long.class};
+        Object[] args = {1, new ByteArrayInputStream(new byte[]{}), 0L};
+        String[] methodNames =
+                {"updateAsciiStream", "updateBinaryStream", "updateBlob"};
+        testFeatureNotSupported(methodNames, parameterTypes, args);
+    }
+
+    @Test
+    public void testFeatureNotSupported2ArgsStringInputStreamLong()
+            throws NoSuchMethodException, IllegalAccessException, SQLException {
+        Class<?>[] parameterTypes = {String.class, InputStream.class, long.class};
+        Object[] args = {"boolean", new ByteArrayInputStream(new byte[]{}), 0L};
+        String[] methodNames =
+                {"updateAsciiStream", "updateBinaryStream", "updateBlob"};
+        testFeatureNotSupported(methodNames, parameterTypes, args);
+    }
+
+    public void testFeatureNotSupported(String[] methodNames, Class<?>[] parameterTypes,
+                                        Object[] args)
+            throws NoSuchMethodException, IllegalAccessException {
+        for (String methodName : methodNames) {
+            final Method m = ResultSet.class.getMethod(methodName, parameterTypes);
             try {
-                m.invoke(rs, 1);
+                m.invoke(rs, args);
                 Assert.assertFalse(true);
             } catch (InvocationTargetException e) {
                 Assert.assertEquals(SQLFeatureNotSupportedException.class,
@@ -169,7 +277,7 @@ public class AbstractResultSetTest {
         Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
             @Override
             public void run() throws Throwable {
-                rs.updateBytes(1, new byte[] {});
+                rs.updateBytes(1, new byte[]{});
             }
         });
         Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
@@ -193,37 +301,13 @@ public class AbstractResultSetTest {
         Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
             @Override
             public void run() throws Throwable {
-                rs.updateAsciiStream(1, new ByteArrayInputStream(new byte[]{}));
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
                 rs.updateAsciiStream(1, new ByteArrayInputStream(new byte[]{}), 10);
             }
         });
         Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
             @Override
             public void run() throws Throwable {
-                rs.updateBinaryStream(1, new ByteArrayInputStream(new byte[]{}));
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
                 rs.updateBinaryStream(1, new ByteArrayInputStream(new byte[]{}), 10);
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateCharacterStream(1, new StringReader(""));
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateCharacterStream(1, new StringReader(""), 10);
             }
         });
     }
@@ -290,7 +374,7 @@ public class AbstractResultSetTest {
         Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
             @Override
             public void run() throws Throwable {
-                rs.updateBytes("boolean", new byte[] {});
+                rs.updateBytes("boolean", new byte[]{});
             }
         });
         Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
