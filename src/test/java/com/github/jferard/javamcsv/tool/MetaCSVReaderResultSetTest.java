@@ -32,6 +32,7 @@ import org.junit.function.ThrowingRunnable;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -107,6 +108,42 @@ public class MetaCSVReaderResultSetTest {
     }
 
     @Test
+    public void testBigDecimal() throws SQLException {
+        Assert.assertTrue(rs.next());
+        Assert.assertEquals(BigDecimal.ZERO, rs.getBigDecimal(4));
+        Assert.assertTrue(rs.wasNull());
+        Assert.assertEquals(new BigDecimal(15L), rs.getBigDecimal(2));
+    }
+
+    @Test
+    public void testGetConstants() throws SQLException {
+        rs.next();
+        Assert.assertEquals(ResultSet.FETCH_FORWARD, rs.getFetchDirection());
+        Assert.assertEquals(0, rs.getFetchSize());
+        Assert.assertEquals(ResultSet.TYPE_FORWARD_ONLY, rs.getType());
+        Assert.assertEquals(ResultSet.CONCUR_READ_ONLY, rs.getConcurrency());
+        Assert.assertEquals(ResultSet.HOLD_CURSORS_OVER_COMMIT, rs.getHoldability());
+    }
+
+    @Test
+    public void testGetRow() throws SQLException {
+        rs.next();
+        Assert.assertEquals(1, rs.getRow());
+    }
+
+    @Test
+    public void testSetConstants() throws SQLException {
+        rs.next();
+        rs.setFetchSize(10);
+        Assert.assertThrows(SQLException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.setFetchDirection(ResultSet.FETCH_REVERSE);
+            }
+        });
+    }
+
+    @Test
     public void testInteger2()
             throws SQLException, IOException, MetaCSVReadException, MetaCSVDataException,
             MetaCSVParseException {
@@ -138,6 +175,79 @@ public class MetaCSVReaderResultSetTest {
         Assert.assertTrue(rs.wasNull());
         Assert.assertEquals(0L, rs.getLong(2));
         Assert.assertTrue(rs.wasNull());
+    }
+
+    @Test
+    public void testString() throws SQLException {
+        Assert.assertTrue(rs.next());
+        Assert.assertEquals("true", rs.getString(1));
+        Assert.assertFalse(rs.wasNull());
+        Assert.assertArrayEquals(new byte[]{'t', 'r', 'u', 'e'}, rs.getBytes(1));
+        Assert.assertFalse(rs.wasNull());
+        Assert.assertNull(rs.getString(4));
+        Assert.assertTrue(rs.wasNull());
+        Assert.assertNull(rs.getBytes(4));
+        Assert.assertTrue(rs.wasNull());
+    }
+
+    @Test
+    public void testStream() throws SQLException, IOException {
+        rs.next();
+        InputStream stream = rs.getAsciiStream(1);
+        byte[] buf = getBytes(stream, 4);
+        Assert.assertArrayEquals(new byte[]{'t', 'r', 'u', 'e'}, buf);
+        Assert.assertFalse(rs.wasNull());
+
+        InputStream stream2 = rs.getBinaryStream(1);
+        byte[] buf2 = getBytes(stream2, 4);
+        Assert.assertArrayEquals(new byte[]{'t', 'r', 'u', 'e'}, buf2);
+        Assert.assertFalse(rs.wasNull());
+    }
+
+    @Test
+    public void testNullStream() throws SQLException, IOException {
+        rs.next();
+        Assert.assertNull(rs.getAsciiStream(4));
+        Assert.assertNull(rs.getBinaryStream(4));
+    }
+
+    @Test
+    public void testDateAndTime() throws SQLException {
+        rs.next();
+        Assert.assertEquals(c.getTime(), rs.getDate(3));
+        Assert.assertEquals(c.getTime(), rs.getTime(3));
+        Assert.assertEquals(c.getTime(), rs.getTimestamp(3));
+    }
+
+    @Test
+    public void testFindColumn() throws SQLException {
+        rs.next();
+        Assert.assertThrows(SQLException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.findColumn("foo");
+            }
+        });
+    }
+
+    public byte[] getBytes(InputStream stream, int n) throws IOException {
+        byte[] buf = new byte[n];
+        int cs = 0;
+        while (cs < n) {
+            cs += stream.read(buf, cs, n-cs);
+        }
+        return buf;
+    }
+
+    @Test
+    public void testFloat() throws SQLException {
+        Assert.assertTrue(rs.next());
+        Assert.assertEquals(0, rs.getFloat(4), 0.01);
+        Assert.assertTrue(rs.wasNull());
+        Assert.assertEquals(12354L, rs.getFloat(6), 0.01);
+        Assert.assertFalse(rs.wasNull());
+        Assert.assertEquals(15.0, rs.getFloat(2), 0.01);
+        Assert.assertFalse(rs.wasNull());
     }
 
     @Test

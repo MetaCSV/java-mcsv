@@ -194,8 +194,8 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
             return 0;
         }
         this.wasNull = false;
-        if (o instanceof Integer) {
-            return (Integer) o;
+        if (o instanceof Long) {
+            return (Long) o;
         } else if (o instanceof Double) {
             return (Double) o;
         } else if (o instanceof BigDecimal) {
@@ -213,7 +213,11 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
 
     @Override
     public byte[] getBytes(int columnIndex) throws SQLException {
-        return this.cur.getAny(columnIndex-1).toString().getBytes(Util.UTF_8_CHARSET);
+        String s = this.getString(columnIndex);
+        if (s == null) {
+            return null;
+        }
+        return s.getBytes(Util.UTF_8_CHARSET);
     }
 
     @Override
@@ -252,8 +256,11 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
     @Override
     public InputStream getAsciiStream(int columnIndex) throws SQLException {
         try {
-            return new ByteArrayInputStream(
-                    this.getString(columnIndex).getBytes(Util.ASCII_CHARSET));
+            String s = this.getString(columnIndex);
+            if (s == null) {
+                return null;
+            }
+            return new ByteArrayInputStream(s.getBytes(Util.ASCII_CHARSET));
         } catch (Exception e) {
             throw new SQLException(e);
         }
@@ -262,8 +269,12 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
     @Override
     public InputStream getBinaryStream(int columnIndex) throws SQLException {
         try {
+            String s = this.getString(columnIndex);
+            if (s == null) {
+                return null;
+            }
             return new ByteArrayInputStream(
-                    this.getString(columnIndex).getBytes(Util.UTF_8_CHARSET));
+                    s.getBytes(Util.UTF_8_CHARSET));
         } catch (Exception e) {
             throw new SQLException(e);
         }
@@ -310,7 +321,7 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
             return BigDecimal.ZERO;
         } else {
             this.wasNull = false;
-            if (o instanceof Integer || o instanceof Double) {
+            if (o instanceof Long || o instanceof Double) {
                 new BigDecimal(o.toString());
             } else if (o instanceof BigDecimal) {
                 return (BigDecimal) o;

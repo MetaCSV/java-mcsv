@@ -30,6 +30,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.function.ThrowingRunnable;
 
+import javax.sql.rowset.serial.SerialArray;
+import javax.sql.rowset.serial.SerialBlob;
+import javax.sql.rowset.serial.SerialClob;
+import javax.sql.rowset.serial.SerialRef;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,6 +43,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.sql.NClob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
@@ -46,6 +51,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Locale;
 
 public class AbstractResultSetTest {
@@ -310,6 +316,67 @@ public class AbstractResultSetTest {
                 rs.updateBinaryStream(1, new ByteArrayInputStream(new byte[]{}), 10);
             }
         });
+        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.updateObject(1, new Object());
+            }
+        });
+        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.updateObject(1, new Object(), 10);
+            }
+        });
+        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.updateRef(1, null);
+
+            }
+        });
+        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.updateBlob(1, new SerialBlob(new byte[]{}));
+            }
+        });
+        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.updateClob(1, new SerialClob(new char[]{}));
+            }
+        });
+        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.updateArray(1, null);
+            }
+        });
+        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.updateRowId(1, null);
+            }
+        });
+        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.updateNString(1, "");
+            }
+        });
+        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.updateNClob(1, (NClob) null);
+            }
+        });
+        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.updateSQLXML(1, null);
+            }
+        });
     }
 
     @Test
@@ -429,6 +496,90 @@ public class AbstractResultSetTest {
             @Override
             public void run() throws Throwable {
                 rs.updateCharacterStream("boolean", new StringReader(""), 10);
+            }
+        });
+        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.updateObject("boolean", new Object());
+            }
+        });
+        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.updateObject("boolean", new Object(), 10);
+            }
+        });
+        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.updateBlob("boolean", new SerialBlob(new byte[]{}));
+
+            }
+        });
+        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.updateClob("boolean", new SerialClob(new char[]{}));
+            }
+        });
+        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.updateArray("boolean", null);
+            }
+        });
+        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.updateRowId("boolean", null);
+            }
+        });
+        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.updateNString("boolean", "");
+            }
+        });
+        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.updateNClob("boolean", (NClob) null);
+            }
+        });
+        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.updateSQLXML("boolean", null);
+            }
+        });
+    }
+
+    @Test
+    public void testOther() throws SQLException {
+        rs.next();
+        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.getBigDecimal(1, 1);
+            }
+        });
+        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.getBigDecimal("boolean", 1);
+            }
+        });
+        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.getObject(1, new HashMap<String, Class<?>>());
+            }
+        });
+        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.getObject("boolean", new HashMap<String, Class<?>>());
             }
         });
     }

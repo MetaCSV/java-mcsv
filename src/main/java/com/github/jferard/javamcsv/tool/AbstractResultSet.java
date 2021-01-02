@@ -99,7 +99,7 @@ public abstract class AbstractResultSet implements ResultSet {
 
     @Override
     public BigDecimal getBigDecimal(String columnLabel, int scale) throws SQLException {
-        return this.getBigDecimal(this.findColumn(columnLabel));
+        return this.getBigDecimal(this.findColumn(columnLabel), scale);
     }
 
     @Override
