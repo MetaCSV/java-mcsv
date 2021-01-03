@@ -26,7 +26,7 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 
-public class DecimalPercentageFieldProcessorTest {
+public class PercentageDecimalFieldProcessorTest {
     private FieldProcessor<BigDecimal> processorPre;
     private FieldProcessor<BigDecimal> processorPost;
 

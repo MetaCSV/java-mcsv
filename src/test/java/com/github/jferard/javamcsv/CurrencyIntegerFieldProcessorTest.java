@@ -24,17 +24,17 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class FloatPercentageFieldProcessorTest {
-    private FieldProcessor<Double> processorPre;
-    private FieldProcessor<Double> processorPost;
+public class CurrencyIntegerFieldProcessorTest {
+    private FieldProcessor<Long> processorPre;
+    private FieldProcessor<Long> processorPost;
 
     @Before
     public void setUp() {
-        processorPre = new PercentageFloatFieldDescription(true, "%",
-                new FloatFieldDescription(null, ".")
+        processorPre = new CurrencyIntegerFieldDescription(true, "$",
+                new IntegerFieldDescription(null)
         ).toFieldProcessor("NULL");
-        processorPost = new PercentageFloatFieldDescription(false, "%",
-                new FloatFieldDescription(null, ",")
+        processorPost = new CurrencyIntegerFieldDescription(false, "€",
+                new IntegerFieldDescription(null)
         ).toFieldProcessor("NULL");
     }
 
@@ -46,22 +46,22 @@ public class FloatPercentageFieldProcessorTest {
 
     @Test(expected = MetaCSVReadException.class)
     public void testWrongPreToObject() throws MetaCSVReadException {
-        Assert.assertNull(processorPre.toObject("10.0"));
+        Assert.assertNull(processorPre.toObject("€10.0"));
     }
 
     @Test
     public void testRightPreToObject() throws MetaCSVReadException {
-        Assert.assertEquals(0.1, processorPre.toObject("%10.0"), 0.01);
+        Assert.assertEquals(10, (long) processorPre.toObject("$10"));
     }
 
     @Test(expected = MetaCSVReadException.class)
     public void testWrongPostToObject() throws MetaCSVReadException {
-        Assert.assertNull(processorPost.toObject("%10,0"));
+        Assert.assertNull(processorPost.toObject("10$"));
     }
 
     @Test
     public void testRightPostToObject() throws MetaCSVReadException {
-        Assert.assertEquals(0.1, processorPost.toObject("10,0 %"), 0.01);
+        Assert.assertEquals(10, (long) processorPost.toObject("10 €"));
     }
 
     @Test
@@ -71,11 +71,18 @@ public class FloatPercentageFieldProcessorTest {
 
     @Test
     public void testPreToString() {
-        Assert.assertEquals("%1720", processorPre.toString(17.2));
+        Assert.assertEquals("$2560", processorPre.toString(2560L));
     }
 
     @Test
     public void testPostToString() {
-        Assert.assertEquals("1720%", processorPost.toString(17.2));
+        Assert.assertEquals("2560€", processorPost.toString(2560L));
+    }
+
+    @Test
+    public void testIntegerToString() {
+        FieldProcessor<Long> processor = new CurrencyIntegerFieldDescription(false, "€",
+                IntegerFieldDescription.INSTANCE).toFieldProcessor("NULL");
+        Assert.assertEquals("17€", processor.toString(17L));
     }
 }

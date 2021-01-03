@@ -129,6 +129,8 @@ public class MetaCSVReaderResultSetTest {
     public void testGetRow() throws SQLException {
         rs.next();
         Assert.assertEquals(1, rs.getRow());
+        rs.next();
+        Assert.assertEquals(2, rs.getRow());
     }
 
     @Test
@@ -344,4 +346,19 @@ public class MetaCSVReaderResultSetTest {
         });
     }
 
+    @Test
+    public void testUnwrap() throws SQLException {
+        rs.unwrap(MetaCSVReaderResultSet.class);
+        rs.isWrapperFor(MetaCSVReaderResultSet.class);
+    }
+
+    @Test(expected = SQLException.class)
+    public void testWrongUnwrap() throws SQLException {
+        rs.unwrap(String.class);
+    }
+
+    @Test
+    public void testWrongWrapperFor() throws SQLException {
+        Assert.assertFalse(rs.isWrapperFor(String.class));
+    }
 }

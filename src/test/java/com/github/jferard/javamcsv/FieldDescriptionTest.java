@@ -65,7 +65,7 @@ public class FieldDescriptionTest {
     }
 
     @Test
-    public void testDecimalCurrency() throws IOException {
+    public void testCurrencyDecimal() throws IOException {
         FieldDescription<BigDecimal> numberDescription = new DecimalFieldDescription("", ".");
         Assert.assertEquals("currency/pre/$/decimal//.", TestHelper.render(
                 new CurrencyDecimalFieldDescription(true, "$", numberDescription)));
@@ -76,14 +76,17 @@ public class FieldDescriptionTest {
     }
 
     @Test
-    public void testIntegerCurrency() throws IOException {
+    public void testCurrencyInteger() throws IOException {
         FieldDescription<Long> numberDescription = new IntegerFieldDescription(null);
-        Assert.assertEquals("currency/pre/$/integer", TestHelper.render(
-                new CurrencyIntegerFieldDescription(true, "$", numberDescription)));
+        CurrencyIntegerFieldDescription instance =
+                new CurrencyIntegerFieldDescription(true, "$", numberDescription);
+        Assert.assertEquals("currency/pre/$/integer", TestHelper.render(                instance));
         Assert.assertEquals("currency/post/€/integer", TestHelper.render(
                 new CurrencyIntegerFieldDescription(false, "€", numberDescription)));
-        Assert.assertEquals("CurrencyFieldDescription(false, €, IntegerFieldDescription(null))",
-                new CurrencyIntegerFieldDescription(false, "€", numberDescription).toString());
+        Assert.assertEquals("CurrencyFieldDescription(true, $, IntegerFieldDescription(null))",
+                instance.toString());
+        Assert.assertEquals(DataType.CURRENCY_INTEGER, instance.getDataType());
+        Assert.assertEquals(Long.class, instance.getJavaType());
     }
 
     @Test
@@ -110,18 +113,23 @@ public class FieldDescriptionTest {
     }
 
     @Test
-    public void testDecimalPercentage() throws IOException {
+    public void testPercentageDecimal() throws IOException {
         FieldDescription<BigDecimal> numberDescription = new DecimalFieldDescription("", ".");
+        PercentageDecimalFieldDescription instance =
+                new PercentageDecimalFieldDescription(false, "%", numberDescription);
+
         Assert.assertEquals("percentage/pre/%/decimal//.", TestHelper.render(
                 new PercentageDecimalFieldDescription(true, "%", numberDescription)));
         Assert.assertEquals("percentage/post/%/decimal//.", TestHelper.render(
-                new PercentageDecimalFieldDescription(false, "%", numberDescription)));
+                instance));
         Assert.assertEquals("PercentageFieldDescription(false, %, DecimalFieldDescription(, .))",
-                new PercentageDecimalFieldDescription(false, "%", numberDescription).toString());
+                instance.toString());
+        Assert.assertEquals(DataType.PERCENTAGE_DECIMAL, instance.getDataType());
+        Assert.assertEquals(BigDecimal.class, instance.getJavaType());
     }
 
     @Test
-    public void testFloatPercentage() throws IOException {
+    public void testPercentageFloat() throws IOException {
         FieldDescription<Double> numberDescription = new FloatFieldDescription("", ".");
         Assert.assertEquals("percentage/pre/%/float//.", TestHelper.render(
                 new PercentageFloatFieldDescription(true, "%", numberDescription)));
@@ -133,17 +141,22 @@ public class FieldDescriptionTest {
 
     @Test
     public void testText() throws IOException {
-        Assert.assertEquals("text", TestHelper.render(TextFieldDescription.INSTANCE));
-        Assert.assertEquals("TextFieldDescription()", TextFieldDescription.INSTANCE.toString());
+        FieldDescription<String> instance = TextFieldDescription.INSTANCE;
+        Assert.assertEquals("text", TestHelper.render(instance));
+        Assert.assertEquals("TextFieldDescription()", instance.toString());
+        Assert.assertEquals(DataType.TEXT, instance.getDataType());
+        Assert.assertEquals(String.class, instance.getJavaType());
     }
 
     @Test
     public void testAny() throws IOException {
-        Assert.assertEquals("any/a/b\\/c/d\\\\e", TestHelper.render(
-                new AnyFieldDescription(Arrays.<String>asList("a", "b/c", "d\\e"))));
-        Assert.assertEquals("any", TestHelper.render(
-                new AnyFieldDescription(Collections.<String>emptyList())));
-        Assert.assertEquals("AnyFieldDescription([a, b/c, d\\e])",
-                new AnyFieldDescription(Arrays.<String>asList("a", "b/c", "d\\e")).toString());
+        AnyFieldDescription instance =
+                new AnyFieldDescription(Arrays.<String>asList("a", "b/c", "d\\e"));
+        Assert.assertEquals("any/a/b\\/c/d\\\\e", TestHelper.render(instance));
+        Assert.assertEquals("any",
+                TestHelper.render(new AnyFieldDescription(Collections.<String>emptyList())));
+        Assert.assertEquals("AnyFieldDescription([a, b/c, d\\e])", instance.toString());
+        Assert.assertEquals(DataType.ANY, instance.getDataType());
+        Assert.assertEquals(Object.class, instance.getJavaType());
     }
 }

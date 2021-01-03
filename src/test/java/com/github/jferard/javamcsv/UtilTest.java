@@ -19,7 +19,7 @@
  */
 
 package com.github.jferard.javamcsv;
-import com.github.jferard.javamcsv.Util;
+
 import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Test;
@@ -61,5 +61,12 @@ public class UtilTest extends TestCase {
         Assert.assertEquals(new File("/a.mcsv"), Util.withExtension(new File("/a"), ".mcsv"));
         Assert.assertEquals(new File("/.mcsv"), Util.withExtension(new File("/.csv"), ".mcsv"));
         Assert.assertEquals(new File("/a.mcsv"), Util.withExtension(new File("/a.csv"), ".mcsv"));
+    }
+
+    @Test
+    public void testJoin() {
+        Assert.assertEquals("", Util.join(new String[]{}, ","));
+        Assert.assertEquals("foo", Util.join(new String[]{"foo"}, ","));
+        Assert.assertEquals("foo,bar,baz", Util.join(new String[]{"foo", "bar", "baz"}, ","));
     }
 }
