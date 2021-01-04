@@ -33,7 +33,7 @@ import java.util.Locale;
 public class FieldDescriptionTest {
     @Test
     public void testBoolean() throws IOException {
-        Assert.assertEquals("boolean/T/", TestHelper.render(new BooleanFieldDescription("T", "")));
+        Assert.assertEquals("boolean/T", TestHelper.render(new BooleanFieldDescription("T", "")));
         Assert.assertEquals("boolean/T/F",
                 TestHelper.render(new BooleanFieldDescription("T", "F")));
         Assert.assertEquals("BooleanFieldDescription(T, F)",

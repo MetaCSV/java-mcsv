@@ -32,7 +32,7 @@ public class BooleanFieldDescription implements FieldDescription<Boolean> {
     @Override
     public void render(Appendable out) throws IOException {
         out.append("boolean/").append(this.trueWord);
-        if (this.falseWord != null) {
+        if (!this.falseWord.isEmpty()) {
             out.append('/').append(this.falseWord);
         }
     }

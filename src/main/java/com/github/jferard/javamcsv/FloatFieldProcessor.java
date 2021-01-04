@@ -41,29 +41,17 @@ public class FloatFieldProcessor implements FieldProcessor<Double> {
             return null;
         }
         try {
-            String newText = Util.replaceChar(text, thousandsSeparator, "");
-            newText = Util.replaceChar(newText, decimalSeparator, ".");
-            return Double.parseDouble(newText);
+            return Util.parseDouble(text, thousandsSeparator, decimalSeparator);
         } catch (NumberFormatException e) {
             throw new MetaCSVReadException(e);
         }
     }
 
     @Override
-    public String toString(Double f) {
-        if (f == null) {
+    public String toString(Double d) {
+        if (d == null) {
             return this.nullValue;
         }
-        DecimalFormat formatter = new DecimalFormat();
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-        if (this.thousandsSeparator == null || this.thousandsSeparator.isEmpty()) {
-            formatter.setGroupingUsed(false);
-        } else {
-            symbols.setGroupingSeparator(this.thousandsSeparator.charAt(0));
-        }
-        symbols.setDecimalSeparator(decimalSeparator.charAt(0));
-        formatter.setDecimalFormatSymbols(symbols);
-        formatter.setMaximumFractionDigits(100);
-        return formatter.format(f);
+        return Util.formatDouble(d, this.thousandsSeparator, decimalSeparator);
     }
 }

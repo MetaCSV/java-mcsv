@@ -26,6 +26,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Arrays;
 
 public class UtilTest extends TestCase {
@@ -68,5 +69,110 @@ public class UtilTest extends TestCase {
         Assert.assertEquals("", Util.join(new String[]{}, ","));
         Assert.assertEquals("foo", Util.join(new String[]{"foo"}, ","));
         Assert.assertEquals("foo,bar,baz", Util.join(new String[]{"foo", "bar", "baz"}, ","));
+    }
+
+    @Test
+    public void testFormatLong() {
+        Assert.assertEquals("123", Util.formatLong(123L, ""));
+        Assert.assertEquals("12345", Util.formatLong(12345L, ""));
+        Assert.assertEquals("123456", Util.formatLong(123456L, null));
+        Assert.assertEquals("123", Util.formatLong(123L, "~~"));
+        Assert.assertEquals("12~~345", Util.formatLong(12345L, "~~"));
+        Assert.assertEquals("123~~456", Util.formatLong(123456L, "~~"));
+        Assert.assertEquals("0", Util.formatLong(0, "<>"));
+    }
+
+    @Test
+    public void testFormatLongNeg() {
+        Assert.assertEquals("-12~~345", Util.formatLong(-12345L, "~~"));
+        Assert.assertEquals("-123~~456", Util.formatLong(-123456L, "~~"));
+    }
+
+    @Test
+    public void testParseLong() {
+        Assert.assertEquals(123456L, Util.parseLong("123456", null));
+        Assert.assertEquals(12345L, Util.parseLong("12345", ""));
+        Assert.assertEquals(123456L, Util.parseLong("123~~456", "~~"));
+        Assert.assertEquals(12345L, Util.parseLong("12~~345", "~~"));
+        Assert.assertEquals(123L, Util.parseLong("123", "~~"));
+        Assert.assertEquals(0L, Util.parseLong("0", "~~"));
+    }
+
+    @Test
+    public void testParseLongNeg() {
+        Assert.assertEquals(-12345L, Util.parseLong("-12~~345", "~~"));
+        Assert.assertEquals(-123456L, Util.parseLong("-123~~456", "~~"));
+    }
+
+    @Test
+    public void testFormatDouble() {
+        Assert.assertEquals("123.0", Util.formatDouble(123, null, "."));
+        Assert.assertEquals("1234.56", Util.formatDouble(1234.56, null, "."));
+        Assert.assertEquals("1234.5", Util.formatDouble(1234.5, "", "."));
+        Assert.assertEquals("123.0", Util.formatDouble(123, "~~", "."));
+        Assert.assertEquals("12~~345.6", Util.formatDouble(12345.6, "~~", "."));
+        Assert.assertEquals("12~~345.0", Util.formatDouble(12345.0, "~~", "."));
+        Assert.assertEquals("0.0", Util.formatDouble(0, "<>", "."));
+    }
+
+    @Test
+    public void testFormatDoubleNeg() {
+        Assert.assertEquals("-1~~234,56", Util.formatDouble(-1234.56, "~~", ","));
+    }
+
+    @Test
+    public void testParseDouble() {
+        Assert.assertEquals(123, Util.parseDouble("123.0", null, "."), 0.001);
+        Assert.assertEquals(1234.56, Util.parseDouble("1234.56", null, "."), 0.001);
+        Assert.assertEquals(1234.5, Util.parseDouble("1234.5", "", "."), 0.001);
+        Assert.assertEquals(123, Util.parseDouble("123.0", "~~", "."), 0.001);
+        Assert.assertEquals(12345.6, Util.parseDouble("12~~345.6", "~~", "."), 0.001);
+        Assert.assertEquals(12345.0, Util.parseDouble("12~~345.0", "~~", "."), 0.001);
+        Assert.assertEquals(0, Util.parseDouble("0.0", "<>", "."), 0.001);
+    }
+
+    @Test
+    public void testParseDoubleNeg() {
+        Assert.assertEquals(-1234.56, Util.parseDouble("-1~~234,56", "~~", ","), 0.001);
+    }
+
+    @Test
+    public void testFormatBigDecimal() {
+        Assert.assertEquals("123.0", Util.formatBigDecimal(new BigDecimal("123"), null, "."));
+        Assert.assertEquals("123.0", Util.formatBigDecimal(new BigDecimal("123."), null, "."));
+        Assert.assertEquals("123.0", Util.formatBigDecimal(new BigDecimal("123.0"), null, "."));
+        Assert.assertEquals("123.0", Util.formatBigDecimal(new BigDecimal("123.00"), null, "."));
+        Assert.assertEquals("1234.56", Util.formatBigDecimal(new BigDecimal("1234.56"), null, "."));
+        Assert.assertEquals("1234.5", Util.formatBigDecimal(new BigDecimal("1234.5"), "", "."));
+        Assert.assertEquals("123.0", Util.formatBigDecimal(new BigDecimal("123.0"), "~~", "."));
+        Assert.assertEquals("12~~345.6",
+                Util.formatBigDecimal(new BigDecimal("12345.6"), "~~", "."));
+        Assert.assertEquals("12~~345.0",
+                Util.formatBigDecimal(new BigDecimal("12345.0"), "~~", "."));
+        Assert.assertEquals("0.0", Util.formatBigDecimal(new BigDecimal("0.0"), "<>", "."));
+    }
+
+    @Test
+    public void testFormatBigDecimalNeg() {
+        Assert.assertEquals("-1~~234,56", Util.formatDouble(-1234.56, "~~", ","));
+    }
+
+    @Test
+    public void testParseBigDecimal() {
+        Assert.assertEquals(new BigDecimal("123.0"), Util.parseBigDecimal("123.0", null, "."));
+        Assert.assertEquals(new BigDecimal("1234.56"), Util.parseBigDecimal("1234.56", null, "."));
+        Assert.assertEquals(new BigDecimal("1234.5"), Util.parseBigDecimal("1234.5", "", "."));
+        Assert.assertEquals(new BigDecimal("123.0"), Util.parseBigDecimal("123.0", "~~", "."));
+        Assert.assertEquals(new BigDecimal("12345.6"),
+                Util.parseBigDecimal("12~~345.6", "~~", "."));
+        Assert.assertEquals(new BigDecimal("12345.0"),
+                Util.parseBigDecimal("12~~345.0", "~~", "."));
+        Assert.assertEquals(new BigDecimal("0.0"), Util.parseBigDecimal("0.0", "<>", "."));
+    }
+
+    @Test
+    public void testParseBigDecimalNeg() {
+        Assert.assertEquals(new BigDecimal("-1234.56"),
+                Util.parseBigDecimal("-1~~234,56", "~~", ","));
     }
 }

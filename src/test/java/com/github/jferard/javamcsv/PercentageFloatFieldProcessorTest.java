@@ -71,11 +71,11 @@ public class PercentageFloatFieldProcessorTest {
 
     @Test
     public void testPreToString() {
-        Assert.assertEquals("%1720", processorPre.toString(17.2));
+        Assert.assertEquals("%1720.0", processorPre.toString(17.2));
     }
 
     @Test
     public void testPostToString() {
-        Assert.assertEquals("1720%", processorPost.toString(17.2));
+        Assert.assertEquals("1720,0%", processorPost.toString(17.2));
     }
 }

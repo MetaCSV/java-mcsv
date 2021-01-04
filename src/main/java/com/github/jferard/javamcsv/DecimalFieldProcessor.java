@@ -21,8 +21,6 @@
 package com.github.jferard.javamcsv;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 
 public class DecimalFieldProcessor implements FieldProcessor<BigDecimal> {
     private final String thousandsSeparator;
@@ -42,29 +40,17 @@ public class DecimalFieldProcessor implements FieldProcessor<BigDecimal> {
             return null;
         }
         try {
-            String newText = Util.replaceChar(text, thousandsSeparator, "");
-            newText = Util.replaceChar(newText, decimalSeparator, ".");
-            return new BigDecimal(newText);
+            return Util.parseBigDecimal(text, thousandsSeparator, decimalSeparator);
         } catch (NumberFormatException e) {
             throw new MetaCSVReadException(e);
         }
     }
 
     @Override
-    public String toString(BigDecimal f) {
-        if (f == null) {
+    public String toString(BigDecimal bd) {
+        if (bd == null) {
             return this.nullValue;
         }
-        DecimalFormat formatter = new DecimalFormat();
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-        if (this.thousandsSeparator == null || this.thousandsSeparator.isEmpty()) {
-            formatter.setGroupingUsed(false);
-        } else {
-            symbols.setGroupingSeparator(this.thousandsSeparator.charAt(0));
-        }
-        symbols.setDecimalSeparator(decimalSeparator.charAt(0));
-        formatter.setDecimalFormatSymbols(symbols);
-        formatter.setMaximumFractionDigits(100);
-        return formatter.format(f);
+        return Util.formatBigDecimal(bd, this.thousandsSeparator, decimalSeparator);
     }
 }

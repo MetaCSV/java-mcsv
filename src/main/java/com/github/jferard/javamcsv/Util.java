@@ -22,6 +22,7 @@ package com.github.jferard.javamcsv;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -162,5 +163,131 @@ public class Util {
             }
             return sb.toString();
         }
+    }
+
+    public static String formatLong(long n, String thousandsSeparator) {
+        String text = Long.toString(n);
+        if (thousandsSeparator == null || thousandsSeparator.isEmpty()) {
+            return text;
+        }
+        boolean isNegative = n < 0;
+        int len = text.length();
+        StringBuilder ret = new StringBuilder();
+        appendIntegerPart(ret, text, isNegative, len, thousandsSeparator);
+        return ret.toString();
+    }
+
+    public static String formatDouble(double d, String thousandsSeparator,
+                                      String decimalSeparator) {
+        String text = Double.toString(d);
+        boolean isNegative = d < 0;
+        return formatNumber(text, isNegative, thousandsSeparator, decimalSeparator);
+    }
+
+    public static String formatBigDecimal(BigDecimal bd, String thousandsSeparator,
+                                          String decimalSeparator) {
+        String text = bd.toString();
+        if (!text.contains(".")) {
+            text += ".0";
+        } else {
+            int i = text.length() - 1;
+            while (i >= 0 && text.charAt(i) == '0') {
+                i--;
+            }
+            if (text.charAt(i) == '.') {
+                text = text.substring(0, i + 2);
+            } else {
+                text = text.substring(0, i + 1);
+            }
+        }
+        boolean isNegative = bd.signum() == -1;
+        return formatNumber(text, isNegative, thousandsSeparator, decimalSeparator);
+    }
+
+    private static String formatNumber(String text, boolean isNegative, String thousandsSeparator,
+                                       String decimalSeparator) {
+        boolean defaultThousandsSeparator =
+                thousandsSeparator == null || thousandsSeparator.isEmpty();
+        boolean defaultDecimalSeparator = decimalSeparator == null || decimalSeparator.equals(".");
+        if (defaultThousandsSeparator && defaultDecimalSeparator) {
+            return text;
+        }
+        int sepIndex = text.indexOf(".");
+        StringBuilder ret = new StringBuilder();
+        if (defaultThousandsSeparator) {
+            ret.append(text, 0, sepIndex);
+        } else {
+            appendIntegerPart(ret, text, isNegative, sepIndex, thousandsSeparator);
+        }
+        if (defaultDecimalSeparator) {
+            ret.append(text, sepIndex, text.length());
+        } else {
+            ret.append(decimalSeparator);
+            ret.append(text, sepIndex + 1, text.length());
+        }
+        return ret.toString();
+    }
+
+    public static void appendIntegerPart(StringBuilder ret, String text, boolean isNegative,
+                                         int limit, String thousandsSeparator) {
+        int s;
+        int t;
+        if (isNegative) {
+            s = 1;
+            t = ((limit - 1) % 3) + 1;
+            if (t == 1) {
+                t = 4;
+            }
+            ret.append("-");
+        } else {
+            s = 0;
+            t = limit % 3;
+            if (t == 0) {
+                t = 3;
+            }
+        }
+        while (t < limit) {
+            ret.append(text, s, t);
+            ret.append(thousandsSeparator);
+            s = t;
+            t += 3;
+        }
+        ret.append(text, s, t);
+    }
+
+    public static long parseLong(String s, String thousandsSeparator) {
+        String text;
+        if (thousandsSeparator == null || thousandsSeparator.isEmpty()) {
+            text = s;
+        } else {
+            text = Util.replaceChar(s, thousandsSeparator, "");
+        }
+        return Long.parseLong(text);
+    }
+
+    public static double parseDouble(String s, String thousandsSeparator,
+                                     String decimalSeparator) {
+        String text = normalizeText(s, thousandsSeparator, decimalSeparator);
+        return Double.parseDouble(text);
+    }
+
+    private static String normalizeText(String s, String thousandsSeparator,
+                                        String decimalSeparator) {
+        String text;
+        if (thousandsSeparator == null || thousandsSeparator.isEmpty()) {
+            text = s;
+        } else {
+            text = Util.replaceChar(s, thousandsSeparator, "");
+        }
+        if (!(decimalSeparator == null || decimalSeparator.equals("."))) {
+            text = Util.replaceChar(text, decimalSeparator, ".");
+        }
+        return text;
+    }
+
+    public static BigDecimal parseBigDecimal(String s, String thousandsSeparator,
+                                             String decimalSeparator) {
+        String text = normalizeText(s, thousandsSeparator, decimalSeparator);
+        return new BigDecimal(text);
     }
 }

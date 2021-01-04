@@ -73,11 +73,11 @@ public class PercentageDecimalFieldProcessorTest {
 
     @Test
     public void testPreToString() {
-        Assert.assertEquals("%1720", processorPre.toString(new BigDecimal("17.2")));
+        Assert.assertEquals("%1720.0", processorPre.toString(new BigDecimal("17.2")));
     }
 
     @Test
     public void testPostToString() {
-        Assert.assertEquals("1720%", processorPost.toString(new BigDecimal("17.2")));
+        Assert.assertEquals("1720,0%", processorPost.toString(new BigDecimal("17.2")));
     }
 }

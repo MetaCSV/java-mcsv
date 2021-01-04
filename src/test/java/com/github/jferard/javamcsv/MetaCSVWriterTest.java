@@ -70,7 +70,7 @@ public class MetaCSVWriterTest {
         writer.close();
 
         Assert.assertEquals("boolean,currency,date,datetime,float,integer,percentage,text\r\n" +
-                        "T,$15,01/12/2020,NULL,\"10,000.5\",12 354,56.49999999999999%,Foo\r\n" +
+                        "T,$15.0,01/12/2020,NULL,\"10,000.5\",12 354,56.49999999999999%,Foo\r\n" +
                         "F,\"$-1,900.5\",NULL,2020-12-01 09:30:55,-520.8,-1 000,-12.8%,Bar\r\n",
                 new String(out.toByteArray()));
         Assert.assertEquals("domain,key,value\r\n" +
