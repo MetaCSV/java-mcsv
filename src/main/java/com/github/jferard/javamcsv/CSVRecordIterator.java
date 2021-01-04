@@ -18,11 +18,22 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;import org.apache.commons.csv.CSVRecord;
+package com.github.jferard.javamcsv;
+
+import org.apache.commons.csv.CSVRecord;
 
 import java.util.Iterator;
 
 public class CSVRecordIterator implements Iterator<MetaCSVRecord> {
+    public static final FieldProcessor<String> TEXT_PROCESSOR =
+            TextFieldDescription.INSTANCE.toFieldProcessor(null);
+    public static CSVRecordProcessor HEADER_PROCESSOR = new CSVRecordProcessor(
+            new ProcessorProvider() {
+                @Override
+                public FieldProcessor<?> getProcessor(int c) {
+                    return TEXT_PROCESSOR;
+                }
+            });
     private final Iterator<CSVRecord> csvIterator;
     private final CSVRecordProcessor processor;
     private boolean first;
@@ -44,7 +55,7 @@ public class CSVRecordIterator implements Iterator<MetaCSVRecord> {
         try {
             if (this.first) {
                 this.first = false;
-                return CSVRecordProcessor.TEXT_PROCESSOR.process(record);
+                return HEADER_PROCESSOR.process(record);
             }
             return processor.process(record);
         } catch (MetaCSVReadException e) {

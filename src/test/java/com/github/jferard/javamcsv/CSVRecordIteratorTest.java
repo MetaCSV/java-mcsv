@@ -27,22 +27,18 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 public class CSVRecordIteratorTest {
     @Test(expected = RuntimeException.class)
-    public void testReadException() throws IOException {
+    public void testReadException() throws IOException, MetaCSVDataException {
         Iterator<CSVRecord> wrappedIterator =
                 Arrays.asList(TestHelper.createRecord("foo", "bar", "baz"),
                         TestHelper.createRecord("foo value", "bar value", "baz value")).iterator();
-        Map<Integer, FieldProcessor<?>> processorByIndex =
-                new HashMap<Integer, FieldProcessor<?>>();
-        processorByIndex.put(1, IntegerFieldDescription.INSTANCE.toFieldProcessor(null));
+        MetaCSVData metaData = new MetaCSVDataBuilder()
+                .colType(1, IntegerFieldDescription.INSTANCE).nullValue(null).build();
         Iterator<MetaCSVRecord> it =
-                new CSVRecordIterator(wrappedIterator, new CSVRecordProcessor(processorByIndex,
-                        ""));
+                new CSVRecordIterator(wrappedIterator, new CSVRecordProcessor(metaData));
         Assert.assertTrue(it.hasNext());
         TestHelper.assertMetaEquals(TestHelper.createMetaRecord("foo", "bar", "baz"), it.next());
         Assert.assertTrue(it.hasNext());
@@ -50,16 +46,14 @@ public class CSVRecordIteratorTest {
     }
 
     @Test
-    public void testRead() throws IOException {
+    public void testRead() throws IOException, MetaCSVDataException {
         Iterator<CSVRecord> wrappedIterator =
                 Arrays.asList(TestHelper.createRecord("foo", "bar", "baz"),
                         TestHelper.createRecord("foo value", "1", "baz value")).iterator();
-        Map<Integer, FieldProcessor<?>> processorByIndex =
-                new HashMap<Integer, FieldProcessor<?>>();
-        processorByIndex.put(1, IntegerFieldDescription.INSTANCE.toFieldProcessor(null));
+        MetaCSVData metaData = new MetaCSVDataBuilder()
+                .colType(1, IntegerFieldDescription.INSTANCE).nullValue(null).build();
         Iterator<MetaCSVRecord> it =
-                new CSVRecordIterator(wrappedIterator, new CSVRecordProcessor(processorByIndex,
-                        ""));
+                new CSVRecordIterator(wrappedIterator, new CSVRecordProcessor(metaData));
         Assert.assertTrue(it.hasNext());
         TestHelper.assertMetaEquals(TestHelper.createMetaRecord("foo", "bar", "baz"),
                 it.next());
@@ -74,7 +68,7 @@ public class CSVRecordIteratorTest {
         Iterator<CSVRecord> wrappedIterator =
                 Collections.singleton(TestHelper.createRecord("foo", "bar, baz")).iterator();
         Iterator<MetaCSVRecord> it =
-                new CSVRecordIterator(wrappedIterator, CSVRecordProcessor.TEXT_PROCESSOR);
+                new CSVRecordIterator(wrappedIterator, CSVRecordIterator.HEADER_PROCESSOR);
         it.remove();
     }
 }

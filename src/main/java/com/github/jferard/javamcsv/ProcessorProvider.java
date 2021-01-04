@@ -18,29 +18,8 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;import org.apache.commons.csv.CSVFormat;
+package com.github.jferard.javamcsv;
 
-import java.io.IOException;
-import java.io.Reader;
-
-public class MetaCSVReaderFactory {
-
-    private final MetaCSVData data;
-
-    private final Reader reader;
-
-    public MetaCSVReaderFactory(MetaCSVData data, Reader reader) {
-        this.data = data;
-        this.reader = reader;
-    }
-
-    public MetaCSVReader build() throws IOException {
-        CSVFormat format = CSVFormatHelper.getCSVFormat(data);
-        CSVRecordProcessor processor = getProcessor();
-        return new MetaCSVReader(format.parse(reader), processor, this.data.getMetaData());
-    }
-
-    private CSVRecordProcessor getProcessor() {
-        return new CSVRecordProcessor(this.data);
-    }
+public interface ProcessorProvider {
+    FieldProcessor<?> getProcessor(int c);
 }

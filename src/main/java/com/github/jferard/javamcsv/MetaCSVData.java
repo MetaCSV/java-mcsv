@@ -20,14 +20,19 @@
 
 package com.github.jferard.javamcsv;
 
-import com.github.jferard.javamcsv.tool.MetaCSVResultSetMetaData;
-
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class MetaCSVData {
+public class MetaCSVData implements ProcessorProvider {
+    public static MetaCSVData DEFAULT = new MetaCSVData(
+            Util.UTF_8_CHARSET, false, Util.CRLF, ',', true, '\0', '"', false, "",
+            new HashMap<Integer, FieldDescription<?>>());
+
     private final boolean doubleQuote;
     private final char escapeChar;
     private final char quoteChar;
@@ -38,6 +43,8 @@ public class MetaCSVData {
     private char delimiter;
     private boolean utf8BOM;
     private String lineTerminator;
+    private Map<Integer, FieldProcessor<?>> processorByIndex;
+    private TextFieldProcessor textFieldProcessor;
 
     public MetaCSVData(Charset encoding, boolean utf8BOM, String lineTerminator, char delimiter,
                        boolean doubleQuote, char escapeChar, char quoteChar,
@@ -54,6 +61,12 @@ public class MetaCSVData {
         this.skipInitialSpace = skipInitialSpace;
         this.nullValue = nullValue;
         this.descriptionByColIndex = descriptionByColIndex;
+        processorByIndex = new HashMap<Integer, FieldProcessor<?>>();
+        for (Map.Entry<Integer, FieldDescription<?>> entry : this.descriptionByColIndex
+                .entrySet()) {
+            processorByIndex.put(entry.getKey(), entry.getValue().toFieldProcessor(this.nullValue));
+        }
+        textFieldProcessor = new TextFieldProcessor(this.nullValue);
     }
 
     public Charset getEncoding() {
@@ -68,18 +81,18 @@ public class MetaCSVData {
         return this.delimiter;
     }
 
-    public Map<Integer, FieldDescription<?>> getDescriptionByIndex() {
-        return this.descriptionByColIndex;
+    public FieldDescription<?> getDescription(int c) {
+        return this.descriptionByColIndex.get(c);
     }
 
-    public Map<Integer, FieldProcessor<?>> getProcessorByIndex() {
-        Map<Integer, FieldProcessor<?>> processorByIndex =
-                new HashMap<Integer, FieldProcessor<?>>();
-        for (Map.Entry<Integer, FieldDescription<?>> entry : this.descriptionByColIndex
-                .entrySet()) {
-            processorByIndex.put(entry.getKey(), entry.getValue().toFieldProcessor(this.nullValue));
+    @Override
+    public FieldProcessor<?> getProcessor(int c) {
+        FieldProcessor<?> processor = processorByIndex.get(c);
+        if (processor == null) {
+            return this.textFieldProcessor;
+        } else {
+            return processor;
         }
-        return processorByIndex;
     }
 
     @Override
@@ -94,10 +107,6 @@ public class MetaCSVData {
 
     public boolean isUtf8BOM() {
         return utf8BOM;
-    }
-
-    public FieldProcessor<?> getDefaultProcessor() {
-        return new TextFieldProcessor(this.nullValue);
     }
 
     public String getNullValue() {
@@ -122,5 +131,11 @@ public class MetaCSVData {
 
     public MetaCSVMetaData getMetaData() throws IOException {
         return MetaCSVMetaData.create(this.descriptionByColIndex);
+    }
+
+    public List<Integer> getSortedColIndices() {
+        List<Integer> indices = new ArrayList<Integer>(this.descriptionByColIndex.keySet());
+        Collections.sort(indices);
+        return indices;
     }
 }

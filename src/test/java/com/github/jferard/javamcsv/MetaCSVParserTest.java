@@ -161,33 +161,33 @@ public class MetaCSVParserTest {
         );
         MetaCSVData data = MetaCSVParser.create(is).parse();
         Assert.assertEquals("BooleanFieldDescription(T, F)",
-                data.getDescriptionByIndex().get(0).toString());
+                data.getDescription(0).toString());
         Assert.assertEquals("CurrencyFieldDescription(true, $, DecimalFieldDescription(,, .))",
-                data.getDescriptionByIndex().get(1).toString());
+                data.getDescription(1).toString());
         Assert.assertEquals("CurrencyFieldDescription(false, €, IntegerFieldDescription(null))",
-                data.getDescriptionByIndex().get(2).toString());
+                data.getDescription(2).toString());
         Assert.assertEquals("DateFieldDescription(dd/MM/yyyy, null)",
-                data.getDescriptionByIndex().get(3).toString());
+                data.getDescription(3).toString());
         Assert.assertEquals("DateFieldDescription(dd/MM/yyyy, fr_FR)",
-                data.getDescriptionByIndex().get(4).toString());
+                data.getDescription(4).toString());
         Assert.assertEquals("DatetimeDescription(yyyy-MM-dd HH:mm:ss, null)",
-                data.getDescriptionByIndex().get(5).toString());
+                data.getDescription(5).toString());
         Assert.assertEquals("DatetimeDescription(yyyy-MM-dd HH:mm:ss, en_US)",
-                data.getDescriptionByIndex().get(6).toString());
+                data.getDescription(6).toString());
         Assert.assertEquals("FloatFieldDescription(,, .)",
-                data.getDescriptionByIndex().get(7).toString());
+                data.getDescription(7).toString());
         Assert.assertEquals("DecimalFieldDescription(, .)",
-                data.getDescriptionByIndex().get(8).toString());
+                data.getDescription(8).toString());
         Assert.assertEquals("IntegerFieldDescription( )",
-                data.getDescriptionByIndex().get(9).toString());
+                data.getDescription(9).toString());
         Assert.assertEquals("PercentageFieldDescription(false, %, FloatFieldDescription(,, .))",
-                data.getDescriptionByIndex().get(10).toString());
+                data.getDescription(10).toString());
         Assert.assertEquals("PercentageFieldDescription(false, %, DecimalFieldDescription(, .))",
-                data.getDescriptionByIndex().get(11).toString());
+                data.getDescription(11).toString());
         Assert.assertEquals("TextFieldDescription()",
-                data.getDescriptionByIndex().get(12).toString());
+                data.getDescription(12).toString());
         Assert.assertEquals("AnyFieldDescription([foo, bar, baz])",
-                data.getDescriptionByIndex().get(13).toString());
+                data.getDescription(13).toString());
     }
 
     @Test(expected = MetaCSVParseException.class)
@@ -249,7 +249,7 @@ public class MetaCSVParserTest {
                         "data,col/3/type,boolean/X\r\n");
         MetaCSVData data = MetaCSVParser.create(is).parse();
         Assert.assertEquals("BooleanFieldDescription(X, )",
-                data.getDescriptionByIndex().get(3).toString());
+                data.getDescription(3).toString());
     }
 
     @Test(expected = MetaCSVParseException.class)
@@ -275,7 +275,7 @@ public class MetaCSVParserTest {
                         "data,col/2/type,currency/pre/$/integer\r\n");
         MetaCSVData data = MetaCSVParser.create(is).parse();
         Assert.assertEquals("CurrencyFieldDescription(true, $, IntegerFieldDescription(null))",
-                data.getDescriptionByIndex().get(2).toString());
+                data.getDescription(2).toString());
     }
 
     @Test(expected = MetaCSVParseException.class)
@@ -293,7 +293,7 @@ public class MetaCSVParserTest {
                         "data,col/1/type,date/YYYY/fr_FR\r\n");
         MetaCSVData data = MetaCSVParser.create(is).parse();
         Assert.assertEquals("DateFieldDescription(YYYY, fr_FR)",
-                data.getDescriptionByIndex().get(1).toString());
+                data.getDescription(1).toString());
     }
 
     @Test(expected = MetaCSVParseException.class)

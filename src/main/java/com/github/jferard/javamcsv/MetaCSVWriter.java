@@ -29,7 +29,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class MetaCSVWriter implements Closeable {
     public static MetaCSVWriter create(File csvFile, MetaCSVData data) throws IOException {
@@ -62,12 +61,12 @@ public class MetaCSVWriter implements Closeable {
         return new MetaCSVWriter(printer, data);
     }
 
-    private final MetaCSVData data;
+    private final ProcessorProvider provider;
     private final CSVPrinter printer;
 
-    private MetaCSVWriter(CSVPrinter printer, MetaCSVData data) {
+    private MetaCSVWriter(CSVPrinter printer, ProcessorProvider provider) {
         this.printer = printer;
-        this.data = data;
+        this.provider = provider;
     }
 
     public void close() throws IOException {
@@ -80,13 +79,9 @@ public class MetaCSVWriter implements Closeable {
 
     public void writeRow(List<Object> values) throws IOException {
         List<String> formattedValues = new ArrayList<String>(values.size());
-        Map<Integer, FieldProcessor<?>> processorByIndex = data.getProcessorByIndex();
         for (int i = 0; i < values.size(); i++) {
             Object value = values.get(i);
-            FieldProcessor<?> rawProcessor = processorByIndex.get(i);
-            if (rawProcessor == null) {
-                rawProcessor = data.getDefaultProcessor();
-            }
+            FieldProcessor<?> rawProcessor = provider.getProcessor(i);
             FieldProcessor<Object> processor = (FieldProcessor<Object>) rawProcessor;
             String formattedValue = processor.toString(value);
             formattedValues.add(formattedValue);

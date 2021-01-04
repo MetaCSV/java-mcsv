@@ -18,7 +18,9 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;import java.nio.charset.Charset;
+package com.github.jferard.javamcsv;
+
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 

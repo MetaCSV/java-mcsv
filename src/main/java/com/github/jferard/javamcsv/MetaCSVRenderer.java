@@ -93,11 +93,8 @@ public class MetaCSVRenderer {
         if (!(nullValue == null || nullValue.isEmpty())) {
             this.printer.printRecord("data", "null_value", nullValue);
         }
-        Map<Integer, FieldDescription<?>> descriptionByIndex = data.getDescriptionByIndex();
-        List<Integer> indices = new ArrayList<Integer>(descriptionByIndex.keySet());
-        Collections.sort(indices);
-        for (int i : indices) {
-            FieldDescription<?> description = descriptionByIndex.get(i);
+        for (int i : data.getSortedColIndices()) {
+            FieldDescription<?> description = data.getDescription(i);
             if (!(description instanceof TextFieldDescription)) {
                 StringBuilder out = new StringBuilder();
                 description.render(out);
@@ -122,11 +119,8 @@ public class MetaCSVRenderer {
         this.printer.printRecord("csv", "skip_initial_space", data.isSkipInitialSpace());
         // data
         this.printer.printRecord("data", "null_value", data.getNullValue());
-        Map<Integer, FieldDescription<?>> descriptionByIndex = data.getDescriptionByIndex();
-        List<Integer> indices = new ArrayList<Integer>(descriptionByIndex.keySet());
-        Collections.sort(indices);
-        for (int i : indices) {
-            FieldDescription<?> description = descriptionByIndex.get(i);
+        for (int i : data.getSortedColIndices()) {
+            FieldDescription<?> description = data.getDescription(i);
             StringBuilder out = new StringBuilder();
             description.render(out);
             this.printer.printRecord("data", "col/" + i + "/type", out.toString());

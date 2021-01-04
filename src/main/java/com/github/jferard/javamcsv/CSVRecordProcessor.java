@@ -18,39 +18,26 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;import org.apache.commons.csv.CSVRecord;
+package com.github.jferard.javamcsv;
+
+import org.apache.commons.csv.CSVRecord;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class CSVRecordProcessor {
-    public static CSVRecordProcessor TEXT_PROCESSOR =
-            new CSVRecordProcessor(new HashMap<Integer, FieldProcessor<?>>(), null);
+    private final ProcessorProvider provider;
 
-    private Map<Integer, FieldProcessor<?>> processorByIndex;
-    private String nullValue;
-
-    CSVRecordProcessor(Map<Integer, FieldProcessor<?>> processorByIndex, String nullValue) {
-        this.processorByIndex = processorByIndex;
-        this.nullValue = nullValue;
+    CSVRecordProcessor(ProcessorProvider provider) {
+        this.provider = provider;
     }
 
     public MetaCSVRecord process(CSVRecord record) throws MetaCSVReadException {
         List<Object> values = new ArrayList<Object>(record.size());
         for (int i = 0; i < record.size(); i++) {
-            FieldProcessor<?> processor = processorByIndex.get(i);
+            FieldProcessor<?> processor = provider.getProcessor(i);
             String s = record.get(i);
-            if (processor == null) {
-                if (s == null || s.equals(this.nullValue)) {
-                    values.add(null);
-                } else {
-                    values.add(s);
-                }
-            } else {
-                values.add(processor.toObject(s));
-            }
+            values.add(processor.toObject(s));
         }
         return new MetaCSVRecord(record, values);
     }
