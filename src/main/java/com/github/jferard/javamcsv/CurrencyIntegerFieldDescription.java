@@ -23,7 +23,9 @@ package com.github.jferard.javamcsv;
 import java.io.IOException;
 
 public class CurrencyIntegerFieldDescription implements FieldDescription<Long> {
-    private final boolean pre;
+    public static final FieldDescription<?> INSTANCE =
+            new CurrencyIntegerFieldDescription(true, "$", IntegerFieldDescription.INSTANCE);
+        private final boolean pre;
     private final String symbol;
     private final FieldDescription<Long> numberDescription;
     private final String nullValue;

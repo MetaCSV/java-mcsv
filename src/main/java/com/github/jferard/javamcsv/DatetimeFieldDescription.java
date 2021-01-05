@@ -24,6 +24,8 @@ import java.util.Date;
 import java.util.Locale;
 
 public class DatetimeFieldDescription implements FieldDescription<Date> {
+    public static final FieldDescription<?> INSTANCE = DateFieldDescription.create("yyyy-MM-dd'T'HH:mm:ss");
+
     public static FieldDescription<Date> create(String dateFormat) {
         return new DatetimeFieldDescription(new SimpleDateFormat(dateFormat), null);
     }

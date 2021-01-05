@@ -20,7 +20,8 @@
 
 package com.github.jferard.javamcsv.tool;
 
-import com.github.jferard.javamcsv.IntegerFieldDescription;
+import com.github.jferard.javamcsv.DataType;
+import com.github.jferard.javamcsv.FieldDescription;
 import com.github.jferard.javamcsv.MetaCSVData;
 import com.github.jferard.javamcsv.MetaCSVDataBuilder;
 import com.github.jferard.javamcsv.MetaCSVDataException;
@@ -40,32 +41,7 @@ public class Tool {
         return new MetaCSVReaderResultSet(reader);
     }
 
-    public static void writeResultSetMetaData(ResultSetMetaData resultSetMetaData, MetaCSVDataBuilder dataBuilder,
-                                              MetaCSVRenderer renderer)
-            throws SQLException, MetaCSVDataException, IOException {
-        MetaCSVData data0 = dataBuilder.build();
-        int count = resultSetMetaData.getColumnCount();
-        for (int c=0; c<count; c++) {
-            if (data0.getDescription(c) != null) {
-                continue;
-            }
-            int columnType = resultSetMetaData.getColumnType(c + 1);
-            switch (columnType) {
-                default: dataBuilder.colType(c, IntegerFieldDescription.INSTANCE);
-            }
-        }
-        renderer.render(dataBuilder.build());
-    }
-
-    public static void writeResultSet(ResultSet resultSet, MetaCSVWriter writer)
-            throws SQLException, IOException {
-        ResultSetMetaData metaData = resultSet.getMetaData();
-        int count = metaData.getColumnCount();
-        List<String> header = new ArrayList<String>(count);
-        for (int i =0; i<count; i++) {
-            header.add(metaData.getColumnName(i));
-        }
-        writer.writeHeader(header);
-        writer.writeRow(null);
+    public static ResultSetMetaCSVWriter resultSetWriter(ResultSet resultSet) {
+        return new ResultSetMetaCSVWriter(resultSet);
     }
 }

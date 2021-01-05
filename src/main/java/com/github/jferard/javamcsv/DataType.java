@@ -21,6 +21,21 @@
 package com.github.jferard.javamcsv;
 
 public enum DataType {
-    ANY, BOOLEAN, CURRENCY_DECIMAL, CURRENCY_INTEGER, DATE, DATETIME, DECIMAL, FLOAT, INTEGER,
-    PERCENTAGE_DECIMAL, PERCENTAGE_FLOAT, TEXT;
+    ANY(AnyFieldDescription.INSTANCE), BOOLEAN(BooleanFieldDescription.INSTANCE),
+    CURRENCY_DECIMAL(CurrencyDecimalFieldDescription.INSTANCE),
+    CURRENCY_INTEGER(CurrencyIntegerFieldDescription.INSTANCE), DATE(DateFieldDescription.INSTANCE),
+    DATETIME(DatetimeFieldDescription.INSTANCE), DECIMAL(DecimalFieldDescription.INSTANCE), FLOAT(
+            FloatFieldDescription.INSTANCE), INTEGER(IntegerFieldDescription.INSTANCE),
+    PERCENTAGE_DECIMAL(PercentageDecimalFieldDescription.INSTANCE),
+    PERCENTAGE_FLOAT(PercentageFloatFieldDescription.INSTANCE), TEXT(TextFieldDescription.INSTANCE);
+
+    private final FieldDescription<?> description;
+
+    DataType(FieldDescription<?> description) {
+        this.description = description;
+    }
+
+    public FieldDescription<?> getDefaultDescription() {
+        return description;
+    }
 }

@@ -18,9 +18,12 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;import java.io.IOException;
+package com.github.jferard.javamcsv;
+
+import java.io.IOException;
 
 public class BooleanFieldDescription implements FieldDescription<Boolean> {
+    public static final FieldDescription<?> INSTANCE = new BooleanFieldDescription("true", "false");
     private final String trueWord;
     private final String falseWord;
 

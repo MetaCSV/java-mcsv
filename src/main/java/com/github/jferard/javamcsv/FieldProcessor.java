@@ -38,7 +38,7 @@ package com.github.jferard.javamcsv;/*
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-interface FieldProcessor<T> {
+public interface FieldProcessor<T> {
     /**
      * Prepare a value for a consumer
      * @param text the CSV value

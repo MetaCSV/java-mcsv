@@ -20,9 +20,12 @@
 package com.github.jferard.javamcsv;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 public class AnyFieldDescription implements FieldDescription<Object> {
+    public static final FieldDescription<?> INSTANCE = new AnyFieldDescription(
+            Collections.<String>emptyList());
     private final String nullValue;
     private List<String> parameters;
 

@@ -25,11 +25,14 @@ import java.util.Date;
 import java.util.Locale;
 
 public class DateFieldDescription implements FieldDescription<Date> {
+    public static final FieldDescription<?> INSTANCE = DateFieldDescription.create("yyyy-MM-dd");
+
     public static FieldDescription<Date> create(String dateFormat) {
         return new DateFieldDescription(new SimpleDateFormat(dateFormat), null);
     }
 
     public static FieldDescription<Date> create(String dateFormat, String locale) {
+        // TODO: fixme: not default
         return new DateFieldDescription(new SimpleDateFormat(dateFormat, Locale.getDefault()), locale);
     }
 

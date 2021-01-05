@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 
 public class CurrencyDecimalFieldDescription implements FieldDescription<BigDecimal> {
+    public static final FieldDescription<?> INSTANCE = new CurrencyDecimalFieldDescription(true, "$", DecimalFieldDescription.INSTANCE);
+
     private final boolean pre;
     private final String symbol;
     private final FieldDescription<BigDecimal> numberDescription;

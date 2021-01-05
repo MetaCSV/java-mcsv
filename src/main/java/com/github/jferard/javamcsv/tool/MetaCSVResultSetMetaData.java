@@ -25,7 +25,6 @@ import com.github.jferard.javamcsv.MetaCSVMetaData;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.List;
 import java.util.Map;
 
@@ -129,28 +128,8 @@ public class MetaCSVResultSetMetaData implements ResultSetMetaData {
 
     @Override
     public int getColumnType(int column) throws SQLException {
-        switch (metaData.getDataType(column - 1)) {
-            case ANY:
-                return Types.JAVA_OBJECT;
-            case TEXT:
-                return Types.VARCHAR;
-            case BOOLEAN:
-                return Types.BOOLEAN;
-            case CURRENCY_DECIMAL:
-            case DECIMAL:
-            case PERCENTAGE_DECIMAL:
-                return Types.DECIMAL;
-            case FLOAT:
-            case PERCENTAGE_FLOAT:
-                return Types.DOUBLE;
-            case DATE:
-            case DATETIME:
-                return Types.DATE;
-            case CURRENCY_INTEGER:
-            case INTEGER:
-                return Types.INTEGER;
-        }
-        throw new SQLException();
+        DataType dataType = metaData.getDataType(column - 1);
+        return SQLUtil.dataTypeToSQLType(dataType);
     }
 
     @Override

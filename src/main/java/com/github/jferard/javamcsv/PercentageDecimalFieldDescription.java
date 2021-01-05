@@ -18,10 +18,14 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;import java.io.IOException;
+package com.github.jferard.javamcsv;
+
+import java.io.IOException;
 import java.math.BigDecimal;
 
 public class PercentageDecimalFieldDescription implements FieldDescription<BigDecimal> {
+    public static final FieldDescription<?> INSTANCE =
+            new PercentageDecimalFieldDescription(false, "%", DecimalFieldDescription.INSTANCE);
     private final boolean pre;
     private final String symbol;
     private final FieldDescription<BigDecimal> numberDescription;
