@@ -106,6 +106,7 @@ public class ResultSetMetaCSVWriter {
             List<Object> values = this.getRow(metaCSVData, count);
             writer.writeRow(values);
         }
+        writer.close();
     }
 
     public List<String> getHeader() throws SQLException {

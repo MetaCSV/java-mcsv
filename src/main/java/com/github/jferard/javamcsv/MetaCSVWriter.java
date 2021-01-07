@@ -54,7 +54,7 @@ public class MetaCSVWriter implements Closeable {
         return create(out, data);
     }
 
-    private static MetaCSVWriter create(OutputStream out, MetaCSVData data) throws IOException {
+    public static MetaCSVWriter create(OutputStream out, MetaCSVData data) throws IOException {
         CSVFormat format = CSVFormatHelper.getCSVFormat(data);
         Appendable writer = new OutputStreamWriter(out, data.getEncoding());
         CSVPrinter printer = new CSVPrinter(writer, format);

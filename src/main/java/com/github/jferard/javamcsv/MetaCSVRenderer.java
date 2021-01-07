@@ -36,8 +36,8 @@ public class MetaCSVRenderer {
     }
 
     public static MetaCSVRenderer create(OutputStream os, boolean minimal) throws IOException {
-        CSVPrinter printer =
-                new CSVPrinter(new OutputStreamWriter(os, Util.UTF_8_CHARSET), CSVFormat.DEFAULT);
+        OutputStreamWriter outWriter = new OutputStreamWriter(os, Util.UTF_8_CHARSET);
+        CSVPrinter printer = new CSVPrinter(outWriter, CSVFormat.DEFAULT);
         return new MetaCSVRenderer(printer, minimal);
     }
 
