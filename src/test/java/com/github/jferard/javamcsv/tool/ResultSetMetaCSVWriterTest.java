@@ -86,7 +86,8 @@ public class ResultSetMetaCSVWriterTest {
         MetaCSVData data = rsWriter.getMetaCSVData(new MetaCSVDataBuilder());
         MetaCSVWriter writer = MetaCSVWriter.create(out, data);
         rsWriter.writeCSV(writer);
-        Assert.assertEquals("INT,BIGD,FLOAT,TEXT,ANY,DATE\r\n" +
-                "1,1.0,0.456,foo,[Ljava.lang.Object;@4e718207,2021-01-01\r\n", out.toString());
+        Assert.assertTrue(out.toString().startsWith("INT,BIGD,FLOAT,TEXT,ANY,DATE\r\n" +
+                "1,1.0,0.456,foo,[Ljava.lang.Object;"));
+        Assert.assertTrue(out.toString().endsWith(",2021-01-01\r\n"));
     }
 }
