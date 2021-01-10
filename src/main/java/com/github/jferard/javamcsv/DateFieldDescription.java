@@ -18,8 +18,9 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;import java.io.IOException;
-import java.sql.DatabaseMetaData;
+package com.github.jferard.javamcsv;
+
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -32,8 +33,8 @@ public class DateFieldDescription implements FieldDescription<Date> {
     }
 
     public static FieldDescription<Date> create(String dateFormat, String locale) {
-        // TODO: fixme: not default
-        return new DateFieldDescription(new SimpleDateFormat(dateFormat, Locale.getDefault()), locale);
+        Locale instance = Util.getLocale(locale);
+        return new DateFieldDescription(new SimpleDateFormat(dateFormat, instance), locale);
     }
 
     private SimpleDateFormat simpleDateFormat;

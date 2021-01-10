@@ -18,22 +18,42 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;import org.apache.commons.csv.CSVFormat;
+package com.github.jferard.javamcsv;
+
+import org.apache.commons.csv.CSVFormat;
 
 public class CSVFormatHelper {
     public static CSVFormat getCSVFormat(MetaCSVData data) {
         CSVFormat format = CSVFormat.DEFAULT;
         char delimiter = data.getDelimiter();
-        if (delimiter != ',') {
+        if (delimiter != format.getDelimiter()) {
             format = format.withDelimiter(delimiter);
         }
 
+        char quoteChar = data.getQuoteChar();
+        if (quoteChar != format.getQuoteCharacter()) {
+            format = format.withQuote(quoteChar);
+        }
+
         String lineTerminator = data.getLineTerminator();
-        if (!lineTerminator.equals(Util.CRLF)) {
+        if (!lineTerminator.equals(format.getRecordSeparator())) {
             format = format.withRecordSeparator(lineTerminator);
         }
 
-        // TODO: continue...
+        boolean doubleQuote = data.isDoubleQuote();
+        if (doubleQuote) {
+            format = format.withQuote('"');
+        } else {
+            char escapeChar = data.getEscapeChar();
+            if (quoteChar != format.getEscapeCharacter()) {
+                format = format.withEscape(escapeChar);
+            }
+        }
+
+        boolean skipInitialSpace = data.isSkipInitialSpace();
+        if (skipInitialSpace != format.getIgnoreSurroundingSpaces()) {
+            format.withIgnoreSurroundingSpaces(skipInitialSpace);
+        }
 
         return format;
     }

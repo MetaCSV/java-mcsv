@@ -21,10 +21,23 @@
 package com.github.jferard.javamcsv;
 
 import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.QuoteMode;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.IOException;
+
 public class CSVFormatHelperTest {
+    @Test
+    public void testApacheCommons() throws IOException {
+        CSVFormat format = CSVFormat.DEFAULT.withEscape('"');
+        StringBuilder out = new StringBuilder();
+        CSVPrinter printer = new CSVPrinter(out, format);
+        printer.printRecord("\"foo\", \"bar\"", "baz");
+        Assert.assertEquals("\"\"\"foo\"\", \"\"bar\"\"\",baz\r\n", out.toString());
+    }
+
     @Test
     public void test() throws MetaCSVDataException {
         MetaCSVData data = new MetaCSVDataBuilder().build();

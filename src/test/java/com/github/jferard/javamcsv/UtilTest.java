@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Locale;
 
 public class UtilTest extends TestCase {
     @Test
@@ -174,5 +175,11 @@ public class UtilTest extends TestCase {
     public void testParseBigDecimalNeg() {
         Assert.assertEquals(new BigDecimal("-1234.56"),
                 Util.parseBigDecimal("-1~~234,56", "~~", ","));
+    }
+
+    @Test
+    public void testGetLocale() {
+        Assert.assertEquals(Locale.US, Util.getLocale("en_US"));
+        Assert.assertEquals(Locale.ENGLISH, Util.getLocale("en"));
     }
 }

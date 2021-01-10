@@ -290,4 +290,15 @@ public class Util {
         String text = normalizeText(s, thousandsSeparator, decimalSeparator);
         return new BigDecimal(text);
     }
+
+    public static Locale getLocale(String locale) {
+        Locale instance;
+        String[] s = locale.split("_");
+        if (s.length == 2) {
+            instance = new Locale(s[0], s[1]);
+        } else {
+            instance = new Locale(s[0]);
+        }
+        return instance;
+    }
 }

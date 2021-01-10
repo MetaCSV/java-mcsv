@@ -126,4 +126,14 @@ public class MetaCSVRendererTest {
         Assert.assertEquals("domain,key,value\r\n" +
                 "file,bom,true\r\n", sb.toString());
     }
+
+    @Test
+    public void testNullValueNull() throws IOException, MetaCSVDataException {
+        StringBuilder sb = new StringBuilder();
+        MetaCSVRenderer renderer =
+                new MetaCSVRenderer(new CSVPrinter(sb, CSVFormat.DEFAULT), true);
+        MetaCSVData data = new MetaCSVDataBuilder().nullValue(null).build();
+        renderer.render(data);
+        Assert.assertEquals("domain,key,value\r\n", sb.toString());
+    }
 }
