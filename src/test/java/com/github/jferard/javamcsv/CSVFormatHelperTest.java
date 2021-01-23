@@ -39,6 +39,15 @@ public class CSVFormatHelperTest {
     }
 
     @Test
+    public void testApacheCommonsNoEscape() throws IOException {
+        CSVFormat format = CSVFormat.DEFAULT;
+        StringBuilder out = new StringBuilder();
+        CSVPrinter printer = new CSVPrinter(out, format);
+        printer.printRecord("\"foo\", \"bar\"", "baz");
+        Assert.assertEquals("\"\"\"foo\"\", \"\"bar\"\"\",baz\r\n", out.toString());
+    }
+
+    @Test
     public void test() throws MetaCSVDataException {
         MetaCSVData data = new MetaCSVDataBuilder().build();
         Assert.assertEquals(CSVFormat.DEFAULT, CSVFormatHelper.getCSVFormat(data));

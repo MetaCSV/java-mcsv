@@ -31,7 +31,12 @@ public class CSVFormatHelper {
         }
 
         char quoteChar = data.getQuoteChar();
-        if (quoteChar != format.getQuoteCharacter()) {
+        Character formatQuoteCharacter = format.getQuoteCharacter();
+        if (formatQuoteCharacter == null) {
+            if (quoteChar != '\0') {
+                format = format.withQuote(quoteChar);
+            }
+        } else if (quoteChar != formatQuoteCharacter) {
             format = format.withQuote(quoteChar);
         }
 
@@ -42,17 +47,27 @@ public class CSVFormatHelper {
 
         boolean doubleQuote = data.isDoubleQuote();
         if (doubleQuote) {
-            format = format.withQuote('"');
+            format = format.withEscape(null);
         } else {
             char escapeChar = data.getEscapeChar();
-            if (quoteChar != format.getEscapeCharacter()) {
-                format = format.withEscape(escapeChar);
+            Character formatEscapeCharacter = format.getEscapeCharacter();
+            if (formatEscapeCharacter == null) {
+                if (escapeChar != '\0') {
+                    format = format.withEscape(escapeChar);
+                }
+            } else {
+                if (escapeChar == '"') {
+                    format = format.withEscape(null);
+                }
+                else if (escapeChar != formatEscapeCharacter) {
+                    format = format.withEscape(escapeChar);
+                }
             }
         }
 
         boolean skipInitialSpace = data.isSkipInitialSpace();
         if (skipInitialSpace != format.getIgnoreSurroundingSpaces()) {
-            format.withIgnoreSurroundingSpaces(skipInitialSpace);
+            format = format.withIgnoreSurroundingSpaces(skipInitialSpace);
         }
 
         return format;

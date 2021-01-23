@@ -48,8 +48,7 @@ public class MetaCSVReaderResultSetIT {
             throws IOException, MetaCSVParseException, URISyntaxException, MetaCSVReadException,
             MetaCSVDataException, SQLException {
         File f = TestHelper.getResourceAsFile("20201001-bal-216402149.csv");
-        MetaCSVReader reader;
-        reader = MetaCSVReader.create(f);
+        MetaCSVReader reader = MetaCSVReader.create(f);
         ResultSet rs = Tool.readerToResultSet(reader);
         ResultSetMetaData metaData = rs.getMetaData();
         Assert.assertEquals("TEXT", metaData.getColumnTypeName(1));
