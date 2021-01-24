@@ -22,8 +22,13 @@ package com.github.jferard.javamcsv;
 
 import org.apache.commons.csv.CSVRecord;
 
+import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class MetaCSVRecord implements Iterable<Object> {
     private CSVRecord record;
@@ -49,6 +54,67 @@ public class MetaCSVRecord implements Iterable<Object> {
             return (Double) value;
         } else {
             throw new MetaCSVCastException("Not a currency: " + value);
+        }
+    }
+
+    public Date getDate(int i) {
+        Object value = this.values.get(i);
+        if (value instanceof Date) {
+            Date date = (Date) value;
+            Calendar cal = GregorianCalendar.getInstance();
+            cal.setTime(date);
+            cal.set(Calendar.HOUR, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+            return cal.getTime();
+        } else {
+            throw new MetaCSVCastException("Not a date: " + value);
+        }
+    }
+
+    public Date getDatetime(int i) {
+        Object value = this.values.get(i);
+        if (value instanceof Date) {
+            return (Date) value;
+        } else {
+            throw new MetaCSVCastException("Not a datetime: " + value);
+        }
+    }
+
+    public BigDecimal getDecimal(int i) {
+        Object value = this.values.get(i);
+        if (value instanceof Number) {
+            return (BigDecimal) value;
+        } else {
+            throw new MetaCSVCastException("Not a number: " + value);
+        }
+    }
+
+    public double getFloat(int i) {
+        Object value = this.values.get(i);
+        if (value instanceof Number) {
+            return ((Number) value).doubleValue();
+        } else {
+            throw new MetaCSVCastException("Not a number: " + value);
+        }
+    }
+
+    public long getInteger(int i) {
+        Object value = this.values.get(i);
+        if (value instanceof Number) {
+            return ((Number) value).longValue();
+        } else {
+            throw new MetaCSVCastException("Not a number: " + value);
+        }
+    }
+
+    public double getPercentage(int i) {
+        Object value = this.values.get(i);
+        if (value instanceof Number) {
+            return (Double) value;
+        } else {
+            throw new MetaCSVCastException("Not a percentage: " + value);
         }
     }
 

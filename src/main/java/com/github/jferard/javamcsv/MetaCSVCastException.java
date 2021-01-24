@@ -22,5 +22,6 @@ package com.github.jferard.javamcsv;
 
 public class MetaCSVCastException extends ClassCastException {
     public MetaCSVCastException(String message) {
+        super(message);
     }
 }
