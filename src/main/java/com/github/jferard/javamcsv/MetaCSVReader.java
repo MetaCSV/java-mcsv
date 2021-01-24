@@ -22,6 +22,7 @@ package com.github.jferard.javamcsv;
 
 import org.apache.commons.csv.CSVParser;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -31,7 +32,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.Iterator;
 
-public class MetaCSVReader implements Iterable<MetaCSVRecord> {
+public class MetaCSVReader implements Iterable<MetaCSVRecord>, Closeable {
     public static MetaCSVReader create(File csvFile)
             throws IOException, MetaCSVParseException, MetaCSVReadException, MetaCSVDataException {
         File metaCSVFile = Util.withExtension(csvFile, ".mcsv");
@@ -105,5 +106,10 @@ public class MetaCSVReader implements Iterable<MetaCSVRecord> {
 
     public MetaCSVMetaData getMetaData() {
         return this.metaData;
+    }
+
+    @Override
+    public void close() throws IOException {
+        this.parser.close();
     }
 }

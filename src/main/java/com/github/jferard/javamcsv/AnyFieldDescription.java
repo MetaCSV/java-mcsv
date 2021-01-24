@@ -34,7 +34,7 @@ public class AnyFieldDescription implements FieldDescription<Object> {
         this.nullValue = "";
     }
 
-    List<String> getParameters() {
+    public List<String> getParameters() {
         return this.parameters;
     }
 

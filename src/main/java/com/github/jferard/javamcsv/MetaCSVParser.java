@@ -24,6 +24,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -33,7 +34,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-public class MetaCSVParser {
+public class MetaCSVParser implements Closeable {
     public static MetaCSVParser create(InputStream is) throws IOException {
         Reader reader = new InputStreamReader(is);
         return create(reader);
@@ -316,5 +317,10 @@ public class MetaCSVParser {
         } else {
             throw new MetaCSVParseException("Unknown currency number type: " + parameters);
         }
+    }
+
+    @Override
+    public void close() throws IOException {
+        this.parser.close();
     }
 }
