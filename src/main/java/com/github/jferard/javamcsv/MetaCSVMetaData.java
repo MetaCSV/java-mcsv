@@ -21,60 +21,49 @@
 package com.github.jferard.javamcsv;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 public class MetaCSVMetaData {
     public static MetaCSVMetaData create(Map<Integer, FieldDescription<?>> descriptionByColIndex)
             throws IOException {
-        Map<Integer, Class<?>> javaTypes = new HashMap<Integer, Class<?>>();
-        Map<Integer, DataType> dataTypes = new HashMap<Integer, DataType>();
-        Map<Integer, String> descriptions = new HashMap<Integer, String>();
-        for (Map.Entry<Integer, FieldDescription<?>> entry : descriptionByColIndex
-                .entrySet()) {
-            Integer i = entry.getKey();
-            FieldDescription<?> description = entry.getValue();
-            javaTypes.put(i, description.getJavaType());
-            dataTypes.put(i, description.getDataType());
-            StringBuilder sb = new StringBuilder();
-            description.render(sb);
-            descriptions.put(i, sb.toString());
-        }
-        return new MetaCSVMetaData(descriptions, javaTypes, dataTypes);
+        return new MetaCSVMetaData(descriptionByColIndex);
     }
 
-    private final Map<Integer, String> descriptions;
-    private final Map<Integer, Class<?>> javaTypes;
-    private final Map<Integer, DataType> dataTypes;
+    private final Map<Integer, FieldDescription<?>> descriptionByColIndex;
 
-    public MetaCSVMetaData(Map<Integer, String> descriptions, Map<Integer, Class<?>> javaTypes,
-                           Map<Integer, DataType> dataTypes) {
-        this.descriptions = descriptions;
-        this.javaTypes = javaTypes;
-        this.dataTypes = dataTypes;
+    public MetaCSVMetaData(Map<Integer, FieldDescription<?>> descriptionByColIndex) {
+        this.descriptionByColIndex = descriptionByColIndex;
     }
 
-    public String getDescription(int c) {
-        String ret = this.descriptions.get(c);
+    public FieldDescription<?> getDescription(int c) {
+        FieldDescription<?> ret = this.descriptionByColIndex.get(c);
         if (ret == null) {
-            return "text";
+            return TextFieldDescription.INSTANCE;
+        }
+        return ret;
+    }
+
+    public <T extends FieldDescription<?>> T getDescription(int c, Class<T> klass) {
+        T ret = (T) this.descriptionByColIndex.get(c);
+        if (ret == null) {
+            return (T) TextFieldDescription.INSTANCE;
         }
         return ret;
     }
 
     public Class<?> getJavaType(int c) {
-        Class<?> ret = this.javaTypes.get(c);
+        FieldDescription<?> ret = this.descriptionByColIndex.get(c);
         if (ret == null) {
             return String.class;
         }
-        return ret;
+        return ret.getJavaType();
     }
 
     public DataType getDataType(int c) {
-        DataType ret = this.dataTypes.get(c);
+        FieldDescription<?> ret = this.descriptionByColIndex.get(c);
         if (ret == null) {
             return DataType.TEXT;
         }
-        return ret;
+        return ret.getDataType();
     }
 }

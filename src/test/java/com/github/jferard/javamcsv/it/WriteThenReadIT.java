@@ -66,7 +66,7 @@ public class WriteThenReadIT {
         FieldDescription<BigDecimal> instance = DecimalFieldDescription.INSTANCE;
         Appendable sb = new StringBuilder();
         instance.render(sb);
-        Assert.assertEquals(sb.toString(), reader.getMetaData().getDescription(1));
+        Assert.assertEquals(sb.toString(), TestHelper.stringDescription(reader.getMetaData().getDescription(1)));
         Iterator<MetaCSVRecord> it = reader.iterator();
         Assert.assertTrue(it.hasNext());
         TestHelper.assertMetaEquals(TestHelper.createMetaRecord("foo", "bar"), it.next());

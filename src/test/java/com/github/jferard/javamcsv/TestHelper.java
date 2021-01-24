@@ -120,4 +120,10 @@ public class TestHelper {
         return new File(
                 TestHelper.class.getClassLoader().getResource(name).toURI().getPath());
     }
+
+    public static String stringDescription(FieldDescription<?> description) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        description.render(sb);
+        return sb.toString();
+    }
 }

@@ -66,4 +66,8 @@ public class CurrencyIntegerFieldDescription implements FieldDescription<Long> {
         return String.format("CurrencyFieldDescription(%b, %s, %s)",
                 this.pre, this.symbol, this.numberDescription.toString());
     }
+
+    public String getCurrencySymbol() {
+        return this.symbol;
+    }
 }

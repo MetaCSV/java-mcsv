@@ -60,9 +60,9 @@ public class MetaCSVReaderIT {
                 TestHelper.getResourceAsStream("meta_csv.mcsv");
         MetaCSVReader reader = MetaCSVReader.create(is, metaIs);
         MetaCSVMetaData metaData = reader.getMetaData();
-        Assert.assertEquals(metaData.getDescription(0), "text");
-        Assert.assertEquals(metaData.getDescription(1), "text");
-        Assert.assertEquals(metaData.getDescription(2), "any");
+        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(0)), "text");
+        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(1)), "text");
+        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(2)), "any");
         Iterator<MetaCSVRecord> iterator = reader.iterator();
         Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(
@@ -103,12 +103,12 @@ public class MetaCSVReaderIT {
         MetaCSVReader reader;
         reader = MetaCSVReader.create(f);
         MetaCSVMetaData metaData = reader.getMetaData();
-        Assert.assertEquals(metaData.getDescription(3), "integer");
-        Assert.assertEquals(metaData.getDescription(7), "float//.");
-        Assert.assertEquals(metaData.getDescription(8), "float//.");
-        Assert.assertEquals(metaData.getDescription(9), "float//.");
-        Assert.assertEquals(metaData.getDescription(10), "float//.");
-        Assert.assertEquals(metaData.getDescription(12), "date/yyyy-MM-dd");
+        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(3)), "integer");
+        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(7)), "float//.");
+        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(8)), "float//.");
+        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(9)), "float//.");
+        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(10)), "float//.");
+        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(12))   , "date/yyyy-MM-dd");
         Iterator<MetaCSVRecord> iterator = reader.iterator();
         Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(
@@ -139,8 +139,8 @@ public class MetaCSVReaderIT {
         MetaCSVReader reader;
         reader = MetaCSVReader.create(f);
         MetaCSVMetaData metaData = reader.getMetaData();
-        Assert.assertEquals(metaData.getDescription(1), "date/yyyy-MM-dd");
-        Assert.assertEquals(metaData.getDescription(2), "integer");
+        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(1)), "date/yyyy-MM-dd");
+        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(2)), "integer");
         Iterator<MetaCSVRecord> iterator = reader.iterator();
         Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(

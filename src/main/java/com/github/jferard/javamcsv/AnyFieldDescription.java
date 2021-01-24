@@ -34,6 +34,10 @@ public class AnyFieldDescription implements FieldDescription<Object> {
         this.nullValue = "";
     }
 
+    List<String> getParameters() {
+        return this.parameters;
+    }
+
     @Override
     public void render(Appendable out) throws IOException {
         out.append("any");

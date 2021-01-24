@@ -31,10 +31,10 @@ public class MetaCSVMetaDataTest {
         MetaCSVData data =
                 new MetaCSVDataBuilder().colType(1, IntegerFieldDescription.INSTANCE).build();
         MetaCSVMetaData metaData = data.getMetaData();
-        Assert.assertEquals("text", metaData.getDescription(0));
+        Assert.assertEquals(TextFieldDescription.INSTANCE, metaData.getDescription(0));
         Assert.assertEquals(DataType.TEXT, metaData.getDataType(0));
         Assert.assertEquals(String.class, metaData.getJavaType(0));
-        Assert.assertEquals("integer", metaData.getDescription(1));
+        Assert.assertEquals(IntegerFieldDescription.INSTANCE, metaData.getDescription(1));
         Assert.assertEquals(DataType.INTEGER, metaData.getDataType(1));
         Assert.assertEquals(Long.class, metaData.getJavaType(1));
 

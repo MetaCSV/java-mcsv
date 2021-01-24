@@ -78,13 +78,17 @@ public class MetaCSVReaderTest {
         MetaCSVReader reader = MetaCSVReader.create(is, metaIs);
 
         MetaCSVMetaData metaData = reader.getMetaData();
-        Assert.assertEquals(metaData.getDescription(0), "boolean/T/F");
-        Assert.assertEquals(metaData.getDescription(1), "currency/pre/$/decimal/,/.");
-        Assert.assertEquals(metaData.getDescription(2), "date/dd\\/MM\\/yyyy");
-        Assert.assertEquals(metaData.getDescription(3), "datetime/yyyy-MM-dd HH:mm:ss");
-        Assert.assertEquals(metaData.getDescription(4), "float/,/.");
-        Assert.assertEquals(metaData.getDescription(5), "integer/ ");
-        Assert.assertEquals(metaData.getDescription(6), "percentage/post/%/float/,/.");
+        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(0)), "boolean/T/F");
+        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(1)),
+                "currency/pre/$/decimal/,/.");
+        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(2)),
+                "date/dd\\/MM\\/yyyy");
+        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(3)),
+                "datetime/yyyy-MM-dd HH:mm:ss");
+        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(4)), "float/,/.");
+        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(5)), "integer/ ");
+        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(6)),
+                "percentage/post/%/float/,/.");
         Iterator<MetaCSVRecord> iterator = reader.iterator();
         Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(
@@ -124,13 +128,19 @@ public class MetaCSVReaderTest {
                         "data,col/6/type,\"percentage/post/%/float/,/.\"");
 
         MetaCSVMetaData metaData = reader.getMetaData();
-        Assert.assertEquals(metaData.getDescription(0), "boolean/T/F");
-        Assert.assertEquals(metaData.getDescription(1), "currency/pre/$/decimal/,/.");
-        Assert.assertEquals(metaData.getDescription(2), "date/dd\\/MM\\/yyyy");
-        Assert.assertEquals(metaData.getDescription(3), "datetime/yyyy-MM-dd HH:mm:ss");
-        Assert.assertEquals(metaData.getDescription(4), "float/,/.");
-        Assert.assertEquals(metaData.getDescription(5), "integer/ ");
-        Assert.assertEquals(metaData.getDescription(6), "percentage/post/%/float/,/.");
+        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(0)), "boolean/T/F");
+        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(1)),
+                "currency/pre/$/decimal/,/.");
+        Assert.assertEquals(metaData.getDescription(1, CurrencyDecimalFieldDescription.class).getCurrencySymbol(),
+                "$");
+        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(2)),
+                "date/dd\\/MM\\/yyyy");
+        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(3)),
+                "datetime/yyyy-MM-dd HH:mm:ss");
+        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(4)), "float/,/.");
+        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(5)), "integer/ ");
+        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(6)),
+                "percentage/post/%/float/,/.");
         Iterator<MetaCSVRecord> iterator = reader.iterator();
         Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(
