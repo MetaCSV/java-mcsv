@@ -24,6 +24,10 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 public class MetaCSVRecordTest {
     @Test
@@ -61,16 +65,85 @@ public class MetaCSVRecordTest {
     }
 
     @Test
-    public void testCurrency() throws IOException {
-        MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", 10.5);
-        Assert.assertEquals(10.5,
-                metaRecord.getCurrency(2), 0.01);
+    public void testDate() throws IOException {
+        Calendar cal = GregorianCalendar.getInstance(TimeZone.getTimeZone("UTC"));
+        cal.setTimeInMillis(1234567891011l);
+        MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", cal.getTime());
+        Calendar expectedCal = GregorianCalendar.getInstance(TimeZone.getTimeZone("UTC"));
+        expectedCal.setTimeInMillis(1234567891011l);
+        expectedCal.set(Calendar.HOUR, 0);
+        expectedCal.set(Calendar.MINUTE, 0);
+        expectedCal.set(Calendar.SECOND, 0);
+        expectedCal.set(Calendar.MILLISECOND, 0);
+        Assert.assertEquals(expectedCal.getTime(),
+                metaRecord.getDate(2));
     }
 
     @Test(expected = MetaCSVCastException.class)
-    public void testNotCurrency() throws IOException {
+    public void testNotDate() throws IOException {
+        Calendar cal = GregorianCalendar.getInstance(TimeZone.getTimeZone("UTC"));
+        cal.setTimeInMillis(1234567891011l);
+        MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", cal.getTime());
+        metaRecord.getDate(1);
+    }
+
+    @Test
+    public void testDecimal() throws IOException {
+        MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", BigDecimal.ONE);
+        Assert.assertEquals(BigDecimal.ONE,
+                metaRecord.getDecimal(2));
+    }
+
+    @Test(expected = MetaCSVCastException.class)
+    public void testNotDecimal() throws IOException {
+        MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", BigDecimal.ONE);
+        metaRecord.getDecimal(1);
+    }
+
+    @Test
+    public void testDatetime() throws IOException {
+        Calendar cal = GregorianCalendar.getInstance(TimeZone.getTimeZone("UTC"));
+        cal.setTimeInMillis(1234567891011l);
+        MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", cal.getTime());
+        Calendar expectedCal = GregorianCalendar.getInstance(TimeZone.getTimeZone("UTC"));
+        expectedCal.setTimeInMillis(1234567891011l);
+        Assert.assertEquals(expectedCal.getTime(),
+                metaRecord.getDatetime(2));
+    }
+
+    @Test(expected = MetaCSVCastException.class)
+    public void testNotDatetime() throws IOException {
+        Calendar cal = GregorianCalendar.getInstance(TimeZone.getTimeZone("UTC"));
+        cal.setTimeInMillis(1234567891011l);
+        MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", cal.getTime());
+        metaRecord.getDatetime(1);
+    }
+
+
+    @Test
+    public void testFloat() throws IOException {
         MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", 10.5);
-        metaRecord.getCurrency(1);
+        Assert.assertEquals(10.5,
+                metaRecord.getFloat(2), 0.01);
+    }
+
+    @Test(expected = MetaCSVCastException.class)
+    public void testNotFloat() throws IOException {
+        MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", 10.5);
+        metaRecord.getFloat(1);
+    }
+
+    @Test
+    public void testInteger() throws IOException {
+        MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", 2020);
+        Assert.assertEquals(2020,
+                metaRecord.getInteger(2));
+    }
+
+    @Test(expected = MetaCSVCastException.class)
+    public void testNotInteger() throws IOException {
+        MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", 2020);
+        metaRecord.getInteger(1);
     }
 
     @Test

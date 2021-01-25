@@ -107,7 +107,7 @@ public class MetaCSVParserTest {
                         "csv,skip_initial_space,false\r\n");
         MetaCSVData data = MetaCSVParser.create(is).parse();
         Assert.assertEquals(',', data.getDelimiter());
-        Assert.assertTrue(data.isDoubleQuote());
+        Assert.assertFalse(data.isDoubleQuote());
         Assert.assertEquals('\\', data.getEscapeChar());
         Assert.assertEquals('\'', data.getQuoteChar());
         Assert.assertFalse(data.isSkipInitialSpace());

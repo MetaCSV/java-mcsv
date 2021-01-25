@@ -32,10 +32,9 @@ public class CSVFormatHelper {
 
         char quoteChar = data.getQuoteChar();
         Character formatQuoteCharacter = format.getQuoteCharacter();
-        if (formatQuoteCharacter == null) {
-            if (quoteChar != '\0') {
-                format = format.withQuote(quoteChar);
-            }
+        assert formatQuoteCharacter != null;
+        if (quoteChar == '\0') {
+            format = format.withQuote(null);
         } else if (quoteChar != formatQuoteCharacter) {
             format = format.withQuote(quoteChar);
         }
@@ -51,17 +50,9 @@ public class CSVFormatHelper {
         } else {
             char escapeChar = data.getEscapeChar();
             Character formatEscapeCharacter = format.getEscapeCharacter();
-            if (formatEscapeCharacter == null) {
-                if (escapeChar != '\0') {
-                    format = format.withEscape(escapeChar);
-                }
-            } else {
-                if (escapeChar == '"') {
-                    format = format.withEscape(null);
-                }
-                else if (escapeChar != formatEscapeCharacter) {
-                    format = format.withEscape(escapeChar);
-                }
+            assert formatEscapeCharacter == null;
+            if (escapeChar != '\0' && escapeChar != '"') {
+                format = format.withEscape(escapeChar);
             }
         }
 

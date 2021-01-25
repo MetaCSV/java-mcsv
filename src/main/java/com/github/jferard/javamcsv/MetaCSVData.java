@@ -141,6 +141,10 @@ public class MetaCSVData implements ProcessorProvider {
         return this.skipInitialSpace;
     }
 
+    /**
+     * @return the utility meta data object
+     * @throws IOException
+     */
     public MetaCSVMetaData getMetaData() throws IOException {
         return MetaCSVMetaData.create(this.descriptionByColIndex);
     }

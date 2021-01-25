@@ -73,6 +73,8 @@ public class FieldDescriptionTest {
                 new CurrencyDecimalFieldDescription(false, "€", numberDescription)));
         Assert.assertEquals("CurrencyFieldDescription(false, €, DecimalFieldDescription(, .))",
                 new CurrencyDecimalFieldDescription(false, "€", numberDescription).toString());
+        Assert.assertEquals("€", new CurrencyDecimalFieldDescription(false, "€", numberDescription)
+                .getCurrencySymbol());
     }
 
     @Test
@@ -80,13 +82,15 @@ public class FieldDescriptionTest {
         FieldDescription<Long> numberDescription = new IntegerFieldDescription(null);
         CurrencyIntegerFieldDescription instance =
                 new CurrencyIntegerFieldDescription(true, "$", numberDescription);
-        Assert.assertEquals("currency/pre/$/integer", TestHelper.render(                instance));
+        Assert.assertEquals("currency/pre/$/integer", TestHelper.render(instance));
         Assert.assertEquals("currency/post/€/integer", TestHelper.render(
                 new CurrencyIntegerFieldDescription(false, "€", numberDescription)));
         Assert.assertEquals("CurrencyFieldDescription(true, $, IntegerFieldDescription(null))",
                 instance.toString());
         Assert.assertEquals(DataType.CURRENCY_INTEGER, instance.getDataType());
         Assert.assertEquals(Long.class, instance.getJavaType());
+        Assert.assertEquals("$", new CurrencyIntegerFieldDescription(true, "$", numberDescription)
+                .getCurrencySymbol());
     }
 
     @Test
@@ -149,10 +153,11 @@ public class FieldDescriptionTest {
     }
 
     @Test
-    public void testAny() throws IOException {
+    public void testObject() throws IOException {
         ObjectFieldDescription instance =
                 new ObjectFieldDescription(Arrays.<String>asList("a", "b/c", "d\\e"));
         Assert.assertEquals("object/a/b\\/c/d\\\\e", TestHelper.render(instance));
+        Assert.assertEquals(Arrays.<String>asList("a", "b/c", "d\\e"), instance.getParameters());
         Assert.assertEquals("object",
                 TestHelper.render(new ObjectFieldDescription(Collections.<String>emptyList())));
         Assert.assertEquals("ObjectFieldDescription([a, b/c, d\\e])", instance.toString());

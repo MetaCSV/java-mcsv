@@ -23,6 +23,7 @@ package com.github.jferard.javamcsv;
 import java.io.IOException;
 import java.util.Map;
 
+/** Utility class, similar to ResultSetMetaData */
 public class MetaCSVMetaData {
     public static MetaCSVMetaData create(Map<Integer, FieldDescription<?>> descriptionByColIndex)
             throws IOException {

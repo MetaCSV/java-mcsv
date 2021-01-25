@@ -22,7 +22,6 @@ package com.github.jferard.javamcsv;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.QuoteMode;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -48,15 +47,48 @@ public class CSVFormatHelperTest {
     }
 
     @Test
-    public void test() throws MetaCSVDataException {
+    public void testDefault() throws MetaCSVDataException {
         MetaCSVData data = new MetaCSVDataBuilder().build();
         Assert.assertEquals(CSVFormat.DEFAULT, CSVFormatHelper.getCSVFormat(data));
     }
 
     @Test
-    public void test2() throws MetaCSVDataException {
-        MetaCSVData data = new MetaCSVDataBuilder().delimiter(';').lineTerminator("\n").build();
-        Assert.assertEquals(CSVFormat.DEFAULT.withDelimiter(';').withRecordSeparator('\n'),
+    public void testFull() throws MetaCSVDataException {
+        MetaCSVData data =
+                new MetaCSVDataBuilder().delimiter(';').lineTerminator("\n").quoteChar('\'')
+                        .escapeChar('#').build();
+        Assert.assertEquals(
+                CSVFormat.DEFAULT.withDelimiter(';').withRecordSeparator('\n').withQuote('\'')
+                        .withEscape('#'),
+                CSVFormatHelper.getCSVFormat(data));
+    }
+
+    @Test
+    public void testDoubleQuote() throws MetaCSVDataException {
+        MetaCSVData data = new MetaCSVDataBuilder().doubleQuote(true).build();
+        Assert.assertEquals(CSVFormat.DEFAULT,
+                CSVFormatHelper.getCSVFormat(data));
+        Assert.assertNull(CSVFormatHelper.getCSVFormat(data).getEscapeCharacter());
+    }
+
+    @Test
+    public void testDoubleQuoteFalse() throws MetaCSVDataException {
+        MetaCSVData data = new MetaCSVDataBuilder().escapeChar('\\').build();
+        Assert.assertEquals(CSVFormat.DEFAULT.withEscape('\\'),
+                CSVFormatHelper.getCSVFormat(data));
+    }
+
+    @Test
+    public void testNullQuote() throws MetaCSVDataException {
+        MetaCSVData data = new MetaCSVDataBuilder().quoteChar('\0').build();
+        Assert.assertEquals(CSVFormat.DEFAULT.withQuote(null),
+                CSVFormatHelper.getCSVFormat(data));
+    }
+
+    @Test
+    public void testSkip() throws MetaCSVDataException {
+        MetaCSVData data = new MetaCSVDataBuilder().skipInitialSpace(true).build();
+        Assert.assertEquals(CSVFormat.DEFAULT.withIgnoreSurroundingSpaces(),
                 CSVFormatHelper.getCSVFormat(data));
     }
 }

@@ -89,6 +89,7 @@ public class MetaCSVDataBuilder {
     }
 
     public MetaCSVDataBuilder escapeChar(char escapeChar) {
+        this.doubleQuote = false;
         this.escapeChar = escapeChar;
         return this;
     }

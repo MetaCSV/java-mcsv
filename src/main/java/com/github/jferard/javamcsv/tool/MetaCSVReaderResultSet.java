@@ -86,7 +86,7 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
 
     @Override
     public String getString(int columnIndex) throws SQLException {
-        Object o = this.cur.getAny(columnIndex-1);
+        Object o = this.cur.getObject(columnIndex-1);
         if (o == null) {
             this.wasNull = true;
             return null;
@@ -98,7 +98,7 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
 
     @Override
     public boolean getBoolean(int columnIndex) throws SQLException {
-        Object o = this.cur.getAny(columnIndex-1);
+        Object o = this.cur.getObject(columnIndex-1);
         if (o == null) {
             this.wasNull = true;
             return false;
@@ -169,7 +169,7 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
     }
 
     private long getLong(String typeName, int columnIndex) throws SQLException {
-        Object o = this.cur.getAny(columnIndex-1);
+        Object o = this.cur.getObject(columnIndex-1);
         if (o == null) {
             this.wasNull = true;
             return 0L;
@@ -188,7 +188,7 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
     }
 
     private Number getNumber(String typeName, int columnIndex) throws SQLException {
-        Object o = this.cur.getAny(columnIndex-1);
+        Object o = this.cur.getObject(columnIndex-1);
         if (o == null) {
             this.wasNull = true;
             return 0;
@@ -230,7 +230,7 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
     }
 
     private java.util.Date getDate(String typeName, int columnIndex) throws SQLException {
-        Object o = this.cur.getAny(columnIndex-1);
+        Object o = this.cur.getObject(columnIndex-1);
         if (o == null) {
             this.wasNull = true;
             return null;
@@ -296,7 +296,7 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
 
     @Override
     public Object getObject(int columnIndex) throws SQLException {
-        return this.cur.getAny(columnIndex-1);
+        return this.cur.getObject(columnIndex-1);
     }
 
     @Override
@@ -315,7 +315,7 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
 
     @Override
     public BigDecimal getBigDecimal(int columnIndex) throws SQLException {
-        Object o = this.cur.getAny(columnIndex-1);
+        Object o = this.cur.getObject(columnIndex-1);
         if (o == null) {
             this.wasNull = true;
             return BigDecimal.ZERO;

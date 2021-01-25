@@ -48,20 +48,11 @@ public class MetaCSVRecord implements Iterable<Object> {
         }
     }
 
-    public double getCurrency(int i) {
-        Object value = this.values.get(i);
-        if (value instanceof Number) {
-            return (Double) value;
-        } else {
-            throw new MetaCSVCastException("Not a currency: " + value);
-        }
-    }
-
     public Date getDate(int i) {
         Object value = this.values.get(i);
         if (value instanceof Date) {
             Date date = (Date) value;
-            Calendar cal = GregorianCalendar.getInstance();
+            Calendar cal = GregorianCalendar.getInstance(TimeZone.getTimeZone("UTC"));
             cal.setTime(date);
             cal.set(Calendar.HOUR, 0);
             cal.set(Calendar.MINUTE, 0);
@@ -109,15 +100,6 @@ public class MetaCSVRecord implements Iterable<Object> {
         }
     }
 
-    public double getPercentage(int i) {
-        Object value = this.values.get(i);
-        if (value instanceof Number) {
-            return (Double) value;
-        } else {
-            throw new MetaCSVCastException("Not a percentage: " + value);
-        }
-    }
-
     public CharSequence getText(int i) {
         Object value = this.values.get(i);
         if (value instanceof CharSequence) {
@@ -127,7 +109,7 @@ public class MetaCSVRecord implements Iterable<Object> {
         }
     }
 
-    public Object getAny(int i) {
+    public Object getObject(int i) {
         return this.values.get(i);
     }
 
