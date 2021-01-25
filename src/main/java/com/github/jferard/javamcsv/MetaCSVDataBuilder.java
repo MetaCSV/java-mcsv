@@ -35,6 +35,8 @@ public class MetaCSVDataBuilder {
     private Map<Integer, FieldDescription<?>> descriptionByColIndex;
     private String nullValue;
     private boolean bom;
+    private String metaVersion;
+    private Map<String, String> meta;
 
     public MetaCSVDataBuilder() {
         this.encoding = Util.UTF_8_CHARSET_NAME;
@@ -44,6 +46,8 @@ public class MetaCSVDataBuilder {
         this.doubleQuote = true;
         this.quoteChar = '"';
         this.nullValue = "";
+        this.metaVersion = "draft0";
+        this.meta = new HashMap<String, String>();
         this.bom = false;
     }
 
@@ -56,9 +60,10 @@ public class MetaCSVDataBuilder {
             charset = Charset.forName(this.encoding);
         }
         if (!charset.equals(Util.UTF_8_CHARSET) && bom) {
-            throw new MetaCSVDataException("Can't have a bom with charset "+charset);
+            throw new MetaCSVDataException("Can't have a bom with charset " + charset);
         }
-        return new MetaCSVData(charset, this.bom, Util.unescapeLineTerminator(lineTerminator),
+        return new MetaCSVData(this.metaVersion, this.meta, charset, this.bom,
+                Util.unescapeLineTerminator(lineTerminator),
                 this.delimiter, this.doubleQuote, this.escapeChar, this.quoteChar,
                 this.skipInitialSpace, this.nullValue, this.descriptionByColIndex);
     }
@@ -110,6 +115,16 @@ public class MetaCSVDataBuilder {
 
     public MetaCSVDataBuilder bom(boolean value) {
         this.bom = value;
+        return this;
+    }
+
+    public MetaCSVDataBuilder metaVersion(String metaVersion) {
+        this.metaVersion = metaVersion;
+        return this;
+    }
+
+    public MetaCSVDataBuilder meta(String key, String value) {
+        this.meta.put(key, value);
         return this;
     }
 }

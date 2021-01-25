@@ -29,9 +29,15 @@ import java.util.List;
 import java.util.Map;
 
 public class MetaCSVData implements ProcessorProvider {
-    public static MetaCSVData DEFAULT = new MetaCSVData(
-            Util.UTF_8_CHARSET, false, Util.CRLF, ',', true, '\0', '"', false, "",
-            new HashMap<Integer, FieldDescription<?>>());
+    public static MetaCSVData DEFAULT;
+
+    static {
+        try {
+            DEFAULT = new MetaCSVDataBuilder().build();
+        } catch (MetaCSVDataException e) {
+            throw new AssertionError(e);
+        }
+    }
 
     private final boolean doubleQuote;
     private final char escapeChar;
@@ -39,6 +45,8 @@ public class MetaCSVData implements ProcessorProvider {
     private final boolean skipInitialSpace;
     private final Map<Integer, FieldDescription<?>> descriptionByColIndex;
     private String nullValue;
+    private String metaVersion;
+    private Map<String, String> meta;
     private Charset encoding;
     private char delimiter;
     private boolean utf8BOM;
@@ -46,11 +54,15 @@ public class MetaCSVData implements ProcessorProvider {
     private Map<Integer, FieldProcessor<?>> processorByIndex;
     private TextFieldProcessor textFieldProcessor;
 
-    public MetaCSVData(Charset encoding, boolean utf8BOM, String lineTerminator, char delimiter,
+    public MetaCSVData(String metaVersion, Map<String, String> meta,
+                       Charset encoding, boolean utf8BOM,
+                       String lineTerminator, char delimiter,
                        boolean doubleQuote, char escapeChar, char quoteChar,
                        boolean skipInitialSpace,
                        String nullValue,
                        Map<Integer, FieldDescription<?>> descriptionByColIndex) {
+        this.metaVersion = metaVersion;
+        this.meta = meta;
         this.encoding = encoding;
         this.utf8BOM = utf8BOM;
         this.lineTerminator = lineTerminator;
@@ -137,5 +149,13 @@ public class MetaCSVData implements ProcessorProvider {
         List<Integer> indices = new ArrayList<Integer>(this.descriptionByColIndex.keySet());
         Collections.sort(indices);
         return indices;
+    }
+
+    public String getMetaVersion() {
+        return metaVersion;
+    }
+
+    public String getMeta(final String key) {
+        return meta.get(key);
     }
 }

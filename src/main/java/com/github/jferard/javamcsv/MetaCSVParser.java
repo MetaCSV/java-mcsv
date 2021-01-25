@@ -78,7 +78,9 @@ public class MetaCSVParser implements Closeable {
     }
 
     private void parseRow(String domain, String key, String value) throws MetaCSVParseException {
-        if (domain.equals("file")) {
+        if (domain.equals("meta")) {
+            this.parseMetaRow(key, value);
+        } else if (domain.equals("file")) {
             this.parseFileRow(key, value);
         } else if (domain.equals("csv")) {
             this.parseCSVRow(key, value);
@@ -86,6 +88,14 @@ public class MetaCSVParser implements Closeable {
             this.parseDataRow(key, value);
         } else {
             throw new MetaCSVParseException("Unknown domain: " + domain);
+        }
+    }
+
+    private void parseMetaRow(String key, String value) throws MetaCSVParseException {
+        if (key.equals("version")) {
+            this.metaCSVDataBuilder.metaVersion(value);
+        } else {
+            this.metaCSVDataBuilder.meta(key, value);
         }
     }
 
