@@ -62,7 +62,7 @@ public class MetaCSVReaderIT {
         MetaCSVMetaData metaData = reader.getMetaData();
         Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(0)), "text");
         Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(1)), "text");
-        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(2)), "any");
+        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(2)), "object");
         Iterator<MetaCSVRecord> iterator = reader.iterator();
         Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(
@@ -91,7 +91,7 @@ public class MetaCSVReaderIT {
                 Arrays.asList("data", "col/1/type", "text"), TestHelper.toList(iterator.next()));
         Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(
-                Arrays.asList("data", "col/2/type", "any"), TestHelper.toList(iterator.next()));
+                Arrays.asList("data", "col/2/type", "object"), TestHelper.toList(iterator.next()));
         Assert.assertFalse(iterator.hasNext());
     }
 

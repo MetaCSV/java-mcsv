@@ -50,7 +50,7 @@ public class ResultSetMetaCSVWriterTest {
                 "BigD DECIMAL,\n" +
                 "Float DOUBLE,\n" +
                 "Text VARCHAR,\n" +
-                "Any ARRAY,\n" +
+                "Object ARRAY,\n" +
                 "Date DATE\n" +
                 ")");
         statement.executeUpdate("INSERT INTO test VALUES (1, 1, 0.456, 'foo', (1, 2), '2021-01-01')");
@@ -75,7 +75,7 @@ public class ResultSetMetaCSVWriterTest {
                 "data,col/1/type,decimal//.\r\n" +
                 "data,col/2/type,float//.\r\n" +
                 "data,col/3/type,text\r\n" +
-                "data,col/4/type,any\r\n" +
+                "data,col/4/type,object\r\n" +
                 "data,col/5/type,date/yyyy-MM-dd\r\n", out.toString());
     }
 
@@ -86,7 +86,7 @@ public class ResultSetMetaCSVWriterTest {
         MetaCSVData data = rsWriter.getMetaCSVData(new MetaCSVDataBuilder());
         MetaCSVWriter writer = MetaCSVWriter.create(out, data);
         rsWriter.writeCSV(writer);
-        Assert.assertTrue(out.toString().startsWith("INT,BIGD,FLOAT,TEXT,ANY,DATE\r\n" +
+        Assert.assertTrue(out.toString().startsWith("INT,BIGD,FLOAT,TEXT,OBJECT,DATE\r\n" +
                 "1,1.0,0.456,foo,[Ljava.lang.Object;"));
         Assert.assertTrue(out.toString().endsWith(",2021-01-01\r\n"));
     }

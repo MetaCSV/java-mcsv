@@ -39,7 +39,7 @@ public class MetaCSVParserIT {
     public void testMetaMinimal() throws IOException, MetaCSVParseException, MetaCSVDataException {
         MetaCSVData metaCSVData = getMetaCSVData("meta_csv.mcsv");
         Assert.assertEquals("domain,key,value\r\n" +
-                "data,col/2/type,any\r\n", this.render(metaCSVData, true));
+                "data,col/2/type,object\r\n", this.render(metaCSVData, true));
     }
 
     @Test
@@ -56,7 +56,7 @@ public class MetaCSVParserIT {
                 "data,null_value,\r\n" +
                 "data,col/0/type,text\r\n" +
                 "data,col/1/type,text\r\n" +
-                "data,col/2/type,any\r\n", this.render(metaCSVData, false));
+                "data,col/2/type,object\r\n", this.render(metaCSVData, false));
     }
 
     @Test

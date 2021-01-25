@@ -28,7 +28,7 @@ import java.sql.Types;
 public class SQLUtil {
     public static int dataTypeToSQLType(DataType dataType) throws SQLException {
         switch (dataType) {
-            case ANY:
+            case OBJECT:
                 return Types.JAVA_OBJECT;
             case TEXT:
                 return Types.VARCHAR;
@@ -105,7 +105,7 @@ public class SQLUtil {
             case Types.NCLOB:
             case Types.SQLXML:
             default:
-                dt = DataType.ANY;
+                dt = DataType.OBJECT;
         }
         return dt;
     }

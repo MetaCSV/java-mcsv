@@ -25,11 +25,11 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
-public class AnyFieldProcessorTest {
+public class ObjectFieldProcessorTest {
     @Test
     public void testToObject() throws MetaCSVReadException {
         FieldProcessor<Object> processor =
-                new AnyFieldDescription(Arrays.asList("a", "b")).toFieldProcessor("NULL");
+                new ObjectFieldDescription(Arrays.asList("a", "b")).toFieldProcessor("NULL");
         Assert.assertNull(processor.toObject(null));
         Assert.assertNull(processor.toObject("NULL"));
         Assert.assertEquals("foo", processor.toObject("foo"));
@@ -38,7 +38,7 @@ public class AnyFieldProcessorTest {
     @Test
     public void testToString() {
         FieldProcessor<Object> processor =
-                new AnyFieldDescription(Arrays.asList("a", "b")).toFieldProcessor("NULL");
+                new ObjectFieldDescription(Arrays.asList("a", "b")).toFieldProcessor("NULL");
         Assert.assertEquals("NULL", processor.toString(null));
         Assert.assertEquals("NULL", processor.toString("NULL"));
         Assert.assertEquals("foo", processor.toString("foo"));

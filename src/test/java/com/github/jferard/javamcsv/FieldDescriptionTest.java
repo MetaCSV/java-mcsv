@@ -150,13 +150,13 @@ public class FieldDescriptionTest {
 
     @Test
     public void testAny() throws IOException {
-        AnyFieldDescription instance =
-                new AnyFieldDescription(Arrays.<String>asList("a", "b/c", "d\\e"));
-        Assert.assertEquals("any/a/b\\/c/d\\\\e", TestHelper.render(instance));
-        Assert.assertEquals("any",
-                TestHelper.render(new AnyFieldDescription(Collections.<String>emptyList())));
-        Assert.assertEquals("AnyFieldDescription([a, b/c, d\\e])", instance.toString());
-        Assert.assertEquals(DataType.ANY, instance.getDataType());
+        ObjectFieldDescription instance =
+                new ObjectFieldDescription(Arrays.<String>asList("a", "b/c", "d\\e"));
+        Assert.assertEquals("object/a/b\\/c/d\\\\e", TestHelper.render(instance));
+        Assert.assertEquals("object",
+                TestHelper.render(new ObjectFieldDescription(Collections.<String>emptyList())));
+        Assert.assertEquals("ObjectFieldDescription([a, b/c, d\\e])", instance.toString());
+        Assert.assertEquals(DataType.OBJECT, instance.getDataType());
         Assert.assertEquals(Object.class, instance.getJavaType());
     }
 }

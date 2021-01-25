@@ -21,7 +21,7 @@
 package com.github.jferard.javamcsv;
 
 public enum DataType {
-    ANY(AnyFieldDescription.INSTANCE), BOOLEAN(BooleanFieldDescription.INSTANCE),
+    OBJECT(ObjectFieldDescription.INSTANCE), BOOLEAN(BooleanFieldDescription.INSTANCE),
     CURRENCY_DECIMAL(CurrencyDecimalFieldDescription.INSTANCE),
     CURRENCY_INTEGER(CurrencyIntegerFieldDescription.INSTANCE), DATE(DateFieldDescription.INSTANCE),
     DATETIME(DatetimeFieldDescription.INSTANCE), DECIMAL(DecimalFieldDescription.INSTANCE), FLOAT(

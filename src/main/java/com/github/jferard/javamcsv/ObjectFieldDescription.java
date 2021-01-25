@@ -23,13 +23,13 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-public class AnyFieldDescription implements FieldDescription<Object> {
-    public static final FieldDescription<?> INSTANCE = new AnyFieldDescription(
+public class ObjectFieldDescription implements FieldDescription<Object> {
+    public static final FieldDescription<?> INSTANCE = new ObjectFieldDescription(
             Collections.<String>emptyList());
     private final String nullValue;
     private List<String> parameters;
 
-    public AnyFieldDescription(List<String> parameters) {
+    public ObjectFieldDescription(List<String> parameters) {
         this.parameters = parameters;
         this.nullValue = "";
     }
@@ -40,7 +40,7 @@ public class AnyFieldDescription implements FieldDescription<Object> {
 
     @Override
     public void render(Appendable out) throws IOException {
-        out.append("any");
+        out.append("object");
         if (parameters.size() > 0) {
             out.append('/');
             Util.render(out, parameters.toArray(new String[]{}));
@@ -49,7 +49,7 @@ public class AnyFieldDescription implements FieldDescription<Object> {
 
     @Override
     public FieldProcessor<Object> toFieldProcessor(String nullValue) {
-        return new AnyFieldProcessor(nullValue);
+        return new ObjectFieldProcessor(nullValue);
     }
 
     @Override
@@ -59,11 +59,11 @@ public class AnyFieldDescription implements FieldDescription<Object> {
 
     @Override
     public DataType getDataType() {
-        return DataType.ANY;
+        return DataType.OBJECT;
     }
 
     @Override
     public String toString() {
-        return String.format("AnyFieldDescription(%s)", this.parameters);
+        return String.format("ObjectFieldDescription(%s)", this.parameters);
     }
 }

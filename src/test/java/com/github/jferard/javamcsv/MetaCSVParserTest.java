@@ -157,7 +157,7 @@ public class MetaCSVParserTest {
                         "data,col/10/type,\"percentage/post/%/float/,/.\"\r\n" +
                         "data,col/11/type,\"percentage/post/%/decimal//.\"\r\n" +
                         "data,col/12/type,text\r\n" +
-                        "data,col/13/type,any/foo/bar/baz\r\n"
+                        "data,col/13/type,object/foo/bar/baz\r\n"
         );
         MetaCSVData data = MetaCSVParser.create(is).parse();
         Assert.assertEquals("BooleanFieldDescription(T, F)",
@@ -186,7 +186,7 @@ public class MetaCSVParserTest {
                 data.getDescription(11).toString());
         Assert.assertEquals("TextFieldDescription()",
                 data.getDescription(12).toString());
-        Assert.assertEquals("AnyFieldDescription([foo, bar, baz])",
+        Assert.assertEquals("ObjectFieldDescription([foo, bar, baz])",
                 data.getDescription(13).toString());
     }
 

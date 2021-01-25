@@ -193,8 +193,8 @@ public class MetaCSVParser implements Closeable {
             fieldDescription = parsePercentage(parameters);
         } else if (valueType.equals("text")) {
             fieldDescription = TextFieldDescription.INSTANCE;
-        } else if (valueType.equals("any")) {
-            fieldDescription = new AnyFieldDescription(parameters);
+        } else if (valueType.equals("object")) {
+            fieldDescription = new ObjectFieldDescription(parameters);
         } else {
             throw new MetaCSVParseException("Unknown col n type: " + valueType);
         }

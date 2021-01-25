@@ -20,10 +20,10 @@
 
 package com.github.jferard.javamcsv;
 
-public class AnyFieldProcessor implements FieldProcessor<Object> {
+public class ObjectFieldProcessor implements FieldProcessor<Object> {
     private final String nullValue;
 
-    public AnyFieldProcessor(String nullValue) {
+    public ObjectFieldProcessor(String nullValue) {
         this.nullValue = nullValue;
     }
 
