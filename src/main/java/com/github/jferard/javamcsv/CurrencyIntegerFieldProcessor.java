@@ -47,13 +47,13 @@ public class CurrencyIntegerFieldProcessor implements FieldProcessor<Long> {
             if (text.startsWith(this.symbol)) {
                 text = text.substring(this.symbol.length()).trim();
             } else {
-                throw new MetaCSVReadException("");
+                throw new MetaCSVReadException("Value "+text+" should start with "+symbol);
             }
         } else {
             if (text.endsWith(this.symbol)) {
                 text = text.substring(0, text.length() - this.symbol.length()).trim();
             } else {
-                throw new MetaCSVReadException("");
+                throw new MetaCSVReadException("Value "+text+" should end with "+symbol);
             }
         }
         return this.numberProcessor.toObject(text);
