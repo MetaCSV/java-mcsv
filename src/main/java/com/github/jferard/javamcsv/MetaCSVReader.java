@@ -24,64 +24,39 @@ import org.apache.commons.csv.CSVParser;
 
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringReader;
 import java.util.Iterator;
 
 public class MetaCSVReader implements Iterable<MetaCSVRecord>, Closeable {
     public static MetaCSVReader create(File csvFile)
             throws IOException, MetaCSVParseException, MetaCSVReadException, MetaCSVDataException {
-        File metaCSVFile = Util.withExtension(csvFile, ".mcsv");
-        return create(csvFile, metaCSVFile);
+        return MetaCSVReaderFactory.create(csvFile);
     }
 
     public static MetaCSVReader create(File csvFile, File metaCSVFile)
             throws IOException, MetaCSVParseException, MetaCSVReadException, MetaCSVDataException {
-        InputStream metaIn = new FileInputStream(metaCSVFile);
-        InputStream in = new FileInputStream(csvFile);
-        return create(in, metaIn);
+        return MetaCSVReaderFactory.create(csvFile, metaCSVFile);
     }
 
     public static MetaCSVReader create(File csvFile, String... metaCSVdirectives)
             throws IOException, MetaCSVParseException, MetaCSVReadException, MetaCSVDataException {
-        InputStream in = new FileInputStream(csvFile);
-        return create(in, metaCSVdirectives);
+        return MetaCSVReaderFactory.create(csvFile, metaCSVdirectives);
     }
 
     public static MetaCSVReader create(InputStream in, String... metaCSVdirectives)
             throws IOException, MetaCSVParseException, MetaCSVDataException, MetaCSVReadException {
-        String metaString = Util.join(metaCSVdirectives, "\r\n");
-        Reader metaReader = new StringReader("domain,key,value\r\n"+metaString);
-        MetaCSVParser parser = MetaCSVParser.create(metaReader);
-        return create(in, parser);
+        return MetaCSVReaderFactory.create(in, metaCSVdirectives);
     }
 
     public static MetaCSVReader create(InputStream in, InputStream metaIn)
             throws IOException, MetaCSVParseException, MetaCSVReadException, MetaCSVDataException {
-        MetaCSVParser parser = MetaCSVParser.create(metaIn);
-        return create(in, parser);
+        return MetaCSVReaderFactory.create(in, metaIn);
     }
 
-    private static MetaCSVReader create(InputStream in, MetaCSVParser parser)
-            throws MetaCSVParseException, MetaCSVDataException, IOException, MetaCSVReadException {
-        MetaCSVData data = parser.parse();
-        if (data.isUtf8BOM()) {
-            byte[] buffer = new byte[3];
-            int count = 0;
-            while (count < 3) {
-                count = in.read(buffer, count, 3-count);
-            }
-            if ((buffer[0] & 0xFF) != 0xEF || (buffer[1] & 0xFF) != 0xBB ||
-                    (buffer[2] & 0xFF) != 0xBF) {
-                throw new MetaCSVReadException("BOM expected");
-            }
-        }
-        Reader reader = new InputStreamReader(in, data.getEncoding());
-        return new MetaCSVReaderFactory(data, reader).build();
+    public static MetaCSVReader create(InputStream in, MetaCSVData data)
+            throws IOException, MetaCSVReadException {
+        return MetaCSVReaderFactory.create(in, data);
     }
 
     private final CSVParser parser;

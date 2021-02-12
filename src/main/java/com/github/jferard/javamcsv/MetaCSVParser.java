@@ -22,7 +22,6 @@ package com.github.jferard.javamcsv;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -46,33 +45,30 @@ public class MetaCSVParser implements Closeable {
     }
 
     private final MetaCSVDataBuilder metaCSVDataBuilder;
-    private final CSVParser parser;
+    private final Iterable<? extends Iterable<String>> rows;
 
-    public MetaCSVParser(CSVParser parser) {
-        this.parser = parser;
+    public MetaCSVParser(Iterable<? extends Iterable<String>> rows) {
+        this.rows = rows;
         this.metaCSVDataBuilder = new MetaCSVDataBuilder();
     }
 
     public MetaCSVData parse() throws MetaCSVParseException, MetaCSVDataException {
-        Iterator<CSVRecord> it = parser.iterator();
+        Iterator<? extends Iterable<String>> it = rows.iterator();
         this.checkHeader(it);
         while (it.hasNext()) {
-            CSVRecord record = it.next();
-            String domain = record.get(0);
-            String key = record.get(1);
-            String value = record.get(2);
-            this.parseRow(domain, key, value);
+            MetaCSVRow row = MetaCSVRow.fromIterable(it.next());
+            this.parseRow(row.getDomain(), row.getKey(), row.getValue());
         }
         return this.metaCSVDataBuilder.build();
     }
 
-    private void checkHeader(Iterator<CSVRecord> it) throws MetaCSVParseException {
+    private void checkHeader(Iterator<? extends Iterable<String>> it) throws MetaCSVParseException {
         if (!it.hasNext()) {
             throw new MetaCSVParseException("Empty file");
         }
-        CSVRecord header = it.next();
-        if (!(header.get(0).equals("domain") && header.get(1).equals("key") &&
-                header.get(2).equals("value"))) {
+        MetaCSVRow header = MetaCSVRow.fromIterable(it.next());
+        if (!(header.getDomain().equals("domain") && header.getKey().equals("key") &&
+                header.getValue().equals("value"))) {
             throw new MetaCSVParseException("Bad header: " + header.toString());
         }
     }
@@ -91,7 +87,7 @@ public class MetaCSVParser implements Closeable {
         }
     }
 
-    private void parseMetaRow(String key, String value) throws MetaCSVParseException {
+    private void parseMetaRow(String key, String value) {
         if (key.equals("version")) {
             this.metaCSVDataBuilder.metaVersion(value);
         } else {
@@ -331,6 +327,8 @@ public class MetaCSVParser implements Closeable {
 
     @Override
     public void close() throws IOException {
-        this.parser.close();
+        if (this.rows instanceof Closeable) {
+            ((Closeable) this.rows).close();
+        }
     }
 }
