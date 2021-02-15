@@ -32,7 +32,7 @@ public class MetaCSVRendererTest {
     public void testDefaultDataVerbose() throws IOException, MetaCSVDataException {
         StringBuilder sb = new StringBuilder();
         MetaCSVRenderer renderer =
-                new MetaCSVRenderer(new CSVPrinter(sb, CSVFormat.DEFAULT), false);
+                MetaCSVRenderer.create(new CSVPrinter(sb, CSVFormat.DEFAULT), false);
         renderer.render(new MetaCSVDataBuilder().build());
         Assert.assertEquals("domain,key,value\r\n" +
                 "file,encoding,UTF-8\r\n" +
@@ -49,7 +49,7 @@ public class MetaCSVRendererTest {
     public void testDefaultDataMinimal() throws IOException, MetaCSVDataException {
         StringBuilder sb = new StringBuilder();
         MetaCSVRenderer renderer =
-                new MetaCSVRenderer(new CSVPrinter(sb, CSVFormat.DEFAULT), true);
+                MetaCSVRenderer.create(new CSVPrinter(sb, CSVFormat.DEFAULT), true);
         renderer.render(new MetaCSVDataBuilder().build());
         Assert.assertEquals("domain,key,value\r\n", sb.toString());
     }
@@ -58,7 +58,7 @@ public class MetaCSVRendererTest {
     public void testVerbose() throws IOException, MetaCSVDataException {
         StringBuilder sb = new StringBuilder();
         MetaCSVRenderer renderer =
-                new MetaCSVRenderer(new CSVPrinter(sb, CSVFormat.DEFAULT), true);
+                MetaCSVRenderer.create(new CSVPrinter(sb, CSVFormat.DEFAULT), true);
         MetaCSVData data = new MetaCSVDataBuilder().doubleQuote(false).escapeChar('\\')
                 .colType(0, new IntegerFieldDescription("")).build();
         renderer.render(data);
@@ -72,7 +72,7 @@ public class MetaCSVRendererTest {
     public void testAsciiMinimal() throws IOException, MetaCSVDataException {
         StringBuilder sb = new StringBuilder();
         MetaCSVRenderer renderer =
-                new MetaCSVRenderer(new CSVPrinter(sb, CSVFormat.DEFAULT), true);
+                MetaCSVRenderer.create(new CSVPrinter(sb, CSVFormat.DEFAULT), true);
         MetaCSVData data = new MetaCSVDataBuilder().encoding("ASCII").lineTerminator("\n")
                 .delimiter(';').doubleQuote(false).escapeChar('\\').quoteChar('\'')
                 .skipInitialSpace(true).nullValue("<NULL>")
@@ -95,7 +95,7 @@ public class MetaCSVRendererTest {
     public void testAsciiVerbose() throws IOException, MetaCSVDataException {
         StringBuilder sb = new StringBuilder();
         MetaCSVRenderer renderer =
-                new MetaCSVRenderer(new CSVPrinter(sb, CSVFormat.DEFAULT), false);
+                MetaCSVRenderer.create(new CSVPrinter(sb, CSVFormat.DEFAULT), false);
         MetaCSVData data = new MetaCSVDataBuilder().encoding("ASCII").lineTerminator("\n")
                 .delimiter(';').doubleQuote(false).escapeChar('\\').quoteChar('\'')
                 .skipInitialSpace(true).nullValue("<NULL>")
@@ -120,7 +120,7 @@ public class MetaCSVRendererTest {
     public void testMinimalBom() throws IOException, MetaCSVDataException {
         StringBuilder sb = new StringBuilder();
         MetaCSVRenderer renderer =
-                new MetaCSVRenderer(new CSVPrinter(sb, CSVFormat.DEFAULT), true);
+                MetaCSVRenderer.create(new CSVPrinter(sb, CSVFormat.DEFAULT), true);
         MetaCSVData data = new MetaCSVDataBuilder().encoding("UTF-8").bom(true).build();
         renderer.render(data);
         Assert.assertEquals("domain,key,value\r\n" +
@@ -131,7 +131,7 @@ public class MetaCSVRendererTest {
     public void testNullValueNull() throws IOException, MetaCSVDataException {
         StringBuilder sb = new StringBuilder();
         MetaCSVRenderer renderer =
-                new MetaCSVRenderer(new CSVPrinter(sb, CSVFormat.DEFAULT), true);
+                MetaCSVRenderer.create(new CSVPrinter(sb, CSVFormat.DEFAULT), true);
         MetaCSVData data = new MetaCSVDataBuilder().nullValue(null).build();
         renderer.render(data);
         Assert.assertEquals("domain,key,value\r\n", sb.toString());

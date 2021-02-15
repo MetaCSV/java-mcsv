@@ -37,14 +37,28 @@ public class MetaCSVRenderer {
 
     public static MetaCSVRenderer create(OutputStream os, boolean minimal) throws IOException {
         OutputStreamWriter outWriter = new OutputStreamWriter(os, Util.UTF_8_CHARSET);
-        CSVPrinter printer = new CSVPrinter(outWriter, CSVFormat.DEFAULT);
-        return new MetaCSVRenderer(printer, minimal);
+        final CSVPrinter printer = new CSVPrinter(outWriter, CSVFormat.DEFAULT);
+        return create(printer, minimal);
     }
 
-    private final CSVPrinter printer;
+    public static MetaCSVRenderer create(final CSVPrinter printer, boolean minimal) {
+        return new MetaCSVRenderer(new MetaCSVPrinter() {
+            @Override
+            public void printRecord(String domain, String key, Object value) throws IOException {
+                printer.printRecord(domain, key, value);
+            }
+
+            @Override
+            public void flush() throws IOException {
+                printer.flush();
+            }
+        }, minimal);
+    }
+
+    private final MetaCSVPrinter printer;
     private final boolean minimal;
 
-    public MetaCSVRenderer(CSVPrinter printer, boolean minimal) {
+    public MetaCSVRenderer(MetaCSVPrinter printer, boolean minimal) {
         this.printer = printer;
         this.minimal = minimal;
     }
