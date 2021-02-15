@@ -64,7 +64,7 @@ public class MetaCSVDataBuilder {
         }
         return new MetaCSVData(this.metaVersion, this.meta, charset, this.bom,
                 Util.unescapeLineTerminator(lineTerminator),
-                this.delimiter, this.doubleQuote, this.escapeChar, this.quoteChar,
+                this.delimiter, this.quoteChar, this.doubleQuote, this.escapeChar,
                 this.skipInitialSpace, this.nullValue, this.descriptionByColIndex);
     }
 

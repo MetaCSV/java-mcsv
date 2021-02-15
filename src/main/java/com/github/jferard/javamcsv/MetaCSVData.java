@@ -57,7 +57,7 @@ public class MetaCSVData implements ProcessorProvider {
     public MetaCSVData(String metaVersion, Map<String, String> meta,
                        Charset encoding, boolean utf8BOM,
                        String lineTerminator, char delimiter,
-                       boolean doubleQuote, char escapeChar, char quoteChar,
+                       char quoteChar, boolean doubleQuote, char escapeChar,
                        boolean skipInitialSpace,
                        String nullValue,
                        Map<Integer, FieldDescription<?>> descriptionByColIndex) {
