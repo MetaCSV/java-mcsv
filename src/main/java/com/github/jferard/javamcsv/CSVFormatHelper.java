@@ -23,7 +23,7 @@ package com.github.jferard.javamcsv;
 import org.apache.commons.csv.CSVFormat;
 
 public class CSVFormatHelper {
-    public static CSVFormat getCSVFormat(MetaCSVData data) {
+    public static CSVFormat getCSVFormat(CSVParameters data) {
         CSVFormat format = CSVFormat.DEFAULT;
         char delimiter = data.getDelimiter();
         if (delimiter != format.getDelimiter()) {

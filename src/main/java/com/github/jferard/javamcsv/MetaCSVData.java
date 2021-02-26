@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MetaCSVData implements ProcessorProvider {
+public class MetaCSVData implements ProcessorProvider, CSVParameters {
     public static MetaCSVData DEFAULT;
 
     static {
