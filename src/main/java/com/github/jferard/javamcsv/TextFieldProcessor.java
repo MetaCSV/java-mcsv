@@ -29,7 +29,7 @@ public class TextFieldProcessor implements FieldProcessor<String> {
 
     @Override
     public String toObject(String text) {
-        if (text == null || text.equals(nullValue)) {
+        if (text == null || text.equals(this.nullValue)) {
             return null;
         }
         return text;

@@ -35,9 +35,9 @@ package com.github.jferard.javamcsv;public class BooleanFieldProcessor implement
             return null;
         }
         text = text.trim();
-        if (text.equals(this.trueWord)) {
+        if (text.equalsIgnoreCase(this.trueWord)) {
             return true;
-        } else if (text.equals(this.falseWord)) {
+        } else if (text.equalsIgnoreCase(this.falseWord)) {
             return false;
         } else {
             throw new MetaCSVReadException("Unknown boolean: "+text+" ("+this.trueWord+"/"+this.falseWord+")");

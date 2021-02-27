@@ -38,6 +38,8 @@ public class BooleanFieldProcessorTest {
         Assert.assertNull(processor.toObject("NULL"));
         Assert.assertTrue(processor.toObject("T"));
         Assert.assertFalse(processor.toObject("F"));
+        Assert.assertTrue(processor.toObject("t"));
+        Assert.assertFalse(processor.toObject("f"));
     }
 
     @Test(expected = MetaCSVReadException.class)
@@ -50,5 +52,13 @@ public class BooleanFieldProcessorTest {
         Assert.assertEquals("NULL", processor.toString(null));
         Assert.assertEquals("T", processor.toString(true));
         Assert.assertEquals("F", processor.toString(false));
+    }
+
+    @Test
+    public void testCase() throws MetaCSVReadException {
+        FieldProcessor<Boolean> aProcessor =
+                new BooleanFieldDescription("true", "false").toFieldProcessor("NULL");
+        Assert.assertTrue(aProcessor.toObject("True"));
+        Assert.assertFalse(aProcessor.toObject("False"));
     }
 }
