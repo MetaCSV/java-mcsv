@@ -65,8 +65,8 @@ public class Util {
 
     /**
      * Escape values and join then with a slash
-     * @param out
-     * @param values
+     * @param out the output
+     * @param values the values
      * @throws IOException
      */
     public static void render(Appendable out, String... values) throws IOException {
@@ -74,11 +74,10 @@ public class Util {
         if (len == 0) {
             return;
         }
-        String first = values[0];
-        out.append(Util.escape(first));
+        Util.render_escaped(out, values[0]);
         for (int i = 1; i < len; i++) {
             out.append('/');
-            out.append(Util.escape(values[i]));
+            Util.render_escaped(out, values[i]);
         }
     }
 
@@ -91,8 +90,14 @@ public class Util {
         return 0;
     }
 
-    private static String escape(String value) {
-        return value.replace("\\", "\\\\").replace("/", "\\/");
+    private static void render_escaped(Appendable out, String value) throws IOException {
+        for (int i=0; i<value.length(); i++) {
+            char c = value.charAt(i);
+            if (c == '/' || c == '\\') {
+                out.append('\\');
+            }
+            out.append(c);
+        }
     }
 
     public static String render(String... values) throws IOException {
