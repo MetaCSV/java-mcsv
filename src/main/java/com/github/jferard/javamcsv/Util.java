@@ -63,16 +63,22 @@ public class Util {
         return parts;
     }
 
+    /**
+     * Escape values and join then with a slash
+     * @param out
+     * @param values
+     * @throws IOException
+     */
     public static void render(Appendable out, String... values) throws IOException {
         int len = getActualLength(values);
         if (len == 0) {
             return;
         }
         String first = values[0];
-        out.append(Util.render(first));
+        out.append(Util.escape(first));
         for (int i = 1; i < len; i++) {
             out.append('/');
-            out.append(Util.render(values[i]));
+            out.append(Util.escape(values[i]));
         }
     }
 
@@ -85,7 +91,7 @@ public class Util {
         return 0;
     }
 
-    private static String render(String value) {
+    private static String escape(String value) {
         return value.replace("\\", "\\\\").replace("/", "\\/");
     }
 

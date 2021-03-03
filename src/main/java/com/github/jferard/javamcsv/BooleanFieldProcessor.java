@@ -18,7 +18,9 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;public class BooleanFieldProcessor implements FieldProcessor<Boolean> {
+package com.github.jferard.javamcsv;
+
+public class BooleanFieldProcessor implements FieldProcessor<Boolean> {
     private final String trueWord;
     private final String falseWord;
     private final String nullValue;

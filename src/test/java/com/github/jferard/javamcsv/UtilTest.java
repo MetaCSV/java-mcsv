@@ -48,6 +48,7 @@ public class UtilTest extends TestCase {
     public void testParse() {
         Assert.assertEquals(Arrays.asList("a", "b\\c/d", "e"), Util.parse("a/b\\\\c\\/d/e"));
         Assert.assertEquals(Arrays.asList("a", "b\\c/d", "e\\f"), Util.parse("a/b\\\\c\\/d/e\\f"));
+        Assert.assertEquals(Arrays.asList("boolean", "/\\", "\\/"), Util.parse("boolean/\\/\\\\/\\\\\\/"));
     }
 
     @Test

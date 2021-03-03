@@ -36,6 +36,8 @@ public class FieldDescriptionTest {
         Assert.assertEquals("boolean/T", TestHelper.render(new BooleanFieldDescription("T", "")));
         Assert.assertEquals("boolean/T/F",
                 TestHelper.render(new BooleanFieldDescription("T", "F")));
+        Assert.assertEquals("boolean/\\/\\\\/\\\\\\/",
+                TestHelper.render(new BooleanFieldDescription("/\\", "\\/")));
         Assert.assertEquals("BooleanFieldDescription(T, F)",
                 new BooleanFieldDescription("T", "F").toString());
     }

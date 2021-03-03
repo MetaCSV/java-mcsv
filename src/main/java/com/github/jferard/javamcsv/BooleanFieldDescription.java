@@ -34,9 +34,10 @@ public class BooleanFieldDescription implements FieldDescription<Boolean> {
 
     @Override
     public void render(Appendable out) throws IOException {
-        out.append("boolean/").append(this.trueWord);
-        if (!this.falseWord.isEmpty()) {
-            out.append('/').append(this.falseWord);
+        if (this.falseWord.isEmpty()) {
+            Util.render(out, "boolean", this.trueWord);
+        } else {
+            Util.render(out, "boolean", this.trueWord, this.falseWord);
         }
     }
 
