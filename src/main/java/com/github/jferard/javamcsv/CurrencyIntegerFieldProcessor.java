@@ -1,6 +1,6 @@
 /*
  * java-mcsv - A MetaCSV library for Java
- *     Copyright (C) 2020 J. Férard <https://github.com/jferard>
+ *     Copyright (C) 2020-2021 J. Férard <https://github.com/jferard>
  *
  * This file is part of java-mcsv.
  *
@@ -66,9 +66,9 @@ public class CurrencyIntegerFieldProcessor implements FieldProcessor<Long> {
         }
         String valueAsString = this.numberProcessor.toString(value);
         if (this.pre) {
-            return this.symbol + valueAsString;
+            return this.symbol + " " + valueAsString;
         } else {
-            return valueAsString + this.symbol;
+            return valueAsString + " " + this.symbol;
         }
     }
 }
