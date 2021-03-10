@@ -68,7 +68,7 @@ public class CurrencyDecimalFieldProcessor implements FieldProcessor<BigDecimal>
         if (this.pre) {
             return this.symbol + valueAsString;
         } else {
-            return valueAsString + this.symbol;
+            return valueAsString + " " + this.symbol;
         }
     }
 }

@@ -76,13 +76,13 @@ public class CurrencyIntegerFieldProcessorTest {
 
     @Test
     public void testPostToString() {
-        Assert.assertEquals("2560€", processorPost.toString(2560L));
+        Assert.assertEquals("2560 €", processorPost.toString(2560L));
     }
 
     @Test
     public void testIntegerToString() {
         FieldProcessor<Long> processor = new CurrencyIntegerFieldDescription(false, "€",
                 IntegerFieldDescription.INSTANCE).toFieldProcessor("NULL");
-        Assert.assertEquals("17€", processor.toString(17L));
+        Assert.assertEquals("17 €", processor.toString(17L));
     }
 }

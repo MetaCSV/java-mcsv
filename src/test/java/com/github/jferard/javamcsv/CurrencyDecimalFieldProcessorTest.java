@@ -78,13 +78,13 @@ public class CurrencyDecimalFieldProcessorTest {
 
     @Test
     public void testPostToString() {
-        Assert.assertEquals("17,2€", processorPost.toString(new BigDecimal("17.2")));
+        Assert.assertEquals("17,2 €", processorPost.toString(new BigDecimal("17.2")));
     }
 
     @Test
     public void testIntegerToString() {
         FieldProcessor<Long> processor = new CurrencyIntegerFieldDescription(false, "€",
                 IntegerFieldDescription.INSTANCE).toFieldProcessor("NULL");
-        Assert.assertEquals("17€", processor.toString(17L));
+        Assert.assertEquals("17 €", processor.toString(17L));
     }
 }

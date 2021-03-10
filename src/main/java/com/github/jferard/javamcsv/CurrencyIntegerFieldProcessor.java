@@ -66,7 +66,7 @@ public class CurrencyIntegerFieldProcessor implements FieldProcessor<Long> {
         }
         String valueAsString = this.numberProcessor.toString(value);
         if (this.pre) {
-            return this.symbol + " " + valueAsString;
+            return this.symbol + valueAsString;
         } else {
             return valueAsString + " " + this.symbol;
         }
