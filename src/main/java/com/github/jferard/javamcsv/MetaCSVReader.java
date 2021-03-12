@@ -31,32 +31,33 @@ import java.util.Iterator;
 public class MetaCSVReader implements Iterable<MetaCSVRecord>, Closeable {
     public static MetaCSVReader create(File csvFile)
             throws IOException, MetaCSVParseException, MetaCSVReadException, MetaCSVDataException {
-        return MetaCSVReaderFactory.create(csvFile);
+        return new MetaCSVReaderBuilder().csvFile(csvFile).build();
     }
 
     public static MetaCSVReader create(File csvFile, File metaCSVFile)
             throws IOException, MetaCSVParseException, MetaCSVReadException, MetaCSVDataException {
-        return MetaCSVReaderFactory.create(csvFile, metaCSVFile);
+        return new MetaCSVReaderBuilder().csvFile(csvFile).metaCSVFile(metaCSVFile).build();
     }
 
     public static MetaCSVReader create(File csvFile, String... metaCSVdirectives)
             throws IOException, MetaCSVParseException, MetaCSVReadException, MetaCSVDataException {
-        return MetaCSVReaderFactory.create(csvFile, metaCSVdirectives);
+        return new MetaCSVReaderBuilder().csvFile(csvFile).metaCSVdirectives(metaCSVdirectives)
+                .build();
     }
 
-    public static MetaCSVReader create(InputStream in, String... metaCSVdirectives)
+    public static MetaCSVReader create(InputStream csvIn, String... metaCSVdirectives)
             throws IOException, MetaCSVParseException, MetaCSVDataException, MetaCSVReadException {
-        return MetaCSVReaderFactory.create(in, metaCSVdirectives);
+        return new MetaCSVReaderBuilder().csvIn(csvIn).metaCSVdirectives(metaCSVdirectives).build();
     }
 
-    public static MetaCSVReader create(InputStream in, InputStream metaIn)
+    public static MetaCSVReader create(InputStream csvIn, InputStream metaIn)
             throws IOException, MetaCSVParseException, MetaCSVReadException, MetaCSVDataException {
-        return MetaCSVReaderFactory.create(in, metaIn);
+        return new MetaCSVReaderBuilder().csvIn(csvIn).metaIn(metaIn).build();
     }
 
-    public static MetaCSVReader create(InputStream in, MetaCSVData data)
-            throws IOException, MetaCSVReadException {
-        return MetaCSVReaderFactory.create(in, data);
+    public static MetaCSVReader create(InputStream csvIn, MetaCSVData data)
+            throws IOException, MetaCSVReadException, MetaCSVDataException, MetaCSVParseException {
+        return new MetaCSVReaderBuilder().csvIn(csvIn).metaData(data).build();
     }
 
     private final CSVParser parser;
