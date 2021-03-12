@@ -26,7 +26,6 @@ import com.github.jferard.javamcsv.MetaCSVParseException;
 import com.github.jferard.javamcsv.MetaCSVParser;
 import com.github.jferard.javamcsv.MetaCSVRenderer;
 import com.github.jferard.javamcsv.TestHelper;
-import com.sun.org.apache.xalan.internal.xsltc.compiler.util.TestGenerator;
 import org.junit.Assert;
 import org.junit.Test;
 

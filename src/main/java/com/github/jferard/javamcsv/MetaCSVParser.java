@@ -23,40 +23,55 @@ package com.github.jferard.javamcsv;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 
+import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.math.BigDecimal;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 public class MetaCSVParser implements Closeable {
-    public static MetaCSVParser create(InputStream is) throws IOException {
-        Reader reader = new InputStreamReader(is);
-        return create(reader);
+    public static MetaCSVParser create(InputStream metaIn) throws IOException {
+        return MetaCSVParser.create(metaIn, true);
+    }
+
+    public static MetaCSVParser create(InputStream metaIn, boolean header) throws IOException {
+        Reader reader = new InputStreamReader(metaIn);
+        return MetaCSVParser.create(reader, header);
     }
 
     public static MetaCSVParser create(Reader reader) throws IOException {
+        return MetaCSVParser.create(reader, true);
+    }
+
+    public static MetaCSVParser create(Reader reader, boolean header) throws IOException {
         CSVParser parser = new CSVParser(reader, CSVFormat.DEFAULT);
-        return new MetaCSVParser(parser);
+        return new MetaCSVParser(parser, header);
+    }
+
+    public static MetaCSVParser create(Iterable<Iterable<String>> metaTriplets, boolean header) {
+        return new MetaCSVParser(metaTriplets, header);
     }
 
     private final MetaCSVDataBuilder metaCSVDataBuilder;
     private final Iterable<? extends Iterable<String>> rows;
+    private boolean header;
     private ColTypeParser colTypeParser;
 
-    public MetaCSVParser(Iterable<? extends Iterable<String>> rows) {
+    public MetaCSVParser(Iterable<? extends Iterable<String>> rows, boolean header) {
         this.rows = rows;
+        this.header = header;
         this.metaCSVDataBuilder = new MetaCSVDataBuilder();
         this.colTypeParser = new ColTypeParser();
     }
 
     public MetaCSVData parse() throws MetaCSVParseException, MetaCSVDataException {
         Iterator<? extends Iterable<String>> it = rows.iterator();
-        this.checkHeader(it);
+        if (this.header) {
+            this.checkHeader(it);
+        }
         while (it.hasNext()) {
             MetaCSVRow row = MetaCSVRow.fromIterable(it.next());
             this.parseRow(row.getDomain(), row.getKey(), row.getValue());

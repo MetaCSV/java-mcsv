@@ -47,9 +47,9 @@ public class MetaCSVRow {
     }
 
     private final String domain;
+
     private final String key;
     private final String value;
-
     public MetaCSVRow(String domain, String key, String value) {
         this.domain = domain;
         this.key = key;
@@ -66,5 +66,14 @@ public class MetaCSVRow {
 
     public String getValue() {
         return value;
+    }
+
+    @Override
+    public String toString() {
+        return "MetaCSVRow{" +
+                "domain='" + domain + '\'' +
+                ", key='" + key + '\'' +
+                ", value='" + value + '\'' +
+                '}';
     }
 }

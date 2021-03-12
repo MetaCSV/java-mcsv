@@ -38,6 +38,7 @@ public class MetaCSVReaderBuilder {
     private InputStream metaIn;
     private MetaCSVData data;
     private MetaCSVParser metaParser;
+    private Iterable<? extends Iterable<String>> metaTriplets;
 
     public MetaCSVReaderBuilder csvFile(File csvFile) {
         this.csvFile = csvFile;
@@ -57,6 +58,11 @@ public class MetaCSVReaderBuilder {
 
     public MetaCSVReaderBuilder metaCSVdirectives(String... metaCSVdirectives) {
         this.metaCSVdirectives = metaCSVdirectives;
+        return this;
+    }
+
+    public MetaCSVReaderBuilder metaCSVTriplets(Iterable<? extends Iterable<String>> metaTriplets) {
+        this.metaTriplets = metaTriplets;
         return this;
     }
 
@@ -91,17 +97,21 @@ public class MetaCSVReaderBuilder {
         }
         if (this.metaParser == null) {
             if (this.metaIn == null) {
-                if (this.metaCSVdirectives == null) {
-                    if (this.metaCSVFile == null) {
-                        throw new MetaCSVParseException("");
+                if (this.metaTriplets == null) {
+                    if (this.metaCSVdirectives == null) {
+                        if (this.metaCSVFile == null) {
+                            throw new MetaCSVParseException("");
+                        } else {
+                            this.metaIn = new FileInputStream(this.metaCSVFile);
+                            this.metaParser = MetaCSVParser.create(metaIn);
+                        }
                     } else {
-                        this.metaIn = new FileInputStream(this.metaCSVFile);
-                        this.metaParser = MetaCSVParser.create(metaIn);
+                        String metaString = Util.join(metaCSVdirectives, "\r\n");
+                        Reader metaReader = new StringReader(metaString);
+                        this.metaParser = MetaCSVParser.create(metaReader, false);
                     }
                 } else {
-                    String metaString = Util.join(metaCSVdirectives, "\r\n");
-                    Reader metaReader = new StringReader("domain,key,value\r\n" + metaString);
-                    this.metaParser = MetaCSVParser.create(metaReader);
+                    this.metaParser = new MetaCSVParser(metaTriplets, false);
                 }
             } else {
                 this.metaParser = MetaCSVParser.create(metaIn);
