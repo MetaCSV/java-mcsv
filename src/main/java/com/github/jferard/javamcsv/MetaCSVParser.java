@@ -23,7 +23,6 @@ package com.github.jferard.javamcsv;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 
-import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,11 +47,11 @@ public class MetaCSVParser implements Closeable {
 
     public static MetaCSVParser create(Reader reader, boolean header) throws IOException {
         CSVParser parser = new CSVParser(reader, CSVFormat.DEFAULT);
-        return new MetaCSVParser(parser, header);
+        return new MetaCSVParser(parser, header, MetaCSVParserBuilder.DEFAULT_OBJECT_PARSER);
     }
 
     public static MetaCSVParser create(Iterable<Iterable<String>> metaTriplets, boolean header) {
-        return new MetaCSVParser(metaTriplets, header);
+        return new MetaCSVParser(metaTriplets, header, MetaCSVParserBuilder.DEFAULT_OBJECT_PARSER);
     }
 
     private final MetaCSVDataBuilder metaCSVDataBuilder;
@@ -60,11 +59,12 @@ public class MetaCSVParser implements Closeable {
     private boolean header;
     private ColTypeParser colTypeParser;
 
-    public MetaCSVParser(Iterable<? extends Iterable<String>> rows, boolean header) {
+    public MetaCSVParser(Iterable<? extends Iterable<String>> rows, boolean header,
+                         ObjectParser objectParser) {
         this.rows = rows;
         this.header = header;
         this.metaCSVDataBuilder = new MetaCSVDataBuilder();
-        this.colTypeParser = new ColTypeParser();
+        this.colTypeParser = new ColTypeParser(objectParser);
     }
 
     public MetaCSVData parse() throws MetaCSVParseException, MetaCSVDataException {

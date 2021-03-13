@@ -25,6 +25,12 @@ import java.util.Date;
 import java.util.List;
 
 public class ColTypeParser {
+    private final ObjectParser objectParser;
+
+    public ColTypeParser(ObjectParser objectParser) {
+        this.objectParser = objectParser;
+    }
+
     public FieldDescription<?> parseColType(String value) throws MetaCSVParseException {
         List<String> values = Util.parse(value);
         String valueType = values.get(0);
@@ -49,7 +55,7 @@ public class ColTypeParser {
         } else if (valueType.equals("text")) {
             fieldDescription = TextFieldDescription.INSTANCE;
         } else if (valueType.equals("object")) {
-            fieldDescription = new ObjectFieldDescription(parameters);
+            fieldDescription = this.objectParser.parse(parameters);
         } else {
             throw new MetaCSVParseException("Unknown col n type: " + valueType);
         }

@@ -41,13 +41,13 @@ public class MetaCSVReader implements Iterable<MetaCSVRecord>, Closeable {
 
     public static MetaCSVReader create(File csvFile, String... metaCSVdirectives)
             throws IOException, MetaCSVParseException, MetaCSVReadException, MetaCSVDataException {
-        return new MetaCSVReaderBuilder().csvFile(csvFile).metaCSVdirectives(metaCSVdirectives)
+        return new MetaCSVReaderBuilder().csvFile(csvFile).metaCSVDirectives(metaCSVdirectives)
                 .build();
     }
 
     public static MetaCSVReader create(InputStream csvIn, String... metaCSVdirectives)
             throws IOException, MetaCSVParseException, MetaCSVDataException, MetaCSVReadException {
-        return new MetaCSVReaderBuilder().csvIn(csvIn).metaCSVdirectives(metaCSVdirectives).build();
+        return new MetaCSVReaderBuilder().csvIn(csvIn).metaCSVDirectives(metaCSVdirectives).build();
     }
 
     public static MetaCSVReader create(InputStream csvIn, InputStream metaIn)

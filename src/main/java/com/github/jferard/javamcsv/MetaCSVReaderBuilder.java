@@ -29,20 +29,22 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.List;
 
 public class MetaCSVReaderBuilder {
     private File csvFile;
-    private File metaCSVFile;
-    private String[] metaCSVdirectives;
     private InputStream csvIn;
-    private InputStream metaIn;
     private MetaCSVData data;
-    private MetaCSVParser metaParser;
-    private Iterable<? extends Iterable<String>> metaTriplets;
+    private final MetaCSVParserBuilder parserBuilder;
+
+    public MetaCSVReaderBuilder() {
+        this.parserBuilder = new MetaCSVParserBuilder();
+    }
 
     public MetaCSVReaderBuilder csvFile(File csvFile) {
         this.csvFile = csvFile;
-        this.metaCSVFile = Util.withExtension(csvFile, ".mcsv");
+        File metaCSVFile = Util.withExtension(csvFile, ".mcsv");
+        this.parserBuilder.metaCSVFile(metaCSVFile);
         return this;
     }
 
@@ -52,27 +54,27 @@ public class MetaCSVReaderBuilder {
     }
 
     public MetaCSVReaderBuilder metaCSVFile(File metaCSVFile) {
-        this.metaCSVFile = metaCSVFile;
+        this.parserBuilder.metaCSVFile(metaCSVFile);
         return this;
     }
 
-    public MetaCSVReaderBuilder metaCSVdirectives(String... metaCSVdirectives) {
-        this.metaCSVdirectives = metaCSVdirectives;
+    public MetaCSVReaderBuilder metaCSVDirectives(String... metaCSVDirectives) {
+        this.parserBuilder.metaCSVDirectives(metaCSVDirectives);
         return this;
     }
 
     public MetaCSVReaderBuilder metaCSVTriplets(Iterable<? extends Iterable<String>> metaTriplets) {
-        this.metaTriplets = metaTriplets;
+        this.parserBuilder.metaTriplets(metaTriplets);
         return this;
     }
 
     public MetaCSVReaderBuilder metaIn(InputStream metaIn) {
-        this.metaIn = metaIn;
+        this.parserBuilder.metaIn(metaIn);
         return this;
     }
 
     public MetaCSVReaderBuilder metaParser(MetaCSVParser metaParser) {
-        this.metaParser = metaParser;
+        this.parserBuilder.metaParser(metaParser);
         return this;
     }
 
@@ -92,32 +94,11 @@ public class MetaCSVReaderBuilder {
     }
 
     private MetaCSVData getData() throws MetaCSVParseException, IOException, MetaCSVDataException {
-        if (this.data != null) {
+        if (this.data == null) {
+            return this.parserBuilder.build();
+        } else {
             return this.data;
         }
-        if (this.metaParser == null) {
-            if (this.metaIn == null) {
-                if (this.metaTriplets == null) {
-                    if (this.metaCSVdirectives == null) {
-                        if (this.metaCSVFile == null) {
-                            throw new MetaCSVParseException("");
-                        } else {
-                            this.metaIn = new FileInputStream(this.metaCSVFile);
-                            this.metaParser = MetaCSVParser.create(metaIn);
-                        }
-                    } else {
-                        String metaString = Util.join(metaCSVdirectives, "\r\n");
-                        Reader metaReader = new StringReader(metaString);
-                        this.metaParser = MetaCSVParser.create(metaReader, false);
-                    }
-                } else {
-                    this.metaParser = new MetaCSVParser(metaTriplets, false);
-                }
-            } else {
-                this.metaParser = MetaCSVParser.create(metaIn);
-            }
-        }
-        return this.metaParser.parse();
     }
 
     public MetaCSVReader create(InputStream csvIn, MetaCSVData data)
