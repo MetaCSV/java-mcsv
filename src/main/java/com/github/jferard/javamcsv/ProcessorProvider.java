@@ -21,5 +21,5 @@
 package com.github.jferard.javamcsv;
 
 public interface ProcessorProvider {
-    FieldProcessor<?> getProcessor(int c);
+    FieldProcessor<?> getProcessor(int c, OnError onError);
 }

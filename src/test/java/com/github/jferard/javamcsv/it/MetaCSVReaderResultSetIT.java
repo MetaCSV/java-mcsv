@@ -25,6 +25,7 @@ import com.github.jferard.javamcsv.MetaCSVParseException;
 import com.github.jferard.javamcsv.MetaCSVReadException;
 import com.github.jferard.javamcsv.MetaCSVReader;
 import com.github.jferard.javamcsv.TestHelper;
+import com.github.jferard.javamcsv.Util;
 import com.github.jferard.javamcsv.tool.Tool;
 import org.junit.Assert;
 import org.junit.Test;
@@ -77,6 +78,7 @@ public class MetaCSVReaderResultSetIT {
         }
         Assert.assertTrue(rs.next());
         Calendar c = GregorianCalendar.getInstance(Locale.US);
+        c.setTimeZone(Util.UTC_TIME_ZONE);
         c.setTimeInMillis(0);
         c.set(2020, Calendar.JUNE, 11, 0, 0, 0);
         Assert.assertEquals("64214_0010_00700", rs.getString(1));

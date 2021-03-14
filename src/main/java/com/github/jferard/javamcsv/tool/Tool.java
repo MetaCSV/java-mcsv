@@ -25,6 +25,7 @@ import com.github.jferard.javamcsv.FieldDescription;
 import com.github.jferard.javamcsv.MetaCSVData;
 import com.github.jferard.javamcsv.MetaCSVDataBuilder;
 import com.github.jferard.javamcsv.MetaCSVDataException;
+import com.github.jferard.javamcsv.MetaCSVReadException;
 import com.github.jferard.javamcsv.MetaCSVReader;
 import com.github.jferard.javamcsv.MetaCSVRenderer;
 import com.github.jferard.javamcsv.MetaCSVWriter;
@@ -37,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Tool {
-    public static ResultSet readerToResultSet(MetaCSVReader reader) {
+    public static ResultSet readerToResultSet(MetaCSVReader reader) throws MetaCSVReadException {
         return new MetaCSVReaderResultSet(reader);
     }
 

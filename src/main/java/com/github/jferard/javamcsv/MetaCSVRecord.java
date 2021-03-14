@@ -23,37 +23,49 @@ package com.github.jferard.javamcsv;
 import org.apache.commons.csv.CSVRecord;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
-public class MetaCSVRecord implements Iterable<Object> {
-    private CSVRecord record;
-    private List<Object> values;
+import static com.github.jferard.javamcsv.Util.UTC_TIME_ZONE;
 
-    public MetaCSVRecord(CSVRecord record, List<Object> values) {
+public class MetaCSVRecord {
+    private final int offset;
+    private CSVRecord record;
+    private ProcessorProvider provider;
+    private Map<Integer, FieldProcessor<?>> processorByIndex;
+
+    public MetaCSVRecord(CSVRecord record, ProcessorProvider provider,
+                         Map<Integer, FieldProcessor<?>> processorByIndex, TimeZone timeZone) {
         this.record = record;
-        this.values = values;
+        this.provider = provider;
+        this.processorByIndex = processorByIndex;
+        this.offset = UTC_TIME_ZONE.getRawOffset() - timeZone.getRawOffset();
     }
 
-    public Boolean getBoolean(int i) throws MetaCSVCastException {
-        Object value = this.values.get(i);
-        if (value instanceof Boolean) {
+    public Boolean getBoolean(int i) throws MetaCSVCastException, MetaCSVReadException {
+        Object value = getValue(i);
+        if (value == null) {
+            return null;
+        } else if (value instanceof Boolean) {
             return (Boolean) value;
         } else {
             throw new MetaCSVCastException("Not a boolean: " + value);
         }
     }
 
-    public Date getDate(int i) {
-        Object value = this.values.get(i);
-        if (value instanceof Date) {
+    public Date getDate(int i) throws MetaCSVReadException {
+        Object value = getValue(i);
+        if (value == null) {
+            return null;
+        } else if (value instanceof Date) {
             Date date = (Date) value;
-            Calendar cal = GregorianCalendar.getInstance(TimeZone.getTimeZone("UTC"));
-            cal.setTime(date);
+            Calendar cal = GregorianCalendar.getInstance(UTC_TIME_ZONE);
+            cal.setTimeInMillis(date.getTime() + offset);
             cal.set(Calendar.HOUR, 0);
             cal.set(Calendar.MINUTE, 0);
             cal.set(Calendar.SECOND, 0);
@@ -64,66 +76,89 @@ public class MetaCSVRecord implements Iterable<Object> {
         }
     }
 
-    public Date getDatetime(int i) {
-        Object value = this.values.get(i);
-        if (value instanceof Date) {
-            return (Date) value;
+    public Date getDatetime(int i) throws MetaCSVReadException {
+        Object value = getValue(i);
+        if (value == null) {
+            return null;
+        } else if (value instanceof Date) {
+            Date date = (Date) value;
+            return new Date(date.getTime() + offset);
         } else {
             throw new MetaCSVCastException("Not a datetime: " + value);
         }
     }
 
-    public BigDecimal getDecimal(int i) {
-        Object value = this.values.get(i);
-        if (value instanceof Number) {
+    public BigDecimal getDecimal(int i) throws MetaCSVReadException {
+        Object value = getValue(i);
+        if (value == null) {
+            return null;
+        } else if (value instanceof Number) {
             return (BigDecimal) value;
         } else {
             throw new MetaCSVCastException("Not a number: " + value);
         }
     }
 
-    public double getFloat(int i) {
-        Object value = this.values.get(i);
-        if (value instanceof Number) {
+    public Double getFloat(int i) throws MetaCSVReadException {
+        Object value = getValue(i);
+        if (value == null) {
+            return null;
+        } else if (value instanceof Number) {
             return ((Number) value).doubleValue();
         } else {
             throw new MetaCSVCastException("Not a number: " + value);
         }
     }
 
-    public long getInteger(int i) {
-        Object value = this.values.get(i);
-        if (value instanceof Number) {
+    public Long getInteger(int i) throws MetaCSVReadException {
+        Object value = getValue(i);
+        if (value == null) {
+            return null;
+        } else if (value instanceof Number) {
             return ((Number) value).longValue();
         } else {
             throw new MetaCSVCastException("Not a number: " + value);
         }
     }
 
-    public CharSequence getText(int i) {
-        Object value = this.values.get(i);
-        if (value instanceof CharSequence) {
+    public CharSequence getText(int i) throws MetaCSVReadException {
+        Object value = getValue(i);
+        if (value == null) {
+            return null;
+        } else if (value instanceof CharSequence) {
             return (CharSequence) value;
         } else {
             throw new MetaCSVCastException("Not a text: " + value);
         }
     }
 
-    public Object getObject(int i) {
-        return this.values.get(i);
-    }
-
-    @Override
-    public Iterator<Object> iterator() {
-        return this.values.iterator();
+    public Object getObject(int i) throws MetaCSVReadException {
+        return getValue(i);
     }
 
     public int size() {
         return this.record.size();
     }
 
+    private Object getValue(int i) throws MetaCSVReadException {
+        FieldProcessor<?> processor = this.provider.getProcessor(i, OnError.EXCEPTION);
+        String text = record.get(i);
+        return processor.toObject(text);
+    }
+
+    public List<Object> toList() throws MetaCSVReadException {
+        int size = this.record.size();
+        List<Object> ret = new ArrayList<Object>(size);
+        for (int c = 0; c < size; c++) {
+            String text = record.get(c);
+            FieldProcessor<?> processor = this.processorByIndex.get(c);
+            ret.add(processor.toObject(text));
+        }
+        return ret;
+    }
+
     @Override
     public String toString() {
-        return "MetaCSVRecord(" + record + " ," + values + ")";
+        return "MetaCSVRecord{record=" + record + "}";
     }
 }

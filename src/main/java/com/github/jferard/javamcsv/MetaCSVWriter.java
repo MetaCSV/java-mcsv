@@ -81,7 +81,7 @@ public class MetaCSVWriter implements Closeable {
         List<String> formattedValues = new ArrayList<String>(values.size());
         for (int i = 0; i < values.size(); i++) {
             Object value = values.get(i);
-            FieldProcessor<?> rawProcessor = provider.getProcessor(i);
+            FieldProcessor<?> rawProcessor = provider.getProcessor(i, OnError.EXCEPTION);
             FieldProcessor<Object> processor = (FieldProcessor<Object>) rawProcessor;
             String formattedValue = processor.toString(value);
             formattedValues.add(formattedValue);

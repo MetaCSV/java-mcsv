@@ -23,20 +23,18 @@ package com.github.jferard.javamcsv;
 import java.io.IOException;
 import java.math.BigDecimal;
 
-public class CurrencyDecimalFieldDescription implements FieldDescription<BigDecimal> {
+public class CurrencyDecimalFieldDescription extends FieldDescription<BigDecimal> {
     public static final FieldDescription<?> INSTANCE = new CurrencyDecimalFieldDescription(true, "$", DecimalFieldDescription.INSTANCE);
 
     private final boolean pre;
     private final String symbol;
     private final FieldDescription<BigDecimal> numberDescription;
-    private final String nullValue;
 
     public CurrencyDecimalFieldDescription(boolean pre, String symbol,
                                            FieldDescription<BigDecimal> numberDescription) {
         this.pre = pre;
         this.symbol = symbol;
         this.numberDescription = numberDescription;
-        this.nullValue = "";
     }
 
     @Override

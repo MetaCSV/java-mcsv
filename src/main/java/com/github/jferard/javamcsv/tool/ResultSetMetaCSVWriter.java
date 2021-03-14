@@ -28,12 +28,14 @@ import com.github.jferard.javamcsv.MetaCSVDataBuilder;
 import com.github.jferard.javamcsv.MetaCSVDataException;
 import com.github.jferard.javamcsv.MetaCSVRenderer;
 import com.github.jferard.javamcsv.MetaCSVWriter;
+import com.github.jferard.javamcsv.Util;
 
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 public class ResultSetMetaCSVWriter {
@@ -135,10 +137,10 @@ public class ResultSetMetaCSVWriter {
                     value = resultSet.getLong(i + 1);
                     break;
                 case DATE:
-                    value = resultSet.getDate(i + 1);
+                    value = resultSet.getDate(i + 1, GregorianCalendar.getInstance(Util.UTC_TIME_ZONE));
                     break;
                 case DATETIME:
-                    value = resultSet.getTime(i + 1);
+                    value = resultSet.getTime(i + 1, GregorianCalendar.getInstance(Util.UTC_TIME_ZONE));
                     break;
                 case FLOAT: case PERCENTAGE_FLOAT:
                     value = resultSet.getDouble(i + 1);

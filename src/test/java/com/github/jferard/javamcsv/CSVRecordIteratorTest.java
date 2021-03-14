@@ -28,17 +28,19 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.TimeZone;
 
 public class CSVRecordIteratorTest {
-    @Test(expected = RuntimeException.class)
-    public void testReadException() throws IOException, MetaCSVDataException {
+    @Test
+    public void testReadException() throws IOException, MetaCSVDataException, MetaCSVReadException {
         Iterator<CSVRecord> wrappedIterator =
                 Arrays.asList(TestHelper.createRecord("foo", "bar", "baz"),
                         TestHelper.createRecord("foo value", "bar value", "baz value")).iterator();
         MetaCSVData metaData = new MetaCSVDataBuilder()
                 .colType(1, IntegerFieldDescription.INSTANCE).nullValue(null).build();
         Iterator<MetaCSVRecord> it =
-                new CSVRecordIterator(wrappedIterator, new CSVRecordProcessor(metaData));
+                new CSVRecordIterator(wrappedIterator, new CSVRecordProcessor(metaData,
+                        OnError.WRAP, TimeZone.getTimeZone("UTC")));
         Assert.assertTrue(it.hasNext());
         TestHelper.assertMetaEquals(TestHelper.createMetaRecord("foo", "bar", "baz"), it.next());
         Assert.assertTrue(it.hasNext());
@@ -46,14 +48,15 @@ public class CSVRecordIteratorTest {
     }
 
     @Test
-    public void testRead() throws IOException, MetaCSVDataException {
+    public void testRead() throws IOException, MetaCSVDataException, MetaCSVReadException {
         Iterator<CSVRecord> wrappedIterator =
                 Arrays.asList(TestHelper.createRecord("foo", "bar", "baz"),
                         TestHelper.createRecord("foo value", "1", "baz value")).iterator();
         MetaCSVData metaData = new MetaCSVDataBuilder()
                 .colType(1, IntegerFieldDescription.INSTANCE).nullValue(null).build();
         Iterator<MetaCSVRecord> it =
-                new CSVRecordIterator(wrappedIterator, new CSVRecordProcessor(metaData));
+                new CSVRecordIterator(wrappedIterator, new CSVRecordProcessor(metaData,
+                        OnError.WRAP, TimeZone.getTimeZone("UTC")));
         Assert.assertTrue(it.hasNext());
         TestHelper.assertMetaEquals(TestHelper.createMetaRecord("foo", "bar", "baz"),
                 it.next());

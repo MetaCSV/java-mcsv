@@ -27,18 +27,20 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringReader;
-import java.util.List;
+import java.util.TimeZone;
 
 public class MetaCSVReaderBuilder {
+    private TimeZone timeZone;
     private File csvFile;
     private InputStream csvIn;
     private MetaCSVData data;
     private final MetaCSVParserBuilder parserBuilder;
+    private OnError onError;
 
     public MetaCSVReaderBuilder() {
         this.parserBuilder = new MetaCSVParserBuilder();
+        this.onError = OnError.WRAP;
+        timeZone = Util.UTC_TIME_ZONE;
     }
 
     public MetaCSVReaderBuilder csvFile(File csvFile) {
@@ -78,9 +80,19 @@ public class MetaCSVReaderBuilder {
         return this;
     }
 
+    public MetaCSVReaderBuilder timeZone(TimeZone timeZone) {
+        this.timeZone = timeZone;
+        return this;
+    }
+
 
     public MetaCSVReaderBuilder metaData(MetaCSVData data) {
         this.data = data;
+        return this;
+    }
+
+    public MetaCSVReaderBuilder onError(OnError onError) {
+        this.onError = onError;
         return this;
     }
 
@@ -90,7 +102,7 @@ public class MetaCSVReaderBuilder {
         if (this.csvIn == null) {
             this.csvIn = new FileInputStream(csvFile);
         }
-        return create(this.csvIn, data);
+        return this.create(this.csvIn, data);
     }
 
     private MetaCSVData getData() throws MetaCSVParseException, IOException, MetaCSVDataException {
@@ -101,22 +113,32 @@ public class MetaCSVReaderBuilder {
         }
     }
 
-    public MetaCSVReader create(InputStream csvIn, MetaCSVData data)
+    private MetaCSVReader create(InputStream csvIn, MetaCSVData data)
             throws IOException, MetaCSVReadException {
         if (data.isUtf8BOM()) {
-            byte[] buffer = new byte[3];
-            int count = 0;
-            while (count < 3) {
-                count = csvIn.read(buffer, count, 3-count);
-            }
-            if ((buffer[0] & 0xFF) != 0xEF || (buffer[1] & 0xFF) != 0xBB ||
-                    (buffer[2] & 0xFF) != 0xBF) {
-                throw new MetaCSVReadException("BOM expected");
-            }
+            gobbleBOM(csvIn);
         }
         InputStreamReader reader = new InputStreamReader(csvIn, data.getEncoding());
         CSVFormat format = CSVFormatHelper.getCSVFormat(data);
-        CSVRecordProcessor processor = new CSVRecordProcessor(data);
+        CSVRecordProcessor processor = new CSVRecordProcessor(data, this.onError,
+                timeZone);
         return new MetaCSVReader(format.parse(reader), processor, data.getMetaData());
+    }
+
+    private void gobbleBOM(InputStream csvIn) throws IOException, MetaCSVReadException {
+        byte[] buffer = new byte[3];
+        int count = 0;
+        while (count < 3) {
+            count = csvIn.read(buffer, count, 3-count);
+        }
+        if ((buffer[0] & 0xFF) != 0xEF || (buffer[1] & 0xFF) != 0xBB ||
+                (buffer[2] & 0xFF) != 0xBF) {
+            throw new MetaCSVReadException("BOM expected");
+        }
+    }
+
+    public MetaCSVReaderBuilder objectParser(ObjectParser objectParser) {
+        this.parserBuilder.objectParser(objectParser);
+        return this;
     }
 }

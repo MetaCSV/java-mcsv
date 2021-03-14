@@ -23,7 +23,7 @@ package com.github.jferard.javamcsv;
 import java.io.IOException;
 import java.math.BigDecimal;
 
-public class DecimalFieldDescription implements FieldDescription<BigDecimal> {
+public class DecimalFieldDescription extends FieldDescription<BigDecimal> {
     public static final FieldDescription<BigDecimal> INSTANCE = new DecimalFieldDescription("", ".");
 
     private String thousandsSeparator;

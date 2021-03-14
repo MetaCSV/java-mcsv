@@ -20,12 +20,80 @@
 
 package com.github.jferard.javamcsv;import java.io.IOException;
 
-public interface FieldDescription<T> {
-    void render(Appendable out) throws IOException;
+abstract public class FieldDescription<T> {
+    public abstract void render(Appendable out) throws IOException;
 
-    FieldProcessor<T> toFieldProcessor(String nullValue);
+    public FieldProcessor<?> toFieldProcessor(String nullValue, OnError onError) {
+        final FieldProcessor<T> rawProcessor = this.toFieldProcessor(nullValue);
+        switch (onError) {
+            case WRAP:
+                final String description = getDescription();
+                return new FieldProcessor<Object>() {
+                    @Override
+                    public Object toObject(String text) {
+                        try {
+                            return rawProcessor.toObject(text);
+                        } catch (MetaCSVReadException e) {
+                            return new ReadError(text, description);
+                        }
+                    }
 
-    Class<T> getJavaType();
+                    @Override
+                    public String toString(Object value) {
+                        return rawProcessor.toString((T) value);
+                    }
+                };
+            case NULL:
+                return new FieldProcessor<T>() {
+                    @Override
+                    public T toObject(String text) {
+                        try {
+                            return rawProcessor.toObject(text);
+                        } catch (MetaCSVReadException e) {
+                            return null;
+                        }
+                    }
 
-    DataType getDataType();
+                    @Override
+                    public String toString(T value) {
+                        return rawProcessor.toString(value);
+                    }
+                };
+            case TEXT:
+                return new FieldProcessor<Object>() {
+                    @Override
+                    public Object toObject(String text) {
+                        try {
+                            return rawProcessor.toObject(text);
+                        } catch (MetaCSVReadException e) {
+                            return text;
+                        }
+                    }
+
+                    @Override
+                    public String toString(Object value) {
+                        return rawProcessor.toString((T) value);
+                    }
+                };
+            default:
+                return rawProcessor;
+        }
+    }
+
+    private String getDescription() {
+        try {
+            StringBuilder sb = new StringBuilder();
+            this.render(sb);
+            return sb.toString();
+        } catch (IOException e) {
+            // should not happen
+            return "???";
+        }
+    }
+
+    protected abstract FieldProcessor<T> toFieldProcessor(String nullValue);
+
+    public abstract Class<T> getJavaType();
+
+    public abstract DataType getDataType();
 }

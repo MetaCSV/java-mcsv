@@ -93,22 +93,23 @@ public class MetaCSVReaderTest {
         Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(
                 Arrays.asList("boolean", "currency", "date", "datetime", "float", "integer",
-                        "percentage", "text"), TestHelper.toList(iterator.next()));
+                        "percentage", "text"), iterator.next().toList());
         Assert.assertTrue(iterator.hasNext());
 
         Calendar c = GregorianCalendar.getInstance(Locale.US);
+        c.setTimeZone(Util.UTC_TIME_ZONE);
         c.setTimeInMillis(0);
         c.set(2020, Calendar.DECEMBER, 1, 0, 0, 0);
         Assert.assertEquals(
                 Arrays.asList(true, new BigDecimal("15"), c.getTime(), null, 10000.5, 12354L, 0.565,
                         "Foo"),
-                TestHelper.toList(iterator.next()));
+                iterator.next().toList());
         Assert.assertTrue(iterator.hasNext());
         c.set(2020, Calendar.DECEMBER, 1, 9, 30, 55);
         Assert.assertEquals(
                 Arrays.asList(false, new BigDecimal("-1900.5"), null, c.getTime(), -520.8, -1000L,
                         -0.128, "Bar"),
-                TestHelper.toList(iterator.next()));
+                iterator.next().toList());
         Assert.assertFalse(iterator.hasNext());
     }
 
@@ -145,22 +146,23 @@ public class MetaCSVReaderTest {
         Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(
                 Arrays.asList("boolean", "currency", "date", "datetime", "float", "integer",
-                        "percentage", "text"), TestHelper.toList(iterator.next()));
+                        "percentage", "text"), iterator.next().toList());
         Assert.assertTrue(iterator.hasNext());
 
         Calendar c = GregorianCalendar.getInstance(Locale.US);
+        c.setTimeZone(Util.UTC_TIME_ZONE);
         c.setTimeInMillis(0);
         c.set(2020, Calendar.DECEMBER, 1, 0, 0, 0);
         Assert.assertEquals(
                 Arrays.asList(true, new BigDecimal("15"), c.getTime(), null, 10000.5, 12354L, 0.565,
                         "Foo"),
-                TestHelper.toList(iterator.next()));
+                iterator.next().toList());
         Assert.assertTrue(iterator.hasNext());
         c.set(2020, Calendar.DECEMBER, 1, 9, 30, 55);
         Assert.assertEquals(
                 Arrays.asList(false, new BigDecimal("-1900.5"), null, c.getTime(), -520.8, -1000L,
                         -0.128, "Bar"),
-                TestHelper.toList(iterator.next()));
+                iterator.next().toList());
         Assert.assertFalse(iterator.hasNext());
     }
 }

@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-public class ObjectFieldDescription implements FieldDescription<Object> {
+public class ObjectFieldDescription extends FieldDescription<Object> {
     public static final FieldDescription<?> INSTANCE = new ObjectFieldDescription(
             Collections.<String>emptyList());
     private final String nullValue;

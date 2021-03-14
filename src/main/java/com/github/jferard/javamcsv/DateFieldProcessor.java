@@ -33,6 +33,12 @@ public class DateFieldProcessor implements FieldProcessor<Date> {
         this.nullValue = nullValue;
     }
 
+    /**
+     *
+     * @param text the CSV value
+     * @return the UTC-Date
+     * @throws MetaCSVReadException
+     */
     @Override
     public Date toObject(String text) throws MetaCSVReadException {
         if (text == null || text.equals(this.nullValue)) {

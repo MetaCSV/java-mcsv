@@ -20,6 +20,7 @@
 
 package com.github.jferard.javamcsv.tool;
 
+import com.github.jferard.javamcsv.MetaCSVReadException;
 import com.github.jferard.javamcsv.MetaCSVReader;
 import com.github.jferard.javamcsv.MetaCSVRecord;
 import com.github.jferard.javamcsv.Util;
@@ -52,7 +53,7 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
     private boolean wasNull;
     private final List<String> header;
 
-    public MetaCSVReaderResultSet(MetaCSVReader reader) {
+    public MetaCSVReaderResultSet(MetaCSVReader reader) throws MetaCSVReadException {
         this.reader = reader;
         this.iterator = reader.iterator();
         MetaCSVRecord headerRecord = this.iterator.next();
@@ -86,7 +87,7 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
 
     @Override
     public String getString(int columnIndex) throws SQLException {
-        Object o = this.cur.getObject(columnIndex-1);
+        Object o = getCurObject(columnIndex);
         if (o == null) {
             this.wasNull = true;
             return null;
@@ -96,9 +97,17 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
         }
     }
 
+    private Object getCurObject(int columnIndex) throws SQLException {
+        try {
+            return this.cur.getObject(columnIndex - 1);
+        } catch (MetaCSVReadException e) {
+            throw new SQLException(e);
+        }
+    }
+
     @Override
     public boolean getBoolean(int columnIndex) throws SQLException {
-        Object o = this.cur.getObject(columnIndex-1);
+        Object o = getCurObject(columnIndex);
         if (o == null) {
             this.wasNull = true;
             return false;
@@ -169,7 +178,7 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
     }
 
     private long getLong(String typeName, int columnIndex) throws SQLException {
-        Object o = this.cur.getObject(columnIndex-1);
+        Object o = getCurObject(columnIndex);
         if (o == null) {
             this.wasNull = true;
             return 0L;
@@ -188,7 +197,7 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
     }
 
     private Number getNumber(String typeName, int columnIndex) throws SQLException {
-        Object o = this.cur.getObject(columnIndex-1);
+        Object o = getCurObject(columnIndex);
         if (o == null) {
             this.wasNull = true;
             return 0;
@@ -230,7 +239,7 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
     }
 
     private java.util.Date getDate(String typeName, int columnIndex) throws SQLException {
-        Object o = this.cur.getObject(columnIndex-1);
+        Object o = getCurObject(columnIndex);
         if (o == null) {
             this.wasNull = true;
             return null;
@@ -296,7 +305,7 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
 
     @Override
     public Object getObject(int columnIndex) throws SQLException {
-        return this.cur.getObject(columnIndex-1);
+        return getCurObject(columnIndex);
     }
 
     @Override
@@ -315,7 +324,7 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
 
     @Override
     public BigDecimal getBigDecimal(int columnIndex) throws SQLException {
-        Object o = this.cur.getObject(columnIndex-1);
+        Object o = getCurObject(columnIndex);
         if (o == null) {
             this.wasNull = true;
             return BigDecimal.ZERO;

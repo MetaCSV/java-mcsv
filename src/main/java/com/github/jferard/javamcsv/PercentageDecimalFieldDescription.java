@@ -23,7 +23,7 @@ package com.github.jferard.javamcsv;
 import java.io.IOException;
 import java.math.BigDecimal;
 
-public class PercentageDecimalFieldDescription implements FieldDescription<BigDecimal> {
+public class PercentageDecimalFieldDescription extends FieldDescription<BigDecimal> {
     public static final FieldDescription<?> INSTANCE =
             new PercentageDecimalFieldDescription(false, "%", DecimalFieldDescription.INSTANCE);
     private final boolean pre;

@@ -22,16 +22,22 @@ package com.github.jferard.javamcsv;import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
-public class DatetimeFieldDescription implements FieldDescription<Date> {
+public class DatetimeFieldDescription extends FieldDescription<Date> {
     public static final FieldDescription<?> INSTANCE = DateFieldDescription.create("yyyy-MM-dd'T'HH:mm:ss");
 
     public static FieldDescription<Date> create(String dateFormat) {
-        return new DatetimeFieldDescription(new SimpleDateFormat(dateFormat), null);
+        SimpleDateFormat format = new SimpleDateFormat(dateFormat);
+        format.setTimeZone(Util.UTC_TIME_ZONE);
+        return new DatetimeFieldDescription(format, null);
     }
 
     public static FieldDescription<Date> create(String dateFormat, String locale) {
-        return new DatetimeFieldDescription(new SimpleDateFormat(dateFormat, Locale.getDefault()), locale);
+        SimpleDateFormat format =
+                new SimpleDateFormat(dateFormat, Util.getLocale(locale));
+        format.setTimeZone(Util.UTC_TIME_ZONE);
+        return new DatetimeFieldDescription(format, locale);
     }
 
     private SimpleDateFormat simpleDateFormat;

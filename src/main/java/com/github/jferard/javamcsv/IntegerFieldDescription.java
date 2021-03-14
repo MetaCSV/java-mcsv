@@ -22,7 +22,7 @@ package com.github.jferard.javamcsv;
 
 import java.io.IOException;
 
-public class IntegerFieldDescription implements FieldDescription<Long> {
+public class IntegerFieldDescription extends FieldDescription<Long> {
     public static IntegerFieldDescription INSTANCE = new IntegerFieldDescription(null);
 
     private final String thousandsSeparator;

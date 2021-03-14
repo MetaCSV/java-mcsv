@@ -34,7 +34,7 @@ public class MetaCSVRecordTest {
     public void testToString() throws IOException {
         MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", 1);
         Assert.assertEquals(
-                "MetaCSVRecord(CSVRecord [comment=null, mapping=null, recordNumber=1, values=[foo, bar, 1]] ,[foo, bar, 1])",
+                "MetaCSVRecord{record=CSVRecord [comment=null, mapping=null, recordNumber=1, values=[foo, bar, 1]]}",
                 metaRecord.toString());
     }
 
@@ -45,32 +45,32 @@ public class MetaCSVRecordTest {
     }
 
     @Test
-    public void testBoolean() throws IOException {
+    public void testBoolean() throws IOException, MetaCSVReadException {
         MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", true);
         Assert.assertTrue(
                 metaRecord.getBoolean(2));
     }
 
     @Test(expected = ArrayIndexOutOfBoundsException.class)
-    public void testBooleanIndex() throws IOException {
+    public void testBooleanIndex() throws IOException, MetaCSVReadException {
         MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", true);
         Assert.assertTrue(
                 metaRecord.getBoolean(3));
     }
 
     @Test(expected = MetaCSVCastException.class)
-    public void testNotBoolean() throws IOException {
+    public void testNotBoolean() throws IOException, MetaCSVReadException {
         MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", true);
         metaRecord.getBoolean(1);
     }
 
     @Test
-    public void testDate() throws IOException {
-        Calendar cal = GregorianCalendar.getInstance(TimeZone.getTimeZone("UTC"));
-        cal.setTimeInMillis(1234567891011l);
+    public void testDate() throws IOException, MetaCSVReadException {
+        Calendar cal = GregorianCalendar.getInstance(Util.UTC_TIME_ZONE);
+        cal.setTimeInMillis(1234567891011L);
         MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", cal.getTime());
-        Calendar expectedCal = GregorianCalendar.getInstance(TimeZone.getTimeZone("UTC"));
-        expectedCal.setTimeInMillis(1234567891011l);
+        Calendar expectedCal = GregorianCalendar.getInstance(Util.UTC_TIME_ZONE);
+        expectedCal.setTimeInMillis(1234567891011L);
         expectedCal.set(Calendar.HOUR, 0);
         expectedCal.set(Calendar.MINUTE, 0);
         expectedCal.set(Calendar.SECOND, 0);
@@ -80,28 +80,28 @@ public class MetaCSVRecordTest {
     }
 
     @Test(expected = MetaCSVCastException.class)
-    public void testNotDate() throws IOException {
+    public void testNotDate() throws IOException, MetaCSVReadException {
         Calendar cal = GregorianCalendar.getInstance(TimeZone.getTimeZone("UTC"));
-        cal.setTimeInMillis(1234567891011l);
+        cal.setTimeInMillis(1234567891011L);
         MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", cal.getTime());
         metaRecord.getDate(1);
     }
 
     @Test
-    public void testDecimal() throws IOException {
+    public void testDecimal() throws IOException, MetaCSVReadException {
         MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", BigDecimal.ONE);
         Assert.assertEquals(BigDecimal.ONE,
                 metaRecord.getDecimal(2));
     }
 
     @Test(expected = MetaCSVCastException.class)
-    public void testNotDecimal() throws IOException {
+    public void testNotDecimal() throws IOException, MetaCSVReadException {
         MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", BigDecimal.ONE);
         metaRecord.getDecimal(1);
     }
 
     @Test
-    public void testDatetime() throws IOException {
+    public void testDatetime() throws IOException, MetaCSVReadException {
         Calendar cal = GregorianCalendar.getInstance(TimeZone.getTimeZone("UTC"));
         cal.setTimeInMillis(1234567891011l);
         MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", cal.getTime());
@@ -112,7 +112,7 @@ public class MetaCSVRecordTest {
     }
 
     @Test(expected = MetaCSVCastException.class)
-    public void testNotDatetime() throws IOException {
+    public void testNotDatetime() throws IOException, MetaCSVReadException {
         Calendar cal = GregorianCalendar.getInstance(TimeZone.getTimeZone("UTC"));
         cal.setTimeInMillis(1234567891011l);
         MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", cal.getTime());
@@ -121,46 +121,46 @@ public class MetaCSVRecordTest {
 
 
     @Test
-    public void testFloat() throws IOException {
+    public void testFloat() throws IOException, MetaCSVReadException {
         MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", 10.5);
         Assert.assertEquals(10.5,
                 metaRecord.getFloat(2), 0.01);
     }
 
     @Test(expected = MetaCSVCastException.class)
-    public void testNotFloat() throws IOException {
+    public void testNotFloat() throws IOException, MetaCSVReadException {
         MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", 10.5);
         metaRecord.getFloat(1);
     }
 
     @Test
-    public void testInteger() throws IOException {
+    public void testInteger() throws IOException, MetaCSVReadException {
         MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", 2020);
-        Assert.assertEquals(2020,
+        Assert.assertEquals(Long.valueOf(2020),
                 metaRecord.getInteger(2));
     }
 
     @Test(expected = MetaCSVCastException.class)
-    public void testNotInteger() throws IOException {
+    public void testNotInteger() throws IOException, MetaCSVReadException {
         MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", 2020);
         metaRecord.getInteger(1);
     }
 
     @Test
-    public void testText() throws IOException {
+    public void testText() throws IOException, MetaCSVReadException {
         MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", 10.5);
         Assert.assertEquals("foo",
                 metaRecord.getText(0));
     }
 
     @Test(expected = MetaCSVCastException.class)
-    public void testNotText() throws IOException {
+    public void testNotText() throws IOException, MetaCSVReadException {
         MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", 10.5);
         metaRecord.getText(2);
     }
 
     @Test
-    public void testEquals() throws IOException {
+    public void testEquals() throws IOException, MetaCSVReadException {
         TestHelper.assertMetaEquals(TestHelper.createMetaRecord("foo", "bar", 10.5),
                 TestHelper.createMetaRecord("foo", "bar", 10.5));
 

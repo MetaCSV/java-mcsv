@@ -22,7 +22,7 @@ package com.github.jferard.javamcsv;
 
 import java.io.IOException;
 
-public class PercentageFloatFieldDescription implements FieldDescription<Double> {
+public class PercentageFloatFieldDescription extends FieldDescription<Double> {
     public static final FieldDescription<?> INSTANCE =
             new PercentageFloatFieldDescription(false, "%", FloatFieldDescription.INSTANCE);
     private final boolean pre;

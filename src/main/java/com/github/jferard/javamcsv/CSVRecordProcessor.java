@@ -22,23 +22,43 @@ package com.github.jferard.javamcsv;
 
 import org.apache.commons.csv.CSVRecord;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TimeZone;
 
 public class CSVRecordProcessor {
     private final ProcessorProvider provider;
+    private final TimeZone timeZone;
+    private int maxSize;
+    private OnError onError;
+    private final Map<Integer, FieldProcessor<?>> processorByIndex;
 
-    CSVRecordProcessor(ProcessorProvider provider) {
+    CSVRecordProcessor(ProcessorProvider provider, OnError onError, TimeZone timeZone) {
         this.provider = provider;
+        this.onError = onError;
+        this.maxSize = 0;
+        processorByIndex = new HashMap<Integer, FieldProcessor<?>>();
+        this.timeZone = timeZone;
     }
 
-    public MetaCSVRecord process(CSVRecord record) throws MetaCSVReadException {
-        List<Object> values = new ArrayList<Object>(record.size());
-        for (int i = 0; i < record.size(); i++) {
-            FieldProcessor<?> processor = provider.getProcessor(i);
-            String s = record.get(i);
-            values.add(processor.toObject(s));
+    public MetaCSVRecord process(CSVRecord record) throws MetaCSVReadException, IOException {
+        if (this.maxSize < record.size()) {
+            updateProcessorByIndex(record);
+            this.maxSize = record.size();
         }
-        return new MetaCSVRecord(record, values);
+        return new MetaCSVRecord(record, this.provider, processorByIndex,
+                timeZone);
     }
+
+    private void updateProcessorByIndex(CSVRecord record) {
+        for (int i = this.maxSize; i < record.size(); i++) {
+            FieldProcessor<?> processor = processorByIndex.get(i);
+            if (processor == null) {
+                processor = this.provider.getProcessor(i, this.onError);
+                processorByIndex.put(i, processor);
+            }
+        }
+    }
+
 }

@@ -22,7 +22,9 @@ package com.github.jferard.javamcsv;
 
 import org.apache.commons.csv.CSVRecord;
 
+import java.io.IOException;
 import java.util.Iterator;
+import java.util.TimeZone;
 
 public class CSVRecordIterator implements Iterator<MetaCSVRecord> {
     public static final FieldProcessor<String> TEXT_PROCESSOR =
@@ -30,10 +32,11 @@ public class CSVRecordIterator implements Iterator<MetaCSVRecord> {
     public static CSVRecordProcessor HEADER_PROCESSOR = new CSVRecordProcessor(
             new ProcessorProvider() {
                 @Override
-                public FieldProcessor<?> getProcessor(int c) {
+                public FieldProcessor<?> getProcessor(int c,
+                                                      OnError onError) {
                     return TEXT_PROCESSOR;
                 }
-            });
+            }, OnError.TEXT, Util.UTC_TIME_ZONE);
     private final Iterator<CSVRecord> csvIterator;
     private final CSVRecordProcessor processor;
     private boolean first;
@@ -59,6 +62,8 @@ public class CSVRecordIterator implements Iterator<MetaCSVRecord> {
             }
             return processor.process(record);
         } catch (MetaCSVReadException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

@@ -27,10 +27,12 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class Util {
     public static final String CRLF = "\r\n";
     public static final Charset ASCII_CHARSET = Charset.forName("US-ASCII");
+    public static final TimeZone UTC_TIME_ZONE = TimeZone.getTimeZone("UTC");
     public static Charset UTF_8_CHARSET = Charset.forName("UTF-8");
     public static String UTF_8_CHARSET_NAME = "UTF-8";
 
@@ -154,10 +156,11 @@ public class Util {
         return locale.getLanguage() + "_" + locale.getCountry();
     }
 
-    public static List<String> header(MetaCSVRecord headerRecord) {
-        List<String> ret = new ArrayList<String>(headerRecord.size());
-        for (Object f : headerRecord) {
-            ret.add(f.toString());
+    public static List<String> header(MetaCSVRecord headerRecord) throws MetaCSVReadException {
+        int size = headerRecord.size();
+        List<String> ret = new ArrayList<String>(size);
+        for (int c=0; c<size; c++) {
+            ret.add(headerRecord.getText(c).toString());
         }
         return ret;
     }
@@ -311,5 +314,13 @@ public class Util {
             instance = new Locale(s[0]);
         }
         return instance;
+    }
+
+    public static boolean equal(Object o1, Object o2) {
+        if (o1 == null) {
+            return o2 == null;
+        } else {
+            return o1.equals(o2);
+        }
     }
 }

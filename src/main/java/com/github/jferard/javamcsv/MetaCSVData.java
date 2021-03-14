@@ -98,12 +98,12 @@ public class MetaCSVData implements ProcessorProvider, CSVParameters {
     }
 
     @Override
-    public FieldProcessor<?> getProcessor(int c) {
-        FieldProcessor<?> processor = processorByIndex.get(c);
-        if (processor == null) {
+    public FieldProcessor<?> getProcessor(int c, OnError onError) {
+        FieldDescription<?> fieldDescription = this.descriptionByColIndex.get(c);
+        if (fieldDescription == null) {
             return this.textFieldProcessor;
         } else {
-            return processor;
+            return fieldDescription.toFieldProcessor(nullValue, onError);
         }
     }
 

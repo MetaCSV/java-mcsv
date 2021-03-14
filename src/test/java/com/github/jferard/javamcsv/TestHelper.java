@@ -39,8 +39,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
 
 public class TestHelper {
     public static String UTF_8_CHARSET_NAME = "UTF-8";
@@ -78,8 +80,39 @@ public class TestHelper {
         return parser.iterator().next();
     }
 
-    public static MetaCSVRecord createMetaRecord(Object... values) throws IOException {
-        return new MetaCSVRecord(TestHelper.createRecord(values), Arrays.<Object>asList(values));
+    public static MetaCSVRecord createMetaRecord(final Object... values) throws IOException {
+        Map<Integer, FieldProcessor<?>> processorByIndex = new HashMap<Integer, FieldProcessor<?>>();
+        for (int c=0; c<values.length; c++) {
+            final int col = c;
+            processorByIndex.put(c, new FieldProcessor<Object>() {
+                @Override
+                public Object toObject(String text) throws MetaCSVReadException {
+                    return values[col];
+                }
+
+                @Override
+                public String toString(Object value) {
+                    return value.toString();
+                }
+            });
+        }
+        return new MetaCSVRecord(TestHelper.createRecord(values),
+                new ProcessorProvider() {
+                    @Override
+                    public FieldProcessor<?> getProcessor(final int c, OnError onError) {
+                        return new FieldProcessor<Object>() {
+                            @Override
+                            public Object toObject(String text) throws MetaCSVReadException {
+                                return values[c];
+                            }
+
+                            @Override
+                            public String toString(Object value) {
+                                return value.toString();
+                            }
+                        };
+                    }
+                }, processorByIndex, TimeZone.getTimeZone("UTC"));
     }
 
     public static <T> List<T> toList(Iterable<T> iterable) {
@@ -108,8 +141,9 @@ public class TestHelper {
         return ret.toString();
     }
 
-    public static void assertMetaEquals(MetaCSVRecord r1, MetaCSVRecord r2) {
-        Assert.assertEquals(toList(r1), toList(r2));
+    public static void assertMetaEquals(MetaCSVRecord r1, MetaCSVRecord r2)
+            throws MetaCSVReadException {
+        Assert.assertEquals(r1.toList(), r2.toList());
     }
 
     public static InputStream getResourceAsStream(String name) {

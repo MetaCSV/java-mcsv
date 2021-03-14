@@ -22,7 +22,7 @@ package com.github.jferard.javamcsv;
 
 import java.io.IOException;
 
-public class BooleanFieldDescription implements FieldDescription<Boolean> {
+public class BooleanFieldDescription extends FieldDescription<Boolean> {
     public static final FieldDescription<?> INSTANCE = new BooleanFieldDescription("true", "false");
     private final String trueWord;
     private final String falseWord;

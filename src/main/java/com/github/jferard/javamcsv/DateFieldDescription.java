@@ -24,17 +24,22 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
-public class DateFieldDescription implements FieldDescription<Date> {
+public class DateFieldDescription extends FieldDescription<Date> {
     public static final FieldDescription<?> INSTANCE = DateFieldDescription.create("yyyy-MM-dd");
 
     public static FieldDescription<Date> create(String dateFormat) {
-        return new DateFieldDescription(new SimpleDateFormat(dateFormat), null);
+        SimpleDateFormat format = new SimpleDateFormat(dateFormat);
+        format.setTimeZone(Util.UTC_TIME_ZONE);
+        return new DateFieldDescription(format, null);
     }
 
     public static FieldDescription<Date> create(String dateFormat, String locale) {
         Locale instance = Util.getLocale(locale);
-        return new DateFieldDescription(new SimpleDateFormat(dateFormat, instance), locale);
+        SimpleDateFormat format = new SimpleDateFormat(dateFormat, instance);
+        format.setTimeZone(Util.UTC_TIME_ZONE);
+        return new DateFieldDescription(format, locale);
     }
 
     private SimpleDateFormat simpleDateFormat;

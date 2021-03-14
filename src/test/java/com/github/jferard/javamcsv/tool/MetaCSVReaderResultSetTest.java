@@ -25,6 +25,7 @@ import com.github.jferard.javamcsv.MetaCSVParseException;
 import com.github.jferard.javamcsv.MetaCSVReadException;
 import com.github.jferard.javamcsv.MetaCSVReader;
 import com.github.jferard.javamcsv.TestHelper;
+import com.github.jferard.javamcsv.Util;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,6 +51,7 @@ public class MetaCSVReaderResultSetTest {
     public void setUp()
             throws MetaCSVReadException, MetaCSVDataException, MetaCSVParseException, IOException {
         c = GregorianCalendar.getInstance(Locale.US);
+        c.setTimeZone(Util.UTC_TIME_ZONE);
         c.setTimeInMillis(0);
         c.set(2020, Calendar.DECEMBER, 1, 0, 0, 0);
         ByteArrayInputStream is = TestHelper.utf8InputStream(
@@ -269,6 +271,7 @@ public class MetaCSVReaderResultSetTest {
         Assert.assertTrue(rs.next());
         Assert.assertTrue(rs.next());
         Calendar c = GregorianCalendar.getInstance(Locale.US);
+        c.setTimeZone(Util.UTC_TIME_ZONE);
         c.setTimeInMillis(0);
         c.set(2020, Calendar.DECEMBER, 1, 9, 30, 55);
         List<Object> secondCol =

@@ -84,6 +84,7 @@ public class DateFieldProcessorTest {
     @Test
     public void testDatetimeToObject() throws MetaCSVReadException {
         Calendar c = GregorianCalendar.getInstance(Locale.US);
+        c.setTimeZone(Util.UTC_TIME_ZONE);
         c.setTimeInMillis(0);
         c.set(2020, Calendar.NOVEMBER, 21, 3, 2, 1);
         Assert.assertEquals(c.getTime(), dtProcessor.toObject("2020-11-21T03:02:01"));
@@ -102,6 +103,7 @@ public class DateFieldProcessorTest {
     @Test
     public void testDatetimeToString() {
         Calendar c = GregorianCalendar.getInstance(Locale.US);
+        c.setTimeZone(Util.UTC_TIME_ZONE);
         c.setTimeInMillis(0);
         c.set(2020, Calendar.NOVEMBER, 21, 3, 2, 1);
         Assert.assertEquals("2020-11-21T03:02:01", dtProcessor.toString(c.getTime()));
