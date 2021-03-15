@@ -18,49 +18,48 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;
+package com.github.jferard.javamcsv.processor;
 
-import com.github.jferard.javamcsv.description.BooleanFieldDescription;
+import com.github.jferard.javamcsv.MetaCSVReadException;
+import com.github.jferard.javamcsv.description.DecimalFieldDescription;
 import com.github.jferard.javamcsv.processor.FieldProcessor;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class BooleanFieldProcessorTest {
-    private FieldProcessor<Boolean> processor;
+import java.math.BigDecimal;
+
+public class DecimalFieldProcessorTest {
+    private FieldProcessor<BigDecimal> processor;
 
     @Before
     public void setUp() {
-        processor = new BooleanFieldDescription("T", "F").toFieldProcessor("NULL");
+        processor = new DecimalFieldDescription(null, ",").toFieldProcessor("NULL");
+    }
+
+    @Test
+    public void testNullToObject() throws MetaCSVReadException {
+        Assert.assertNull(processor.toObject(null));
+        Assert.assertNull(processor.toObject("NULL"));
     }
 
     @Test
     public void testToObject() throws MetaCSVReadException {
-        Assert.assertNull(processor.toObject(null));
-        Assert.assertNull(processor.toObject("NULL"));
-        Assert.assertTrue(processor.toObject("T"));
-        Assert.assertFalse(processor.toObject("F"));
-        Assert.assertTrue(processor.toObject("t"));
-        Assert.assertFalse(processor.toObject("f"));
+        Assert.assertEquals(BigDecimal.valueOf(10.0), processor.toObject("10,0"));
     }
 
     @Test(expected = MetaCSVReadException.class)
-    public void testToObjectError() throws MetaCSVReadException {
-        Assert.assertFalse(processor.toObject("foo"));
+    public void testWrongToObject() throws MetaCSVReadException {
+        Assert.assertNull(processor.toObject("€10.0"));
+    }
+
+    @Test
+    public void testNullToString() {
+        Assert.assertEquals("NULL", processor.toString(null));
     }
 
     @Test
     public void testToString() {
-        Assert.assertEquals("NULL", processor.toString(null));
-        Assert.assertEquals("T", processor.toString(true));
-        Assert.assertEquals("F", processor.toString(false));
-    }
-
-    @Test
-    public void testCase() throws MetaCSVReadException {
-        FieldProcessor<Boolean> aProcessor =
-                new BooleanFieldDescription("true", "false").toFieldProcessor("NULL");
-        Assert.assertTrue(aProcessor.toObject("True"));
-        Assert.assertFalse(aProcessor.toObject("False"));
+        Assert.assertEquals("17,2", processor.toString(new BigDecimal("17.2")));
     }
 }

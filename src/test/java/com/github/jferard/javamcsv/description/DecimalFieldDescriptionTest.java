@@ -18,37 +18,44 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;
+package com.github.jferard.javamcsv.description;
 
-import com.github.jferard.javamcsv.description.TextFieldDescription;
-import com.github.jferard.javamcsv.processor.FieldProcessor;
+import com.github.jferard.javamcsv.DataType;
+import com.github.jferard.javamcsv.TestHelper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TextFieldProcessorTest {
+import java.io.IOException;
+import java.math.BigDecimal;
 
-    private FieldProcessor<String> processor;
+public class DecimalFieldDescriptionTest {
+
+    private DecimalFieldDescription fieldDescription;
 
     @Before
-    public void setUp() {
-        processor = TextFieldDescription.INSTANCE.toFieldProcessor("NULL");
+    public void setUp() throws Exception {
+        fieldDescription = new DecimalFieldDescription(" ", ",");
     }
 
     @Test
-    public void testNullToObject() throws MetaCSVReadException {
-        Assert.assertNull(processor.toObject(null));
-        Assert.assertNull(processor.toObject("NULL"));
+    public void testDecimal() throws IOException {
+        Assert.assertEquals("decimal/ /,", TestHelper.render(fieldDescription));
     }
 
     @Test
-    public void testToObject() throws MetaCSVReadException {
-        Assert.assertEquals("foo", processor.toObject("foo"));
+    public void testDataType() {
+        Assert.assertEquals(DataType.DECIMAL, fieldDescription.getDataType());
     }
 
     @Test
-    public void testToString() {
-        Assert.assertEquals("NULL", processor.toString(null));
-        Assert.assertEquals("bar", processor.toString("bar"));
+    public void testJavaType() {
+        Assert.assertEquals(BigDecimal.class, fieldDescription.getJavaType());
+    }
+
+    @Test
+    public void testToString() throws IOException {
+        Assert.assertEquals("DecimalFieldDescription( , ,)",
+                fieldDescription.toString());
     }
 }

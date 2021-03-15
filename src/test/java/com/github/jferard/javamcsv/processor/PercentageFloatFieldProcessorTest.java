@@ -18,28 +18,27 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;
+package com.github.jferard.javamcsv.processor;
 
-import com.github.jferard.javamcsv.description.DecimalFieldDescription;
-import com.github.jferard.javamcsv.description.PercentageDecimalFieldDescription;
+import com.github.jferard.javamcsv.MetaCSVReadException;
+import com.github.jferard.javamcsv.description.FloatFieldDescription;
+import com.github.jferard.javamcsv.description.PercentageFloatFieldDescription;
 import com.github.jferard.javamcsv.processor.FieldProcessor;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.math.BigDecimal;
-
-public class PercentageDecimalFieldProcessorTest {
-    private FieldProcessor<BigDecimal> processorPre;
-    private FieldProcessor<BigDecimal> processorPost;
+public class PercentageFloatFieldProcessorTest {
+    private FieldProcessor<Double> processorPre;
+    private FieldProcessor<Double> processorPost;
 
     @Before
     public void setUp() {
-        processorPre = new PercentageDecimalFieldDescription(true, "%",
-                new DecimalFieldDescription(null, ".")
+        processorPre = new PercentageFloatFieldDescription(true, "%",
+                new FloatFieldDescription(null, ".")
         ).toFieldProcessor("NULL");
-        processorPost = new PercentageDecimalFieldDescription(false, "%",
-                new DecimalFieldDescription(null, ",")
+        processorPost = new PercentageFloatFieldDescription(false, "%",
+                new FloatFieldDescription(null, ",")
         ).toFieldProcessor("NULL");
     }
 
@@ -56,7 +55,7 @@ public class PercentageDecimalFieldProcessorTest {
 
     @Test
     public void testRightPreToObject() throws MetaCSVReadException {
-        Assert.assertEquals(new BigDecimal("0.1"), processorPre.toObject("%10.0"));
+        Assert.assertEquals(0.1, processorPre.toObject("%10.0"), 0.01);
     }
 
     @Test(expected = MetaCSVReadException.class)
@@ -66,7 +65,7 @@ public class PercentageDecimalFieldProcessorTest {
 
     @Test
     public void testRightPostToObject() throws MetaCSVReadException {
-        Assert.assertEquals(new BigDecimal("0.1"), processorPost.toObject("10,0 %"));
+        Assert.assertEquals(0.1, processorPost.toObject("10,0 %"), 0.01);
     }
 
     @Test
@@ -76,11 +75,11 @@ public class PercentageDecimalFieldProcessorTest {
 
     @Test
     public void testPreToString() {
-        Assert.assertEquals("%1720.0", processorPre.toString(new BigDecimal("17.2")));
+        Assert.assertEquals("%1720.0", processorPre.toString(17.2));
     }
 
     @Test
     public void testPostToString() {
-        Assert.assertEquals("1720,0%", processorPost.toString(new BigDecimal("17.2")));
+        Assert.assertEquals("1720,0%", processorPost.toString(17.2));
     }
 }

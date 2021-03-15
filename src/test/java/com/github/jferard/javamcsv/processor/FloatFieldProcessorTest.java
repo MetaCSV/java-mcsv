@@ -18,22 +18,21 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;
+package com.github.jferard.javamcsv.processor;
 
-import com.github.jferard.javamcsv.description.DecimalFieldDescription;
+import com.github.jferard.javamcsv.MetaCSVReadException;
+import com.github.jferard.javamcsv.description.FloatFieldDescription;
 import com.github.jferard.javamcsv.processor.FieldProcessor;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.math.BigDecimal;
-
-public class DecimalFieldProcessorTest {
-    private FieldProcessor<BigDecimal> processor;
+public class FloatFieldProcessorTest {
+    private FieldProcessor<Double> processor;
 
     @Before
     public void setUp() {
-        processor = new DecimalFieldDescription(null, ",").toFieldProcessor("NULL");
+        processor = new FloatFieldDescription(null, ",").toFieldProcessor("NULL");
     }
 
     @Test
@@ -44,7 +43,7 @@ public class DecimalFieldProcessorTest {
 
     @Test
     public void testToObject() throws MetaCSVReadException {
-        Assert.assertEquals(BigDecimal.valueOf(10.0), processor.toObject("10,0"));
+        Assert.assertEquals(10.0, (double) processor.toObject("10,0"), 0.001);
     }
 
     @Test(expected = MetaCSVReadException.class)
@@ -59,6 +58,6 @@ public class DecimalFieldProcessorTest {
 
     @Test
     public void testToString() {
-        Assert.assertEquals("17,2", processor.toString(new BigDecimal("17.2")));
+        Assert.assertEquals("17,2", processor.toString(17.2));
     }
 }

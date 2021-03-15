@@ -18,8 +18,10 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;
+package com.github.jferard.javamcsv.processor;
 
+import com.github.jferard.javamcsv.MetaCSVReadException;
+import com.github.jferard.javamcsv.Util;
 import com.github.jferard.javamcsv.description.DateFieldDescription;
 import com.github.jferard.javamcsv.description.DatetimeFieldDescription;
 import com.github.jferard.javamcsv.processor.FieldProcessor;

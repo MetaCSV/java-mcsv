@@ -18,12 +18,11 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;
+package com.github.jferard.javamcsv.processor;
 
-import com.github.jferard.javamcsv.description.CurrencyDecimalFieldDescription;
-import com.github.jferard.javamcsv.description.CurrencyIntegerFieldDescription;
+import com.github.jferard.javamcsv.MetaCSVReadException;
 import com.github.jferard.javamcsv.description.DecimalFieldDescription;
-import com.github.jferard.javamcsv.description.IntegerFieldDescription;
+import com.github.jferard.javamcsv.description.PercentageDecimalFieldDescription;
 import com.github.jferard.javamcsv.processor.FieldProcessor;
 import org.junit.Assert;
 import org.junit.Before;
@@ -31,16 +30,16 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 
-public class CurrencyDecimalFieldProcessorTest {
+public class PercentageDecimalFieldProcessorTest {
     private FieldProcessor<BigDecimal> processorPre;
     private FieldProcessor<BigDecimal> processorPost;
 
     @Before
     public void setUp() {
-        processorPre = new CurrencyDecimalFieldDescription(true, "$",
+        processorPre = new PercentageDecimalFieldDescription(true, "%",
                 new DecimalFieldDescription(null, ".")
         ).toFieldProcessor("NULL");
-        processorPost = new CurrencyDecimalFieldDescription(false, "€",
+        processorPost = new PercentageDecimalFieldDescription(false, "%",
                 new DecimalFieldDescription(null, ",")
         ).toFieldProcessor("NULL");
     }
@@ -53,22 +52,22 @@ public class CurrencyDecimalFieldProcessorTest {
 
     @Test(expected = MetaCSVReadException.class)
     public void testWrongPreToObject() throws MetaCSVReadException {
-        Assert.assertNull(processorPre.toObject("€10.0"));
+        Assert.assertNull(processorPre.toObject("10.0"));
     }
 
     @Test
     public void testRightPreToObject() throws MetaCSVReadException {
-        Assert.assertEquals(new BigDecimal("10.0"), processorPre.toObject("$10.0"));
+        Assert.assertEquals(new BigDecimal("0.1"), processorPre.toObject("%10.0"));
     }
 
     @Test(expected = MetaCSVReadException.class)
     public void testWrongPostToObject() throws MetaCSVReadException {
-        Assert.assertNull(processorPost.toObject("10,0$"));
+        Assert.assertNull(processorPost.toObject("%10,0"));
     }
 
     @Test
     public void testRightPostToObject() throws MetaCSVReadException {
-        Assert.assertEquals(new BigDecimal("10.0"), processorPost.toObject("10,0 €"));
+        Assert.assertEquals(new BigDecimal("0.1"), processorPost.toObject("10,0 %"));
     }
 
     @Test
@@ -78,18 +77,11 @@ public class CurrencyDecimalFieldProcessorTest {
 
     @Test
     public void testPreToString() {
-        Assert.assertEquals("$17.2", processorPre.toString(new BigDecimal("17.2")));
+        Assert.assertEquals("%1720.0", processorPre.toString(new BigDecimal("17.2")));
     }
 
     @Test
     public void testPostToString() {
-        Assert.assertEquals("17,2 €", processorPost.toString(new BigDecimal("17.2")));
-    }
-
-    @Test
-    public void testIntegerToString() {
-        FieldProcessor<Long> processor = new CurrencyIntegerFieldDescription(false, "€",
-                IntegerFieldDescription.INSTANCE).toFieldProcessor("NULL");
-        Assert.assertEquals("17 €", processor.toString(17L));
+        Assert.assertEquals("1720,0%", processorPost.toString(new BigDecimal("17.2")));
     }
 }

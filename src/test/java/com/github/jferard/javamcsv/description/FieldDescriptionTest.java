@@ -18,21 +18,11 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;
+package com.github.jferard.javamcsv.description;
 
-import com.github.jferard.javamcsv.description.BooleanFieldDescription;
-import com.github.jferard.javamcsv.description.CurrencyDecimalFieldDescription;
-import com.github.jferard.javamcsv.description.CurrencyIntegerFieldDescription;
-import com.github.jferard.javamcsv.description.DateFieldDescription;
-import com.github.jferard.javamcsv.description.DatetimeFieldDescription;
-import com.github.jferard.javamcsv.description.DecimalFieldDescription;
-import com.github.jferard.javamcsv.description.FieldDescription;
-import com.github.jferard.javamcsv.description.FloatFieldDescription;
-import com.github.jferard.javamcsv.description.IntegerFieldDescription;
-import com.github.jferard.javamcsv.description.ObjectFieldDescription;
-import com.github.jferard.javamcsv.description.PercentageDecimalFieldDescription;
-import com.github.jferard.javamcsv.description.PercentageFloatFieldDescription;
-import com.github.jferard.javamcsv.description.TextFieldDescription;
+import com.github.jferard.javamcsv.DataType;
+import com.github.jferard.javamcsv.TestHelper;
+import com.github.jferard.javamcsv.Util;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -41,31 +31,10 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Locale;
 
 public class FieldDescriptionTest {
-    @Test
-    public void testBoolean() throws IOException {
-        Assert.assertEquals("boolean/T", TestHelper.render(new BooleanFieldDescription("T", "")));
-        Assert.assertEquals("boolean/T/F",
-                TestHelper.render(new BooleanFieldDescription("T", "F")));
-        Assert.assertEquals("boolean/\\/\\\\/\\\\\\/",
-                TestHelper.render(new BooleanFieldDescription("/\\", "\\/")));
-        Assert.assertEquals("BooleanFieldDescription(T, F)",
-                new BooleanFieldDescription("T", "F").toString());
-    }
-
-    @Test
-    public void testDate() throws IOException {
-        Assert.assertEquals("date/yyyy-MM-ddZ", TestHelper.render(
-                new DateFieldDescription(new SimpleDateFormat("yyyy-MM-ddZ"), null)));
-        String locale = Util.getLocaleString(Locale.US);
-        Assert.assertEquals("date/yyyy-MM-ddZ/en_US", TestHelper.render(
-                new DateFieldDescription(new SimpleDateFormat("yyyy-MM-ddZ"), locale)));
-        Assert.assertEquals("DateFieldDescription(yyyy-MM-ddZ, en_US)",
-                new DateFieldDescription(new SimpleDateFormat("yyyy-MM-ddZ"), locale).toString());
-    }
-
     @Test
     public void testDatetime() throws IOException {
         Assert.assertEquals("datetime/yyyy-MM-dd'T'HH:mm:ssZ", TestHelper.render(
@@ -113,14 +82,6 @@ public class FieldDescriptionTest {
         Assert.assertEquals("float/ /,", TestHelper.render(new FloatFieldDescription(" ", ",")));
         Assert.assertEquals("FloatFieldDescription( , ,)",
                 new FloatFieldDescription(" ", ",").toString());
-    }
-
-    @Test
-    public void testDecimal() throws IOException {
-        Assert.assertEquals("decimal/ /,",
-                TestHelper.render(new DecimalFieldDescription(" ", ",")));
-        Assert.assertEquals("DecimalFieldDescription( , ,)",
-                new DecimalFieldDescription(" ", ",").toString());
     }
 
     @Test

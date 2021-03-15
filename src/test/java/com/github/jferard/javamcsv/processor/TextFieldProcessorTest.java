@@ -18,21 +18,22 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;
+package com.github.jferard.javamcsv.processor;
 
-import com.github.jferard.javamcsv.description.IntegerFieldDescription;
+import com.github.jferard.javamcsv.MetaCSVReadException;
+import com.github.jferard.javamcsv.description.TextFieldDescription;
 import com.github.jferard.javamcsv.processor.FieldProcessor;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class IntegerFieldProcessorTest {
-    private FieldProcessor<Long> processor;
+public class TextFieldProcessorTest {
+
+    private FieldProcessor<String> processor;
 
     @Before
     public void setUp() {
-        String thSep = new StringBuilder().append((char) 0xA0).toString();
-        processor = new IntegerFieldDescription(thSep).toFieldProcessor("NULL");
+        processor = TextFieldDescription.INSTANCE.toFieldProcessor("NULL");
     }
 
     @Test
@@ -43,23 +44,12 @@ public class IntegerFieldProcessorTest {
 
     @Test
     public void testToObject() throws MetaCSVReadException {
-        Assert.assertEquals(103L, (long) processor.toObject("103"));
-        Assert.assertEquals(1030L, (long) processor.toObject("1030"));
-        Assert.assertEquals(1030L, (long) processor.toObject("1 030"));
-    }
-
-    @Test(expected = MetaCSVReadException.class)
-    public void testWrongToObject() throws MetaCSVReadException {
-        Assert.assertNull(processor.toObject("foo"));
-    }
-
-    @Test
-    public void testNullToString() {
-        Assert.assertEquals("NULL", processor.toString(null));
+        Assert.assertEquals("foo", processor.toObject("foo"));
     }
 
     @Test
     public void testToString() {
-        Assert.assertEquals("1 030", processor.toString(1030L));
+        Assert.assertEquals("NULL", processor.toString(null));
+        Assert.assertEquals("bar", processor.toString("bar"));
     }
 }

@@ -43,6 +43,8 @@ public class FieldProcessorFactory {
                         }
                     }
                 };
+            case CAST:
+                throw new RuntimeException("OnError.CAST not allowed for read error.");
             case NULL:
                 return new ReadFieldProcessor<T>() {
                     @Override
@@ -95,6 +97,18 @@ public class FieldProcessorFactory {
         switch (onError) {
             case WRAP:
                 throw new RuntimeException("OnError.WRAP not allowed for write error.");
+            case CAST:
+                return new WriteFieldProcessor() {
+                    @Override
+                    public String toString(Object o) {
+                        try {
+                            T text = (T) o;
+                            return rawProcessor.toString(text);
+                        } catch (ClassCastException e) {
+                            return nullValue;
+                        }
+                    }
+                };
             case NULL:
                 return new WriteFieldProcessor() {
                     @Override
