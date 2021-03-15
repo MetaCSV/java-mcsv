@@ -17,31 +17,14 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
+package com.github.jferard.javamcsv.processor;
 
-package com.github.jferard.javamcsv;
-
-public class ObjectFieldProcessor implements FieldProcessor<Object> {
-    private final String nullValue;
-
-    public ObjectFieldProcessor(String nullValue) {
-        this.nullValue = nullValue;
-    }
-
-    @Override
-    public Object toObject(String text) {
-        if (text == null || text.equals(this.nullValue)) {
-            return null;
-        } else {
-            return text;
-        }
-    }
-
-    @Override
-    public String toString(Object value) {
-        if (value == null) {
-            return this.nullValue;
-        } else {
-            return value.toString();
-        }
-    }
+public interface WriteFieldProcessor {
+    /**
+     * Prepare a value for CSV file.
+     * @param value the value
+     * @return the String representation of the value in the CSV file
+     * @throws RuntimeException if the value can't be converted to T.
+     */
+    String toString(Object value);
 }

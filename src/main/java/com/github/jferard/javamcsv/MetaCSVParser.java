@@ -20,6 +20,7 @@
 
 package com.github.jferard.javamcsv;
 
+import com.github.jferard.javamcsv.description.FieldDescription;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 
@@ -60,7 +61,7 @@ public class MetaCSVParser implements Closeable {
     private ColTypeParser colTypeParser;
 
     public MetaCSVParser(Iterable<? extends Iterable<String>> rows, boolean header,
-                         ObjectParser objectParser) {
+                         ObjectTypeParser objectParser) {
         this.rows = rows;
         this.header = header;
         this.metaCSVDataBuilder = new MetaCSVDataBuilder();

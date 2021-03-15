@@ -18,33 +18,39 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;import java.io.IOException;
+package com.github.jferard.javamcsv.description;
+
+import com.github.jferard.javamcsv.DataType;
+import com.github.jferard.javamcsv.processor.DateFieldProcessor;
+import com.github.jferard.javamcsv.processor.FieldProcessor;
+import com.github.jferard.javamcsv.Util;
+
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.TimeZone;
 
-public class DatetimeFieldDescription extends FieldDescription<Date> {
-    public static final FieldDescription<?> INSTANCE = DateFieldDescription.create("yyyy-MM-dd'T'HH:mm:ss");
+public class DateFieldDescription implements FieldDescription<Date> {
+    public static final FieldDescription<?> INSTANCE = DateFieldDescription.create("yyyy-MM-dd");
 
     public static FieldDescription<Date> create(String dateFormat) {
         SimpleDateFormat format = new SimpleDateFormat(dateFormat);
         format.setTimeZone(Util.UTC_TIME_ZONE);
-        return new DatetimeFieldDescription(format, null);
+        return new DateFieldDescription(format, null);
     }
 
     public static FieldDescription<Date> create(String dateFormat, String locale) {
-        SimpleDateFormat format =
-                new SimpleDateFormat(dateFormat, Util.getLocale(locale));
+        Locale instance = Util.getLocale(locale);
+        SimpleDateFormat format = new SimpleDateFormat(dateFormat, instance);
         format.setTimeZone(Util.UTC_TIME_ZONE);
-        return new DatetimeFieldDescription(format, locale);
+        return new DateFieldDescription(format, locale);
     }
 
     private SimpleDateFormat simpleDateFormat;
     private String locale;
     private String nullValue;
 
-    public DatetimeFieldDescription(SimpleDateFormat simpleDateFormat, String locale) {
+    public DateFieldDescription(SimpleDateFormat simpleDateFormat, String locale) {
         this.simpleDateFormat = simpleDateFormat;
         this.locale = locale;
         this.nullValue = "";
@@ -53,7 +59,7 @@ public class DatetimeFieldDescription extends FieldDescription<Date> {
 
     @Override
     public void render(Appendable out) throws IOException {
-        out.append("datetime/");
+        out.append("date/");
         Util.render(out, this.simpleDateFormat.toPattern());
         if (this.locale != null) {
             out.append('/').append(locale);
@@ -72,12 +78,12 @@ public class DatetimeFieldDescription extends FieldDescription<Date> {
 
     @Override
     public DataType getDataType() {
-        return DataType.DATETIME;
+        return DataType.DATE;
     }
 
     @Override
     public String toString() {
-        return String.format("DatetimeDescription(%s, %s)",
+        return String.format("DateFieldDescription(%s, %s)",
                 this.simpleDateFormat.toPattern(), this.locale);
     }
 }

@@ -18,33 +18,32 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;import java.io.IOException;
+package com.github.jferard.javamcsv.processor;
 
-public class TextFieldDescription extends FieldDescription<String> {
-    public static final FieldDescription<String> INSTANCE = new TextFieldDescription();
+import com.github.jferard.javamcsv.processor.FieldProcessor;
 
-    @Override
-    public void render(Appendable out) throws IOException {
-        out.append("text");
+public class ObjectFieldProcessor implements FieldProcessor<Object> {
+    private final String nullValue;
+
+    public ObjectFieldProcessor(String nullValue) {
+        this.nullValue = nullValue;
     }
 
     @Override
-    public FieldProcessor<String> toFieldProcessor(String nullValue) {
-        return new TextFieldProcessor(nullValue);
+    public Object toObject(String text) {
+        if (text == null || text.equals(this.nullValue)) {
+            return null;
+        } else {
+            return text;
+        }
     }
 
     @Override
-    public Class<String> getJavaType() {
-        return String.class;
-    }
-
-    @Override
-    public DataType getDataType() {
-        return DataType.TEXT;
-    }
-
-    @Override
-    public String toString() {
-        return "TextFieldDescription()";
+    public String toString(Object value) {
+        if (value == null) {
+            return this.nullValue;
+        } else {
+            return value.toString();
+        }
     }
 }

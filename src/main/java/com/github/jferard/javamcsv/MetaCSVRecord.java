@@ -20,6 +20,10 @@
 
 package com.github.jferard.javamcsv;
 
+import com.github.jferard.javamcsv.processor.FieldProcessor;
+import com.github.jferard.javamcsv.processor.ProcessorProvider;
+import com.github.jferard.javamcsv.processor.ReadFieldProcessor;
+import com.github.jferard.javamcsv.processor.ReadProcessorProvider;
 import org.apache.commons.csv.CSVRecord;
 
 import java.math.BigDecimal;
@@ -27,9 +31,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.TimeZone;
 
 import static com.github.jferard.javamcsv.Util.UTC_TIME_ZONE;
@@ -38,12 +42,16 @@ public class MetaCSVRecord implements Iterable<Object> {
     private final int offset;
     private CSVRecord record;
     private ProcessorProvider provider;
-    private Map<Integer, FieldProcessor<?>> processorByIndex;
+    private ReadProcessorProvider readProvider;
+    private HashMap<Integer, ReadFieldProcessor<?>> processorByIndex;
 
     public MetaCSVRecord(CSVRecord record, ProcessorProvider provider,
-                         Map<Integer, FieldProcessor<?>> processorByIndex, TimeZone timeZone) {
+                         ReadProcessorProvider readProvider,
+                         HashMap<Integer, ReadFieldProcessor<?>> processorByIndex,
+                         TimeZone timeZone) {
         this.record = record;
         this.provider = provider;
+        this.readProvider = readProvider;
         this.processorByIndex = processorByIndex;
         this.offset = UTC_TIME_ZONE.getRawOffset() - timeZone.getRawOffset();
     }
@@ -142,17 +150,17 @@ public class MetaCSVRecord implements Iterable<Object> {
     }
 
     private Object getValue(int i) throws MetaCSVReadException {
-        FieldProcessor<?> processor = this.provider.getProcessor(i, OnError.EXCEPTION);
+        FieldProcessor<?> processor = this.provider.getProcessor(i);
         String text = record.get(i);
         return processor.toObject(text);
     }
 
-    public List<Object> toList() throws MetaCSVReadException {
+    public List<Object> toList() {
         int size = this.record.size();
         List<Object> ret = new ArrayList<Object>(size);
         for (int c = 0; c < size; c++) {
             String text = record.get(c);
-            FieldProcessor<?> processor = this.processorByIndex.get(c);
+            ReadFieldProcessor<?> processor = this.readProvider.getProcessor(c);
             ret.add(processor.toObject(text));
         }
         return ret;
@@ -165,6 +173,6 @@ public class MetaCSVRecord implements Iterable<Object> {
 
     @Override
     public Iterator<Object> iterator() {
-        return new CSVRecordIterator(this.record, this.processorByIndex);
+        return new CSVRecordIterator(this.record, this.readProvider);
     }
 }

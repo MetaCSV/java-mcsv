@@ -18,39 +18,41 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;
+package com.github.jferard.javamcsv.processor;
 
-import java.math.BigDecimal;
+import com.github.jferard.javamcsv.MetaCSVReadException;
+import com.github.jferard.javamcsv.Util;
+import com.github.jferard.javamcsv.processor.FieldProcessor;
 
-public class DecimalFieldProcessor implements FieldProcessor<BigDecimal> {
+public class FloatFieldProcessor implements FieldProcessor<Double> {
     private final String thousandsSeparator;
     private final String decimalSeparator;
     private final String nullValue;
 
-    public DecimalFieldProcessor(String thousandsSeparator, String decimalSeparator,
-                                 String nullValue) {
+    public FloatFieldProcessor(String thousandsSeparator, String decimalSeparator,
+                               String nullValue) {
         this.thousandsSeparator = thousandsSeparator;
         this.decimalSeparator = decimalSeparator;
         this.nullValue = nullValue;
     }
 
     @Override
-    public BigDecimal toObject(String text) throws MetaCSVReadException {
+    public Double toObject(String text) throws MetaCSVReadException {
         if (text == null || text.equals(this.nullValue)) {
             return null;
         }
         try {
-            return Util.parseBigDecimal(text, thousandsSeparator, decimalSeparator);
+            return Util.parseDouble(text, thousandsSeparator, decimalSeparator);
         } catch (NumberFormatException e) {
             throw new MetaCSVReadException(e);
         }
     }
 
     @Override
-    public String toString(BigDecimal bd) {
-        if (bd == null) {
+    public String toString(Double d) {
+        if (d == null) {
             return this.nullValue;
         }
-        return Util.formatBigDecimal(bd, this.thousandsSeparator, decimalSeparator);
+        return Util.formatDouble(d, this.thousandsSeparator, decimalSeparator);
     }
 }

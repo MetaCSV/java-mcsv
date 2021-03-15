@@ -20,6 +20,9 @@
 
 package com.github.jferard.javamcsv;
 
+import com.github.jferard.javamcsv.description.DateFieldDescription;
+import com.github.jferard.javamcsv.description.DatetimeFieldDescription;
+import com.github.jferard.javamcsv.processor.FieldProcessor;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

@@ -20,6 +20,10 @@
 
 package com.github.jferard.javamcsv;
 
-public interface ProcessorProvider {
-    FieldProcessor<?> getProcessor(int c, OnError onError);
+import com.github.jferard.javamcsv.description.FieldDescription;
+
+import java.util.List;
+
+public interface ObjectTypeParser {
+    FieldDescription<?> parse(List<String> parameters);
 }

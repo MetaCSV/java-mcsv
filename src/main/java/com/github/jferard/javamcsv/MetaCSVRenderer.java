@@ -18,17 +18,17 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;import org.apache.commons.csv.CSVFormat;
+package com.github.jferard.javamcsv;
+
+import com.github.jferard.javamcsv.description.FieldDescription;
+import com.github.jferard.javamcsv.description.TextFieldDescription;
+import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 public class MetaCSVRenderer {
     public static MetaCSVRenderer create(OutputStream os) throws IOException {

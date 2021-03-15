@@ -20,11 +20,11 @@
 
 package com.github.jferard.javamcsv;
 
+import com.github.jferard.javamcsv.description.FloatFieldDescription;
+import com.github.jferard.javamcsv.processor.FieldProcessor;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.math.BigDecimal;
 
 public class FloatFieldProcessorTest {
     private FieldProcessor<Double> processor;

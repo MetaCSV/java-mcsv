@@ -20,6 +20,8 @@
 
 package com.github.jferard.javamcsv;
 
+import com.github.jferard.javamcsv.description.IntegerFieldDescription;
+import com.github.jferard.javamcsv.description.TextFieldDescription;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.junit.Assert;

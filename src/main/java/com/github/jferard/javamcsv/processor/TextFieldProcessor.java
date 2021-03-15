@@ -18,40 +18,29 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;
+package com.github.jferard.javamcsv.processor;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-
-public class FloatFieldProcessor implements FieldProcessor<Double> {
-    private final String thousandsSeparator;
-    private final String decimalSeparator;
+public class TextFieldProcessor
+        implements ReadFieldProcessor<String>, FieldProcessor<String> {
     private final String nullValue;
 
-    public FloatFieldProcessor(String thousandsSeparator, String decimalSeparator,
-                               String nullValue) {
-        this.thousandsSeparator = thousandsSeparator;
-        this.decimalSeparator = decimalSeparator;
+    public TextFieldProcessor(String nullValue) {
         this.nullValue = nullValue;
     }
 
     @Override
-    public Double toObject(String text) throws MetaCSVReadException {
+    public String toObject(String text) {
         if (text == null || text.equals(this.nullValue)) {
             return null;
         }
-        try {
-            return Util.parseDouble(text, thousandsSeparator, decimalSeparator);
-        } catch (NumberFormatException e) {
-            throw new MetaCSVReadException(e);
-        }
+        return text;
     }
 
     @Override
-    public String toString(Double d) {
-        if (d == null) {
+    public String toString(String value) {
+        if (value == null) {
             return this.nullValue;
         }
-        return Util.formatDouble(d, this.thousandsSeparator, decimalSeparator);
+        return value;
     }
 }

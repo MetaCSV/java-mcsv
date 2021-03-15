@@ -20,14 +20,27 @@
 
 package com.github.jferard.javamcsv;
 
+import com.github.jferard.javamcsv.description.BooleanFieldDescription;
+import com.github.jferard.javamcsv.description.CurrencyDecimalFieldDescription;
+import com.github.jferard.javamcsv.description.CurrencyIntegerFieldDescription;
+import com.github.jferard.javamcsv.description.DateFieldDescription;
+import com.github.jferard.javamcsv.description.DatetimeFieldDescription;
+import com.github.jferard.javamcsv.description.DecimalFieldDescription;
+import com.github.jferard.javamcsv.description.FieldDescription;
+import com.github.jferard.javamcsv.description.FloatFieldDescription;
+import com.github.jferard.javamcsv.description.IntegerFieldDescription;
+import com.github.jferard.javamcsv.description.PercentageDecimalFieldDescription;
+import com.github.jferard.javamcsv.description.PercentageFloatFieldDescription;
+import com.github.jferard.javamcsv.description.TextFieldDescription;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
 public class ColTypeParser {
-    private final ObjectParser objectParser;
+    private final ObjectTypeParser objectParser;
 
-    public ColTypeParser(ObjectParser objectParser) {
+    public ColTypeParser(ObjectTypeParser objectParser) {
         this.objectParser = objectParser;
     }
 

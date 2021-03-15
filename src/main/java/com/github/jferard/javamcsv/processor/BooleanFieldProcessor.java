@@ -18,28 +18,44 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;
+package com.github.jferard.javamcsv.processor;
 
-public class TextFieldProcessor implements FieldProcessor<String> {
+import com.github.jferard.javamcsv.MetaCSVReadException;
+
+public class BooleanFieldProcessor implements FieldProcessor<Boolean> {
+    private final String trueWord;
+    private final String falseWord;
     private final String nullValue;
 
-    public TextFieldProcessor(String nullValue) {
+    public BooleanFieldProcessor(String trueWord, String falseWord, String nullValue) {
+        this.trueWord = trueWord;
+        this.falseWord = falseWord;
         this.nullValue = nullValue;
     }
 
     @Override
-    public String toObject(String text) {
-        if (text == null || text.equals(this.nullValue)) {
+    public Boolean toObject(String text) throws MetaCSVReadException {
+        if (text == null || text.trim().equals(this.nullValue)) {
             return null;
         }
-        return text;
+        text = text.trim();
+        if (text.equalsIgnoreCase(this.trueWord)) {
+            return true;
+        } else if (text.equalsIgnoreCase(this.falseWord)) {
+            return false;
+        } else {
+            throw new MetaCSVReadException("Unknown boolean: "+text+" ("+this.trueWord+"/"+this.falseWord+")");
+        }
     }
 
     @Override
-    public String toString(String value) {
+    public String toString(Boolean value) {
         if (value == null) {
             return this.nullValue;
+        } else if (value) {
+            return this.trueWord;
+        } else {
+            return this.falseWord;
         }
-        return value;
     }
 }

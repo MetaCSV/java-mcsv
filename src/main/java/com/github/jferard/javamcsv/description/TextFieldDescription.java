@@ -17,53 +17,40 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
-package com.github.jferard.javamcsv;
+
+package com.github.jferard.javamcsv.description;
+
+import com.github.jferard.javamcsv.DataType;
+import com.github.jferard.javamcsv.processor.TextFieldProcessor;
+import com.github.jferard.javamcsv.processor.FieldProcessor;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
-public class ObjectFieldDescription extends FieldDescription<Object> {
-    public static final FieldDescription<?> INSTANCE = new ObjectFieldDescription(
-            Collections.<String>emptyList());
-    private final String nullValue;
-    private List<String> parameters;
-
-    public ObjectFieldDescription(List<String> parameters) {
-        this.parameters = parameters;
-        this.nullValue = "";
-    }
-
-    public List<String> getParameters() {
-        return this.parameters;
-    }
+public class TextFieldDescription implements FieldDescription<String> {
+    public static final FieldDescription<String> INSTANCE = new TextFieldDescription();
 
     @Override
     public void render(Appendable out) throws IOException {
-        out.append("object");
-        if (parameters.size() > 0) {
-            out.append('/');
-            Util.render(out, parameters.toArray(new String[]{}));
-        }
+        out.append("text");
     }
 
     @Override
-    public FieldProcessor<Object> toFieldProcessor(String nullValue) {
-        return new ObjectFieldProcessor(nullValue);
+    public FieldProcessor<String> toFieldProcessor(String nullValue) {
+        return new TextFieldProcessor(nullValue);
     }
 
     @Override
-    public Class<Object> getJavaType() {
-        return Object.class;
+    public Class<String> getJavaType() {
+        return String.class;
     }
 
     @Override
     public DataType getDataType() {
-        return DataType.OBJECT;
+        return DataType.TEXT;
     }
 
     @Override
     public String toString() {
-        return String.format("ObjectFieldDescription(%s)", this.parameters);
+        return "TextFieldDescription()";
     }
 }

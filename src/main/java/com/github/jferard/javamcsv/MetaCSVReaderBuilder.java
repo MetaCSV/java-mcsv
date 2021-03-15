@@ -20,6 +20,9 @@
 
 package com.github.jferard.javamcsv;
 
+import com.github.jferard.javamcsv.processor.CSVRecordProcessor;
+import com.github.jferard.javamcsv.processor.ProcessorProvider;
+import com.github.jferard.javamcsv.processor.ReadProcessorProvider;
 import org.apache.commons.csv.CSVFormat;
 
 import java.io.File;
@@ -30,11 +33,11 @@ import java.io.InputStreamReader;
 import java.util.TimeZone;
 
 public class MetaCSVReaderBuilder {
+    private final MetaCSVParserBuilder parserBuilder;
     private TimeZone timeZone;
     private File csvFile;
     private InputStream csvIn;
     private MetaCSVData data;
-    private final MetaCSVParserBuilder parserBuilder;
     private OnError onError;
 
     public MetaCSVReaderBuilder() {
@@ -120,8 +123,11 @@ public class MetaCSVReaderBuilder {
         }
         InputStreamReader reader = new InputStreamReader(csvIn, data.getEncoding());
         CSVFormat format = CSVFormatHelper.getCSVFormat(data);
-        CSVRecordProcessor processor = new CSVRecordProcessor(data, this.onError,
-                timeZone);
+        ProcessorProvider processorProvider = data.toProcessorProvider(data.getNullValue());
+        ReadProcessorProvider readProcessorProvider =
+                data.toReadProcessorProvider(this.onError);
+        CSVRecordProcessor processor = new CSVRecordProcessor(
+                processorProvider, readProcessorProvider, this.onError, timeZone);
         return new MetaCSVReader(format.parse(reader), processor, data.getMetaData());
     }
 
@@ -129,7 +135,7 @@ public class MetaCSVReaderBuilder {
         byte[] buffer = new byte[3];
         int count = 0;
         while (count < 3) {
-            count = csvIn.read(buffer, count, 3-count);
+            count = csvIn.read(buffer, count, 3 - count);
         }
         if ((buffer[0] & 0xFF) != 0xEF || (buffer[1] & 0xFF) != 0xBB ||
                 (buffer[2] & 0xFF) != 0xBF) {
@@ -137,7 +143,7 @@ public class MetaCSVReaderBuilder {
         }
     }
 
-    public MetaCSVReaderBuilder objectParser(ObjectParser objectParser) {
+    public MetaCSVReaderBuilder objectParser(ObjectTypeParser objectParser) {
         this.parserBuilder.objectParser(objectParser);
         return this;
     }

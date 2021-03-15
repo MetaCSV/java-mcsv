@@ -20,6 +20,9 @@
 
 package com.github.jferard.javamcsv;
 
+import com.github.jferard.javamcsv.description.FieldDescription;
+import com.github.jferard.javamcsv.description.TextFieldDescription;
+
 import java.io.IOException;
 import java.util.Map;
 

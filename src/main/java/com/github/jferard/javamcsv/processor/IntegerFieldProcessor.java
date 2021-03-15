@@ -18,42 +18,38 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;
+package com.github.jferard.javamcsv.processor;
 
-public class BooleanFieldProcessor implements FieldProcessor<Boolean> {
-    private final String trueWord;
-    private final String falseWord;
+import com.github.jferard.javamcsv.MetaCSVReadException;
+import com.github.jferard.javamcsv.Util;
+import com.github.jferard.javamcsv.processor.FieldProcessor;
+
+public class IntegerFieldProcessor implements FieldProcessor<Long> {
+    private final String thousandsSeparator;
     private final String nullValue;
 
-    public BooleanFieldProcessor(String trueWord, String falseWord, String nullValue) {
-        this.trueWord = trueWord;
-        this.falseWord = falseWord;
+    public IntegerFieldProcessor(String thousandsSeparator, String nullValue) {
+        this.thousandsSeparator = thousandsSeparator;
         this.nullValue = nullValue;
     }
 
     @Override
-    public Boolean toObject(String text) throws MetaCSVReadException {
-        if (text == null || text.trim().equals(this.nullValue)) {
+    public Long toObject(String text) throws MetaCSVReadException {
+        if (text == null || text.equals(this.nullValue)) {
             return null;
         }
-        text = text.trim();
-        if (text.equalsIgnoreCase(this.trueWord)) {
-            return true;
-        } else if (text.equalsIgnoreCase(this.falseWord)) {
-            return false;
-        } else {
-            throw new MetaCSVReadException("Unknown boolean: "+text+" ("+this.trueWord+"/"+this.falseWord+")");
+        try {
+            return Util.parseLong(text, this.thousandsSeparator);
+        } catch (NumberFormatException e) {
+            throw new MetaCSVReadException(e);
         }
     }
 
     @Override
-    public String toString(Boolean value) {
-        if (value == null) {
+    public String toString(Long n) {
+        if (n == null) {
             return this.nullValue;
-        } else if (value) {
-            return this.trueWord;
-        } else {
-            return this.falseWord;
         }
+        return Util.formatLong(n, this.thousandsSeparator);
     }
 }

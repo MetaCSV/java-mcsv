@@ -21,8 +21,7 @@
 package com.github.jferard.javamcsv.tool;
 
 import com.github.jferard.javamcsv.DataType;
-import com.github.jferard.javamcsv.FieldDescription;
-import com.github.jferard.javamcsv.FieldProcessor;
+import com.github.jferard.javamcsv.description.FieldDescription;
 import com.github.jferard.javamcsv.MetaCSVData;
 import com.github.jferard.javamcsv.MetaCSVDataBuilder;
 import com.github.jferard.javamcsv.MetaCSVDataException;

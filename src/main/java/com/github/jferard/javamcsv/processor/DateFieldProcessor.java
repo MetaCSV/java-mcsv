@@ -18,34 +18,48 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;
+package com.github.jferard.javamcsv.processor;
 
-public class IntegerFieldProcessor implements FieldProcessor<Long> {
-    private final String thousandsSeparator;
+import com.github.jferard.javamcsv.MetaCSVReadException;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class DateFieldProcessor implements FieldProcessor<Date> {
+    private final SimpleDateFormat simpleDateFormat;
+    private final String locale;
     private final String nullValue;
 
-    public IntegerFieldProcessor(String thousandsSeparator, String nullValue) {
-        this.thousandsSeparator = thousandsSeparator;
+    public DateFieldProcessor(SimpleDateFormat simpleDateFormat, String locale, String nullValue) {
+        this.simpleDateFormat = simpleDateFormat;
+        this.locale = locale;
         this.nullValue = nullValue;
     }
 
+    /**
+     *
+     * @param text the CSV value
+     * @return the UTC-Date
+     * @throws MetaCSVReadException
+     */
     @Override
-    public Long toObject(String text) throws MetaCSVReadException {
+    public Date toObject(String text) throws MetaCSVReadException {
         if (text == null || text.equals(this.nullValue)) {
             return null;
         }
         try {
-            return Util.parseLong(text, this.thousandsSeparator);
-        } catch (NumberFormatException e) {
+            return simpleDateFormat.parse(text);
+        } catch (ParseException e) {
             throw new MetaCSVReadException(e);
         }
     }
 
     @Override
-    public String toString(Long n) {
-        if (n == null) {
+    public String toString(Date date) {
+        if (date == null) {
             return this.nullValue;
         }
-        return Util.formatLong(n, this.thousandsSeparator);
+        return simpleDateFormat.format(date);
     }
 }

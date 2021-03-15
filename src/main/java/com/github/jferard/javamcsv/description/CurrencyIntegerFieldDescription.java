@@ -18,23 +18,29 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;
+package com.github.jferard.javamcsv.description;
+
+import com.github.jferard.javamcsv.processor.CurrencyIntegerFieldProcessor;
+import com.github.jferard.javamcsv.DataType;
+import com.github.jferard.javamcsv.processor.FieldProcessor;
+import com.github.jferard.javamcsv.Util;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 
-public class CurrencyDecimalFieldDescription extends FieldDescription<BigDecimal> {
-    public static final FieldDescription<?> INSTANCE = new CurrencyDecimalFieldDescription(true, "$", DecimalFieldDescription.INSTANCE);
-
-    private final boolean pre;
+public class CurrencyIntegerFieldDescription implements FieldDescription<Long> {
+    public static final FieldDescription<?> INSTANCE =
+            new CurrencyIntegerFieldDescription(true, "$", IntegerFieldDescription.INSTANCE);
+        private final boolean pre;
     private final String symbol;
-    private final FieldDescription<BigDecimal> numberDescription;
+    private final FieldDescription<Long> numberDescription;
+    private final String nullValue;
 
-    public CurrencyDecimalFieldDescription(boolean pre, String symbol,
-                                           FieldDescription<BigDecimal> numberDescription) {
+    public CurrencyIntegerFieldDescription(boolean pre, String symbol,
+                                           FieldDescription<Long> numberDescription) {
         this.pre = pre;
         this.symbol = symbol;
         this.numberDescription = numberDescription;
+        this.nullValue = "";
     }
 
     @Override
@@ -45,19 +51,19 @@ public class CurrencyDecimalFieldDescription extends FieldDescription<BigDecimal
     }
 
     @Override
-    public FieldProcessor<BigDecimal> toFieldProcessor(String nullValue) {
-        return new CurrencyDecimalFieldProcessor(this.pre, this.symbol,
+    public FieldProcessor<Long> toFieldProcessor(String nullValue) {
+        return new CurrencyIntegerFieldProcessor(this.pre, this.symbol,
                 this.numberDescription.toFieldProcessor(nullValue), nullValue);
     }
 
     @Override
-    public Class<BigDecimal> getJavaType() {
-        return BigDecimal.class;
+    public Class<Long> getJavaType() {
+        return Long.class;
     }
 
     @Override
     public DataType getDataType() {
-        return DataType.CURRENCY_DECIMAL;
+        return DataType.CURRENCY_INTEGER;
     }
 
     @Override

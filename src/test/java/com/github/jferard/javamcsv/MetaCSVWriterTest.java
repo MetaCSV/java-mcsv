@@ -20,6 +20,14 @@
 
 package com.github.jferard.javamcsv;
 
+import com.github.jferard.javamcsv.description.BooleanFieldDescription;
+import com.github.jferard.javamcsv.description.CurrencyDecimalFieldDescription;
+import com.github.jferard.javamcsv.description.DateFieldDescription;
+import com.github.jferard.javamcsv.description.DatetimeFieldDescription;
+import com.github.jferard.javamcsv.description.DecimalFieldDescription;
+import com.github.jferard.javamcsv.description.FloatFieldDescription;
+import com.github.jferard.javamcsv.description.IntegerFieldDescription;
+import com.github.jferard.javamcsv.description.PercentageFloatFieldDescription;
 import org.junit.Assert;
 import org.junit.Test;
 

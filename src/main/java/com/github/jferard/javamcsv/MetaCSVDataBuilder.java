@@ -20,6 +20,8 @@
 
 package com.github.jferard.javamcsv;
 
+import com.github.jferard.javamcsv.description.FieldDescription;
+
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;

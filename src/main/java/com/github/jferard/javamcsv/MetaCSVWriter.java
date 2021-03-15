@@ -18,7 +18,11 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;import org.apache.commons.csv.CSVFormat;
+package com.github.jferard.javamcsv;
+
+import com.github.jferard.javamcsv.processor.WriteFieldProcessor;
+import com.github.jferard.javamcsv.processor.WriteProcessorProvider;
+import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.Closeable;
@@ -58,15 +62,15 @@ public class MetaCSVWriter implements Closeable {
         CSVFormat format = CSVFormatHelper.getCSVFormat(data);
         Appendable writer = new OutputStreamWriter(out, data.getEncoding());
         CSVPrinter printer = new CSVPrinter(writer, format);
-        return new MetaCSVWriter(printer, data);
+        return new MetaCSVWriter(printer, data.toWriteProcessorProvider(OnError.TEXT));
     }
 
-    private final ProcessorProvider provider;
+    private final WriteProcessorProvider writeProvider;
     private final CSVPrinter printer;
 
-    private MetaCSVWriter(CSVPrinter printer, ProcessorProvider provider) {
+    private MetaCSVWriter(CSVPrinter printer, WriteProcessorProvider writeProvider) {
         this.printer = printer;
-        this.provider = provider;
+        this.writeProvider = writeProvider;
     }
 
     public void close() throws IOException {
@@ -81,8 +85,7 @@ public class MetaCSVWriter implements Closeable {
         List<String> formattedValues = new ArrayList<String>(values.size());
         for (int i = 0; i < values.size(); i++) {
             Object value = values.get(i);
-            FieldProcessor<?> rawProcessor = provider.getProcessor(i, OnError.EXCEPTION);
-            FieldProcessor<Object> processor = (FieldProcessor<Object>) rawProcessor;
+            WriteFieldProcessor processor = writeProvider.getProcessor(i);
             String formattedValue = processor.toString(value);
             formattedValues.add(formattedValue);
         }

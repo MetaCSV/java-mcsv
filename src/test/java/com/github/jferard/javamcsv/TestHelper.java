@@ -20,6 +20,11 @@
 
 package com.github.jferard.javamcsv;
 
+import com.github.jferard.javamcsv.processor.ProcessorProvider;
+import com.github.jferard.javamcsv.processor.ReadFieldProcessor;
+import com.github.jferard.javamcsv.description.FieldDescription;
+import com.github.jferard.javamcsv.processor.FieldProcessor;
+import com.github.jferard.javamcsv.processor.ReadProcessorProvider;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -96,23 +101,36 @@ public class TestHelper {
                 }
             });
         }
-        return new MetaCSVRecord(TestHelper.createRecord(values),
-                new ProcessorProvider() {
+        CSVRecord csvRecord = TestHelper.createRecord(values);
+        ProcessorProvider provider = new ProcessorProvider(null, null) {
+            @Override
+            public FieldProcessor<?> getProcessor(final int c) {
+                return new FieldProcessor<Object>() {
                     @Override
-                    public FieldProcessor<?> getProcessor(final int c, OnError onError) {
-                        return new FieldProcessor<Object>() {
-                            @Override
-                            public Object toObject(String text) throws MetaCSVReadException {
-                                return values[c];
-                            }
-
-                            @Override
-                            public String toString(Object value) {
-                                return value.toString();
-                            }
-                        };
+                    public Object toObject(String text) throws MetaCSVReadException {
+                        return values[c];
                     }
-                }, processorByIndex, TimeZone.getTimeZone("UTC"));
+
+                    @Override
+                    public String toString(Object value) {
+                        return value.toString();
+                    }
+                };
+            }
+        };
+        ReadProcessorProvider readProvider = new ReadProcessorProvider(null, null, null) {
+            @Override
+            public ReadFieldProcessor<?> getProcessor(final int c) {
+                return new ReadFieldProcessor<Object>() {
+                    @Override
+                    public Object toObject(String text) {
+                        return values[c];
+                    }
+
+                };
+            }
+        };
+        return new MetaCSVRecord(csvRecord, provider, readProvider, null, TimeZone.getTimeZone("UTC"));
     }
 
     public static <T> List<T> toList(Iterable<T> iterable) {

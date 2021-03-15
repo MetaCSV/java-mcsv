@@ -20,6 +20,13 @@
 
 package com.github.jferard.javamcsv;
 
+import com.github.jferard.javamcsv.processor.ProcessorProvider;
+import com.github.jferard.javamcsv.processor.ReadProcessorProvider;
+import com.github.jferard.javamcsv.processor.TextFieldProcessor;
+import com.github.jferard.javamcsv.description.FieldDescription;
+import com.github.jferard.javamcsv.processor.FieldProcessor;
+import com.github.jferard.javamcsv.processor.WriteProcessorProvider;
+
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -28,7 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MetaCSVData implements ProcessorProvider, CSVParameters {
+public class MetaCSVData implements CSVParameters {
     public static MetaCSVData DEFAULT;
 
     static {
@@ -98,16 +105,6 @@ public class MetaCSVData implements ProcessorProvider, CSVParameters {
     }
 
     @Override
-    public FieldProcessor<?> getProcessor(int c, OnError onError) {
-        FieldDescription<?> fieldDescription = this.descriptionByColIndex.get(c);
-        if (fieldDescription == null) {
-            return this.textFieldProcessor;
-        } else {
-            return fieldDescription.toFieldProcessor(nullValue, onError);
-        }
-    }
-
-    @Override
     public String toString() {
         return "MetaCSVData(encoding=" + this.encoding + ", lineTerminator=" +
                 Util.escapeLineTerminator(this.lineTerminator) +
@@ -161,5 +158,18 @@ public class MetaCSVData implements ProcessorProvider, CSVParameters {
 
     public String getMeta(final String key) {
         return meta.get(key);
+    }
+
+    public ReadProcessorProvider toReadProcessorProvider(OnError onError) {
+        return new ReadProcessorProvider(this.descriptionByColIndex, this.nullValue, onError);
+    }
+
+    public WriteProcessorProvider toWriteProcessorProvider(
+            OnError onError) {
+        return new WriteProcessorProvider(this.descriptionByColIndex, this.nullValue, onError);
+    }
+
+    public ProcessorProvider toProcessorProvider(String nullValue) {
+        return new ProcessorProvider(this.descriptionByColIndex, nullValue);
     }
 }

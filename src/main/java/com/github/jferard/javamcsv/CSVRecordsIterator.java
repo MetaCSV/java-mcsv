@@ -20,23 +20,36 @@
 
 package com.github.jferard.javamcsv;
 
+import com.github.jferard.javamcsv.description.TextFieldDescription;
+import com.github.jferard.javamcsv.processor.CSVRecordProcessor;
+import com.github.jferard.javamcsv.processor.FieldProcessor;
+import com.github.jferard.javamcsv.processor.FieldProcessorFactory;
+import com.github.jferard.javamcsv.processor.ProcessorProvider;
+import com.github.jferard.javamcsv.processor.ReadFieldProcessor;
+import com.github.jferard.javamcsv.processor.ReadProcessorProvider;
 import org.apache.commons.csv.CSVRecord;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.TimeZone;
 
 public class CSVRecordsIterator implements Iterator<MetaCSVRecord> {
     public static final FieldProcessor<String> TEXT_PROCESSOR =
             TextFieldDescription.INSTANCE.toFieldProcessor(null);
+    public static final ReadFieldProcessor<?> SAFE_TEXT_PROCESSOR =
+            new FieldProcessorFactory()
+                    .toReadFieldProcessor(TextFieldDescription.INSTANCE, null, OnError.EXCEPTION);
     public static CSVRecordProcessor HEADER_PROCESSOR = new CSVRecordProcessor(
-            new ProcessorProvider() {
+            new ProcessorProvider(null, null) {
                 @Override
-                public FieldProcessor<?> getProcessor(int c,
-                                                      OnError onError) {
+                public FieldProcessor<?> getProcessor(int c) {
                     return TEXT_PROCESSOR;
                 }
-            }, OnError.TEXT, Util.UTC_TIME_ZONE);
+            }, new ReadProcessorProvider(null, null, null) {
+        @Override
+        public ReadFieldProcessor<?> getProcessor(int c) {
+            return SAFE_TEXT_PROCESSOR;
+        }
+    }, OnError.TEXT, Util.UTC_TIME_ZONE);
     private final Iterator<CSVRecord> csvIterator;
     private final CSVRecordProcessor processor;
     private boolean first;

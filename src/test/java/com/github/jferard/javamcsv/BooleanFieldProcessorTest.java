@@ -20,6 +20,8 @@
 
 package com.github.jferard.javamcsv;
 
+import com.github.jferard.javamcsv.description.BooleanFieldDescription;
+import com.github.jferard.javamcsv.processor.FieldProcessor;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

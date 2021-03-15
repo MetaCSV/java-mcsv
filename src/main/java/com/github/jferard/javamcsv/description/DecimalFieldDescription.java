@@ -18,19 +18,23 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;
+package com.github.jferard.javamcsv.description;
+
+import com.github.jferard.javamcsv.DataType;
+import com.github.jferard.javamcsv.processor.DecimalFieldProcessor;
+import com.github.jferard.javamcsv.processor.FieldProcessor;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 
-public class FloatFieldDescription extends FieldDescription<Double> {
-    public static final FieldDescription<Double> INSTANCE = new FloatFieldDescription("", ".");
+public class DecimalFieldDescription implements FieldDescription<BigDecimal> {
+    public static final FieldDescription<BigDecimal> INSTANCE = new DecimalFieldDescription("", ".");
 
     private String thousandsSeparator;
     private String decimalSeparator;
     private String nullValue;
 
-    public FloatFieldDescription(String thousandsSeparator, String decimalSeparator) {
+    public DecimalFieldDescription(String thousandsSeparator, String decimalSeparator) {
         this.thousandsSeparator = thousandsSeparator;
         this.decimalSeparator = decimalSeparator;
         this.nullValue = "";
@@ -39,31 +43,31 @@ public class FloatFieldDescription extends FieldDescription<Double> {
     @Override
     public void render(Appendable out) throws IOException {
         if (this.thousandsSeparator.isEmpty()) {
-            out.append("float//");
+            out.append("decimal//");
         } else {
-            out.append("float/").append(this.thousandsSeparator).append('/');
+            out.append("decimal/").append(this.thousandsSeparator).append('/');
         }
         out.append(this.decimalSeparator);
     }
 
     @Override
-    public FieldProcessor<Double> toFieldProcessor(String nullValue) {
-        return new FloatFieldProcessor(this.thousandsSeparator, this.decimalSeparator, nullValue);
+    public FieldProcessor<BigDecimal> toFieldProcessor(String nullValue) {
+        return new DecimalFieldProcessor(this.thousandsSeparator, this.decimalSeparator, nullValue);
     }
 
     @Override
-    public Class<Double> getJavaType() {
-        return Double.class;
+    public Class<BigDecimal> getJavaType() {
+        return BigDecimal.class;
     }
 
     @Override
     public DataType getDataType() {
-        return DataType.FLOAT;
+        return DataType.DECIMAL;
     }
 
     @Override
     public String toString() {
-        return String.format("FloatFieldDescription(%s, %s)",
+        return String.format("DecimalFieldDescription(%s, %s)",
                 this.thousandsSeparator, this.decimalSeparator);
     }
 }

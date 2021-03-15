@@ -20,8 +20,8 @@
 
 package com.github.jferard.javamcsv.it;
 
-import com.github.jferard.javamcsv.DecimalFieldDescription;
-import com.github.jferard.javamcsv.FieldDescription;
+import com.github.jferard.javamcsv.description.DecimalFieldDescription;
+import com.github.jferard.javamcsv.description.FieldDescription;
 import com.github.jferard.javamcsv.MetaCSVData;
 import com.github.jferard.javamcsv.MetaCSVDataBuilder;
 import com.github.jferard.javamcsv.MetaCSVDataException;
@@ -38,9 +38,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 public class WriteThenReadIT {
     @Test

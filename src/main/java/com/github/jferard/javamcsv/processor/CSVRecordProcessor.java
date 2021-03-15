@@ -18,27 +18,33 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;
+package com.github.jferard.javamcsv.processor;
 
+import com.github.jferard.javamcsv.MetaCSVReadException;
+import com.github.jferard.javamcsv.MetaCSVRecord;
+import com.github.jferard.javamcsv.OnError;
 import org.apache.commons.csv.CSVRecord;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.TimeZone;
 
 public class CSVRecordProcessor {
     private final ProcessorProvider provider;
     private final TimeZone timeZone;
     private int maxSize;
+    private ReadProcessorProvider readProcessorProvider;
     private OnError onError;
-    private final Map<Integer, FieldProcessor<?>> processorByIndex;
+    private final HashMap<Integer, ReadFieldProcessor<?>> processorByIndex;
 
-    CSVRecordProcessor(ProcessorProvider provider, OnError onError, TimeZone timeZone) {
+    public CSVRecordProcessor(ProcessorProvider provider,
+                              ReadProcessorProvider readProcessorProvider, OnError onError,
+                              TimeZone timeZone) {
         this.provider = provider;
+        this.readProcessorProvider = readProcessorProvider;
         this.onError = onError;
         this.maxSize = 0;
-        processorByIndex = new HashMap<Integer, FieldProcessor<?>>();
+        processorByIndex = new HashMap<Integer, ReadFieldProcessor<?>>();
         this.timeZone = timeZone;
     }
 
@@ -47,15 +53,15 @@ public class CSVRecordProcessor {
             updateProcessorByIndex(record);
             this.maxSize = record.size();
         }
-        return new MetaCSVRecord(record, this.provider, processorByIndex,
+        return new MetaCSVRecord(record, this.provider, this.readProcessorProvider, processorByIndex,
                 timeZone);
     }
 
     private void updateProcessorByIndex(CSVRecord record) {
         for (int i = this.maxSize; i < record.size(); i++) {
-            FieldProcessor<?> processor = processorByIndex.get(i);
+            ReadFieldProcessor<?> processor = processorByIndex.get(i);
             if (processor == null) {
-                processor = this.provider.getProcessor(i, this.onError);
+                processor = this.readProcessorProvider.getProcessor(i);
                 processorByIndex.put(i, processor);
             }
         }

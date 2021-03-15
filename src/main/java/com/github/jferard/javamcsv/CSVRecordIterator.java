@@ -20,19 +20,20 @@
 
 package com.github.jferard.javamcsv;
 
+import com.github.jferard.javamcsv.processor.ReadFieldProcessor;
+import com.github.jferard.javamcsv.processor.ReadProcessorProvider;
 import org.apache.commons.csv.CSVRecord;
 
 import java.util.Iterator;
-import java.util.Map;
 
 public class CSVRecordIterator implements Iterator<Object> {
     private int c;
     private CSVRecord record;
-    private Map<Integer, FieldProcessor<?>> processorByIndex;
+    private ReadProcessorProvider readProvider;
 
-    public CSVRecordIterator(CSVRecord record, Map<Integer, FieldProcessor<?>> processorByIndex) {
+    public CSVRecordIterator(CSVRecord record, ReadProcessorProvider readProvider) {
         this.record = record;
-        this.processorByIndex = processorByIndex;
+        this.readProvider = readProvider;
         this.c = 0;
     }
 
@@ -44,13 +45,8 @@ public class CSVRecordIterator implements Iterator<Object> {
     @Override
     public Object next() {
         String text = record.get(c);
-        FieldProcessor<?> processor = this.processorByIndex.get(c);
+        ReadFieldProcessor<?> processor = this.readProvider.getProcessor(c);
         this.c++;
-        try {
-            return processor.toObject(text);
-        } catch (MetaCSVReadException e) {
-            // Should not happen.
-            throw new RuntimeException(e);
-        }
+        return processor.toObject(text);
     }
 }

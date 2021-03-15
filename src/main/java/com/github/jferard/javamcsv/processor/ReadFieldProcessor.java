@@ -17,20 +17,13 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
+package com.github.jferard.javamcsv.processor;
 
-package com.github.jferard.javamcsv.tool;
-
-import com.github.jferard.javamcsv.MetaCSVReadException;
-import com.github.jferard.javamcsv.MetaCSVReader;
-
-import java.sql.ResultSet;
-
-public class Tool {
-    public static ResultSet readerToResultSet(MetaCSVReader reader) throws MetaCSVReadException {
-        return new MetaCSVReaderResultSet(reader);
-    }
-
-    public static ResultSetMetaCSVWriter resultSetWriter(ResultSet resultSet) {
-        return new ResultSetMetaCSVWriter(resultSet);
-    }
+public interface ReadFieldProcessor<T> {
+    /**
+     * Prepare a value for a consumer. Does not throw any exception.
+     * @param text the CSV value
+     * @return the Object
+     */
+    Object toObject(String text);
 }

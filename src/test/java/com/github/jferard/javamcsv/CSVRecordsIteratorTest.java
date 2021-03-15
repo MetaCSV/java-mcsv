@@ -20,6 +20,8 @@
 
 package com.github.jferard.javamcsv;
 
+import com.github.jferard.javamcsv.description.IntegerFieldDescription;
+import com.github.jferard.javamcsv.processor.CSVRecordProcessor;
 import org.apache.commons.csv.CSVRecord;
 import org.junit.Assert;
 import org.junit.Test;
@@ -39,8 +41,10 @@ public class CSVRecordsIteratorTest {
         MetaCSVData metaData = new MetaCSVDataBuilder()
                 .colType(1, IntegerFieldDescription.INSTANCE).nullValue(null).build();
         Iterator<MetaCSVRecord> it =
-                new CSVRecordsIterator(wrappedIterator, new CSVRecordProcessor(metaData,
-                        OnError.WRAP, TimeZone.getTimeZone("UTC")));
+                new CSVRecordsIterator(wrappedIterator,
+                        new CSVRecordProcessor(metaData.toProcessorProvider(null),
+                                metaData.toReadProcessorProvider(OnError.WRAP),
+                                OnError.WRAP, TimeZone.getTimeZone("UTC")));
         Assert.assertTrue(it.hasNext());
         TestHelper.assertMetaEquals(TestHelper.createMetaRecord("foo", "bar", "baz"), it.next());
         Assert.assertTrue(it.hasNext());
@@ -55,8 +59,8 @@ public class CSVRecordsIteratorTest {
         MetaCSVData metaData = new MetaCSVDataBuilder()
                 .colType(1, IntegerFieldDescription.INSTANCE).nullValue(null).build();
         Iterator<MetaCSVRecord> it =
-                new CSVRecordsIterator(wrappedIterator, new CSVRecordProcessor(metaData,
-                        OnError.WRAP, TimeZone.getTimeZone("UTC")));
+                new CSVRecordsIterator(wrappedIterator, new CSVRecordProcessor(metaData.toProcessorProvider(null),
+                        metaData.toReadProcessorProvider(OnError.WRAP), OnError.WRAP, TimeZone.getTimeZone("UTC")));
         Assert.assertTrue(it.hasNext());
         TestHelper.assertMetaEquals(TestHelper.createMetaRecord("foo", "bar", "baz"),
                 it.next());

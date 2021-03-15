@@ -18,11 +18,15 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;
+package com.github.jferard.javamcsv.description;
+
+import com.github.jferard.javamcsv.DataType;
+import com.github.jferard.javamcsv.processor.IntegerFieldProcessor;
+import com.github.jferard.javamcsv.processor.FieldProcessor;
 
 import java.io.IOException;
 
-public class IntegerFieldDescription extends FieldDescription<Long> {
+public class IntegerFieldDescription implements FieldDescription<Long> {
     public static IntegerFieldDescription INSTANCE = new IntegerFieldDescription(null);
 
     private final String thousandsSeparator;

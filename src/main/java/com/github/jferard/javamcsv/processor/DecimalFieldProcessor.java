@@ -18,44 +18,42 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+package com.github.jferard.javamcsv.processor;
 
-public class DateFieldProcessor implements FieldProcessor<Date> {
-    private final SimpleDateFormat simpleDateFormat;
-    private final String locale;
+import com.github.jferard.javamcsv.MetaCSVReadException;
+import com.github.jferard.javamcsv.Util;
+
+import java.math.BigDecimal;
+
+public class DecimalFieldProcessor implements FieldProcessor<BigDecimal> {
+    private final String thousandsSeparator;
+    private final String decimalSeparator;
     private final String nullValue;
 
-    public DateFieldProcessor(SimpleDateFormat simpleDateFormat, String locale, String nullValue) {
-        this.simpleDateFormat = simpleDateFormat;
-        this.locale = locale;
+    public DecimalFieldProcessor(String thousandsSeparator, String decimalSeparator,
+                                 String nullValue) {
+        this.thousandsSeparator = thousandsSeparator;
+        this.decimalSeparator = decimalSeparator;
         this.nullValue = nullValue;
     }
 
-    /**
-     *
-     * @param text the CSV value
-     * @return the UTC-Date
-     * @throws MetaCSVReadException
-     */
     @Override
-    public Date toObject(String text) throws MetaCSVReadException {
+    public BigDecimal toObject(String text) throws MetaCSVReadException {
         if (text == null || text.equals(this.nullValue)) {
             return null;
         }
         try {
-            return simpleDateFormat.parse(text);
-        } catch (ParseException e) {
+            return Util.parseBigDecimal(text, thousandsSeparator, decimalSeparator);
+        } catch (NumberFormatException e) {
             throw new MetaCSVReadException(e);
         }
     }
 
     @Override
-    public String toString(Date date) {
-        if (date == null) {
+    public String toString(BigDecimal bd) {
+        if (bd == null) {
             return this.nullValue;
         }
-        return simpleDateFormat.format(date);
+        return Util.formatBigDecimal(bd, this.thousandsSeparator, decimalSeparator);
     }
 }

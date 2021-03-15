@@ -18,7 +18,7 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;/*
+package com.github.jferard.javamcsv.processor;/*
  * java-mcsv - A MetaCSV library for Java
  *     Copyright (C) 2020 J. Férard <https://github.com/jferard>
  *
@@ -38,14 +38,16 @@ package com.github.jferard.javamcsv;/*
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
+import com.github.jferard.javamcsv.MetaCSVReadException;
+
 public interface FieldProcessor<T> {
     /**
      * Prepare a value for a consumer
      * @param text the CSV value
      * @return the Object
-     * @throws MetaCSVReadException
+     * @throws MetaCSVReadException if the text can't be converted to a T value.
      */
-    T   toObject(String text) throws MetaCSVReadException;
+    T toObject(String text) throws MetaCSVReadException;
 
     /**
      * Prepare a value for CSV file.

@@ -21,8 +21,8 @@
 package com.github.jferard.javamcsv.it;
 
 import com.github.jferard.javamcsv.DataType;
-import com.github.jferard.javamcsv.FieldDescription;
-import com.github.jferard.javamcsv.FieldProcessor;
+import com.github.jferard.javamcsv.description.FieldDescription;
+import com.github.jferard.javamcsv.processor.FieldProcessor;
 import com.github.jferard.javamcsv.MetaCSVDataException;
 import com.github.jferard.javamcsv.MetaCSVMetaData;
 import com.github.jferard.javamcsv.MetaCSVParseException;
@@ -30,8 +30,8 @@ import com.github.jferard.javamcsv.MetaCSVReadException;
 import com.github.jferard.javamcsv.MetaCSVReader;
 import com.github.jferard.javamcsv.MetaCSVReaderBuilder;
 import com.github.jferard.javamcsv.MetaCSVRecord;
-import com.github.jferard.javamcsv.ObjectFieldDescription;
-import com.github.jferard.javamcsv.ObjectParser;
+import com.github.jferard.javamcsv.description.ObjectFieldDescription;
+import com.github.jferard.javamcsv.ObjectTypeParser;
 import com.github.jferard.javamcsv.ReadError;
 import com.github.jferard.javamcsv.TestHelper;
 import com.github.jferard.javamcsv.Util;
@@ -198,7 +198,7 @@ public class MetaCSVReaderIT {
             try {
                 MetaCSVReader reader =
                         new MetaCSVReaderBuilder().csvIn(csvIn).metaIn(metaIn).objectParser(
-                                new ObjectParser() {
+                                new ObjectTypeParser() {
                                     @Override
                                     public FieldDescription<?> parse(
                                             final List<String> parameters) {
@@ -334,7 +334,7 @@ public class MetaCSVReaderIT {
             }
 
             @Override
-            protected FieldProcessor<URL> toFieldProcessor(
+            public FieldProcessor<URL> toFieldProcessor(
                     final String nullValue) {
                 return getURLFieldProcessor(nullValue);
             }

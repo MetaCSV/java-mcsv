@@ -18,18 +18,20 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;
+package com.github.jferard.javamcsv.processor;
+
+import com.github.jferard.javamcsv.MetaCSVReadException;
 
 import java.math.BigDecimal;
 
-public class CurrencyIntegerFieldProcessor implements FieldProcessor<Long> {
+public class CurrencyDecimalFieldProcessor implements FieldProcessor<BigDecimal> {
     private final boolean pre;
     private final String symbol;
-    private final FieldProcessor<Long> numberProcessor;
+    private final FieldProcessor<BigDecimal> numberProcessor;
     private final String nullValue;
 
-    public CurrencyIntegerFieldProcessor(boolean pre, String symbol,
-                                         FieldProcessor<Long> numberProcessor,
+    public CurrencyDecimalFieldProcessor(boolean pre, String symbol,
+                                         FieldProcessor<BigDecimal> numberProcessor,
                                          String nullValue) {
         this.pre = pre;
         this.symbol = symbol;
@@ -38,7 +40,7 @@ public class CurrencyIntegerFieldProcessor implements FieldProcessor<Long> {
     }
 
     @Override
-    public Long toObject(String text) throws MetaCSVReadException {
+    public BigDecimal toObject(String text) throws MetaCSVReadException {
         if (text == null || text.equals(this.nullValue)) {
             return null;
         }
@@ -60,7 +62,7 @@ public class CurrencyIntegerFieldProcessor implements FieldProcessor<Long> {
     }
 
     @Override
-    public String toString(Long value) {
+    public String toString(BigDecimal value) {
         if (value == null) {
             return this.nullValue;
         }

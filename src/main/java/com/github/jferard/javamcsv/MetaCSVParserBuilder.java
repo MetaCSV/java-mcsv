@@ -20,6 +20,8 @@
 
 package com.github.jferard.javamcsv;
 
+import com.github.jferard.javamcsv.description.FieldDescription;
+import com.github.jferard.javamcsv.description.ObjectFieldDescription;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 
@@ -30,11 +32,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MetaCSVParserBuilder {
-    public static final ObjectParser DEFAULT_OBJECT_PARSER = new ObjectParser() {
+    public static final ObjectTypeParser DEFAULT_OBJECT_PARSER = new ObjectTypeParser() {
         @Override
         public FieldDescription<?> parse(List<String> parameters) {
             return new ObjectFieldDescription(parameters);
@@ -47,7 +48,7 @@ public class MetaCSVParserBuilder {
     private InputStream metaIn;
     private MetaCSVParser metaParser;
     private boolean header;
-    private ObjectParser objectParser;
+    private ObjectTypeParser objectParser;
 
     public MetaCSVParserBuilder() {
         this.objectParser = DEFAULT_OBJECT_PARSER;
@@ -94,7 +95,7 @@ public class MetaCSVParserBuilder {
         return this;
     }
 
-    public MetaCSVParserBuilder objectParser(ObjectParser objectParser) {
+    public MetaCSVParserBuilder objectParser(ObjectTypeParser objectParser) {
         this.objectParser = objectParser;
         return this;
     }

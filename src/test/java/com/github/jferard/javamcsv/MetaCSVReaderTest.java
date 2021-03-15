@@ -20,6 +20,7 @@
 
 package com.github.jferard.javamcsv;
 
+import com.github.jferard.javamcsv.description.CurrencyDecimalFieldDescription;
 import org.junit.Assert;
 import org.junit.Test;
 

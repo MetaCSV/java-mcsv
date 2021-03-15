@@ -18,11 +18,16 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;
+package com.github.jferard.javamcsv.description;
+
+import com.github.jferard.javamcsv.processor.BooleanFieldProcessor;
+import com.github.jferard.javamcsv.DataType;
+import com.github.jferard.javamcsv.processor.FieldProcessor;
+import com.github.jferard.javamcsv.Util;
 
 import java.io.IOException;
 
-public class BooleanFieldDescription extends FieldDescription<Boolean> {
+public class BooleanFieldDescription implements FieldDescription<Boolean> {
     public static final FieldDescription<?> INSTANCE = new BooleanFieldDescription("true", "false");
     private final String trueWord;
     private final String falseWord;

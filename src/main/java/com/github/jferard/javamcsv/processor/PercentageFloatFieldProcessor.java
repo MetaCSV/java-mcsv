@@ -18,19 +18,19 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;
+package com.github.jferard.javamcsv.processor;
 
-import java.math.BigDecimal;
+import com.github.jferard.javamcsv.MetaCSVReadException;
+import com.github.jferard.javamcsv.processor.FieldProcessor;
 
-public class CurrencyDecimalFieldProcessor implements FieldProcessor<BigDecimal> {
+public class PercentageFloatFieldProcessor implements FieldProcessor<Double> {
     private final boolean pre;
     private final String symbol;
-    private final FieldProcessor<BigDecimal> numberProcessor;
+    private final FieldProcessor<Double> numberProcessor;
     private final String nullValue;
 
-    public CurrencyDecimalFieldProcessor(boolean pre, String symbol,
-                                         FieldProcessor<BigDecimal> numberProcessor,
-                                         String nullValue) {
+    public PercentageFloatFieldProcessor(boolean pre, String symbol,
+                                         FieldProcessor<Double> numberProcessor, String nullValue) {
         this.pre = pre;
         this.symbol = symbol;
         this.numberProcessor = numberProcessor;
@@ -38,7 +38,7 @@ public class CurrencyDecimalFieldProcessor implements FieldProcessor<BigDecimal>
     }
 
     @Override
-    public BigDecimal toObject(String text) throws MetaCSVReadException {
+    public Double toObject(String text) throws MetaCSVReadException {
         if (text == null || text.equals(this.nullValue)) {
             return null;
         }
@@ -56,19 +56,20 @@ public class CurrencyDecimalFieldProcessor implements FieldProcessor<BigDecimal>
                 throw new MetaCSVReadException("Value "+text+" should end with "+symbol);
             }
         }
-        return this.numberProcessor.toObject(text);
+        return this.numberProcessor.toObject(text) / 100.0;
     }
 
     @Override
-    public String toString(BigDecimal value) {
+    public String toString(Double value) {
         if (value == null) {
             return this.nullValue;
         }
-        String valueAsString = this.numberProcessor.toString(value);
+        String valueAsString =
+                this.numberProcessor.toString(value * 100.0);
         if (this.pre) {
             return this.symbol + valueAsString;
         } else {
-            return valueAsString + " " + this.symbol;
+            return valueAsString + this.symbol;
         }
     }
 }

@@ -18,35 +18,40 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;
+package com.github.jferard.javamcsv.description;
+
+import com.github.jferard.javamcsv.DataType;
+import com.github.jferard.javamcsv.processor.FieldProcessor;
+import com.github.jferard.javamcsv.processor.FloatFieldProcessor;
 
 import java.io.IOException;
 
-public class PercentageFloatFieldDescription extends FieldDescription<Double> {
-    public static final FieldDescription<?> INSTANCE =
-            new PercentageFloatFieldDescription(false, "%", FloatFieldDescription.INSTANCE);
-    private final boolean pre;
-    private final String symbol;
-    private final FieldDescription<Double> numberDescription;
+public class FloatFieldDescription implements FieldDescription<Double> {
+    public static final FieldDescription<Double> INSTANCE = new FloatFieldDescription("", ".");
 
-    public PercentageFloatFieldDescription(boolean pre, String symbol,
-                                           FieldDescription<Double> numberDescription) {
-        this.pre = pre;
-        this.symbol = symbol;
-        this.numberDescription = numberDescription;
+    private String thousandsSeparator;
+    private String decimalSeparator;
+    private String nullValue;
+
+    public FloatFieldDescription(String thousandsSeparator, String decimalSeparator) {
+        this.thousandsSeparator = thousandsSeparator;
+        this.decimalSeparator = decimalSeparator;
+        this.nullValue = "";
     }
 
     @Override
     public void render(Appendable out) throws IOException {
-        Util.render(out, "percentage", this.pre ? "pre" : "post", symbol);
-        out.append('/');
-        this.numberDescription.render(out);
+        if (this.thousandsSeparator.isEmpty()) {
+            out.append("float//");
+        } else {
+            out.append("float/").append(this.thousandsSeparator).append('/');
+        }
+        out.append(this.decimalSeparator);
     }
 
     @Override
     public FieldProcessor<Double> toFieldProcessor(String nullValue) {
-        return new PercentageFloatFieldProcessor(this.pre, this.symbol,
-                this.numberDescription.toFieldProcessor(nullValue), nullValue);
+        return new FloatFieldProcessor(this.thousandsSeparator, this.decimalSeparator, nullValue);
     }
 
     @Override
@@ -56,12 +61,12 @@ public class PercentageFloatFieldDescription extends FieldDescription<Double> {
 
     @Override
     public DataType getDataType() {
-        return DataType.PERCENTAGE_FLOAT;
+        return DataType.FLOAT;
     }
 
     @Override
     public String toString() {
-        return String.format("PercentageFieldDescription(%b, %s, %s)",
-                this.pre, this.symbol, this.numberDescription.toString());
+        return String.format("FloatFieldDescription(%s, %s)",
+                this.thousandsSeparator, this.decimalSeparator);
     }
 }

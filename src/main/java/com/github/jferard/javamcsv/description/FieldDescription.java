@@ -18,10 +18,19 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;
+package com.github.jferard.javamcsv.description;
 
-import java.util.List;
+import com.github.jferard.javamcsv.DataType;
+import com.github.jferard.javamcsv.processor.FieldProcessor;
 
-public interface ObjectParser {
-    FieldDescription<?> parse(List<String> parameters);
+import java.io.IOException;
+
+public interface FieldDescription<T> {
+    void render(Appendable out) throws IOException;
+
+    FieldProcessor<T> toFieldProcessor(String nullValue);
+
+    Class<T> getJavaType();
+
+    DataType getDataType();
 }

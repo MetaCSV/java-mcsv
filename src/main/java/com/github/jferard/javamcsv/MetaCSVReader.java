@@ -20,6 +20,7 @@
 
 package com.github.jferard.javamcsv;
 
+import com.github.jferard.javamcsv.processor.CSVRecordProcessor;
 import org.apache.commons.csv.CSVParser;
 
 import java.io.Closeable;

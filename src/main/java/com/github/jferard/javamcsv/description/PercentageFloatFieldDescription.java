@@ -18,56 +18,55 @@
  * this program. If not, see <http://www.gnu.org/licenses />.
  */
 
-package com.github.jferard.javamcsv;
+package com.github.jferard.javamcsv.description;
+
+import com.github.jferard.javamcsv.DataType;
+import com.github.jferard.javamcsv.processor.PercentageFloatFieldProcessor;
+import com.github.jferard.javamcsv.Util;
+import com.github.jferard.javamcsv.processor.FieldProcessor;
 
 import java.io.IOException;
 
-public class CurrencyIntegerFieldDescription extends FieldDescription<Long> {
+public class PercentageFloatFieldDescription implements FieldDescription<Double> {
     public static final FieldDescription<?> INSTANCE =
-            new CurrencyIntegerFieldDescription(true, "$", IntegerFieldDescription.INSTANCE);
-        private final boolean pre;
+            new PercentageFloatFieldDescription(false, "%", FloatFieldDescription.INSTANCE);
+    private final boolean pre;
     private final String symbol;
-    private final FieldDescription<Long> numberDescription;
-    private final String nullValue;
+    private final FieldDescription<Double> numberDescription;
 
-    public CurrencyIntegerFieldDescription(boolean pre, String symbol,
-                                           FieldDescription<Long> numberDescription) {
+    public PercentageFloatFieldDescription(boolean pre, String symbol,
+                                           FieldDescription<Double> numberDescription) {
         this.pre = pre;
         this.symbol = symbol;
         this.numberDescription = numberDescription;
-        this.nullValue = "";
     }
 
     @Override
     public void render(Appendable out) throws IOException {
-        Util.render(out, "currency", this.pre ? "pre" : "post", symbol);
+        Util.render(out, "percentage", this.pre ? "pre" : "post", symbol);
         out.append('/');
         this.numberDescription.render(out);
     }
 
     @Override
-    public FieldProcessor<Long> toFieldProcessor(String nullValue) {
-        return new CurrencyIntegerFieldProcessor(this.pre, this.symbol,
+    public FieldProcessor<Double> toFieldProcessor(String nullValue) {
+        return new PercentageFloatFieldProcessor(this.pre, this.symbol,
                 this.numberDescription.toFieldProcessor(nullValue), nullValue);
     }
 
     @Override
-    public Class<Long> getJavaType() {
-        return Long.class;
+    public Class<Double> getJavaType() {
+        return Double.class;
     }
 
     @Override
     public DataType getDataType() {
-        return DataType.CURRENCY_INTEGER;
+        return DataType.PERCENTAGE_FLOAT;
     }
 
     @Override
     public String toString() {
-        return String.format("CurrencyFieldDescription(%b, %s, %s)",
+        return String.format("PercentageFieldDescription(%b, %s, %s)",
                 this.pre, this.symbol, this.numberDescription.toString());
-    }
-
-    public String getCurrencySymbol() {
-        return this.symbol;
     }
 }
