@@ -27,13 +27,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
 import static com.github.jferard.javamcsv.Util.UTC_TIME_ZONE;
 
-public class MetaCSVRecord {
+public class MetaCSVRecord implements Iterable<Object> {
     private final int offset;
     private CSVRecord record;
     private ProcessorProvider provider;
@@ -160,5 +161,10 @@ public class MetaCSVRecord {
     @Override
     public String toString() {
         return "MetaCSVRecord{record=" + record + "}";
+    }
+
+    @Override
+    public Iterator<Object> iterator() {
+        return new CSVRecordIterator(this.record, this.processorByIndex);
     }
 }
