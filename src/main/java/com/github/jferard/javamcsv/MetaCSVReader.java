@@ -73,7 +73,7 @@ public class MetaCSVReader implements Iterable<MetaCSVRecord>, Closeable {
 
     @Override
     public Iterator<MetaCSVRecord> iterator() {
-        return new CSVRecordIterator(this.parser.iterator(), this.processor);
+        return new CSVRecordsIterator(this.parser.iterator(), this.processor);
     }
 
     public long getRow() {

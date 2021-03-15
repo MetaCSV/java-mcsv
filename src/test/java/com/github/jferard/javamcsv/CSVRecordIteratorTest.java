@@ -39,7 +39,7 @@ public class CSVRecordIteratorTest {
         MetaCSVData metaData = new MetaCSVDataBuilder()
                 .colType(1, IntegerFieldDescription.INSTANCE).nullValue(null).build();
         Iterator<MetaCSVRecord> it =
-                new CSVRecordIterator(wrappedIterator, new CSVRecordProcessor(metaData,
+                new CSVRecordsIterator(wrappedIterator, new CSVRecordProcessor(metaData,
                         OnError.WRAP, TimeZone.getTimeZone("UTC")));
         Assert.assertTrue(it.hasNext());
         TestHelper.assertMetaEquals(TestHelper.createMetaRecord("foo", "bar", "baz"), it.next());
@@ -55,7 +55,7 @@ public class CSVRecordIteratorTest {
         MetaCSVData metaData = new MetaCSVDataBuilder()
                 .colType(1, IntegerFieldDescription.INSTANCE).nullValue(null).build();
         Iterator<MetaCSVRecord> it =
-                new CSVRecordIterator(wrappedIterator, new CSVRecordProcessor(metaData,
+                new CSVRecordsIterator(wrappedIterator, new CSVRecordProcessor(metaData,
                         OnError.WRAP, TimeZone.getTimeZone("UTC")));
         Assert.assertTrue(it.hasNext());
         TestHelper.assertMetaEquals(TestHelper.createMetaRecord("foo", "bar", "baz"),
@@ -71,7 +71,7 @@ public class CSVRecordIteratorTest {
         Iterator<CSVRecord> wrappedIterator =
                 Collections.singleton(TestHelper.createRecord("foo", "bar, baz")).iterator();
         Iterator<MetaCSVRecord> it =
-                new CSVRecordIterator(wrappedIterator, CSVRecordIterator.HEADER_PROCESSOR);
+                new CSVRecordsIterator(wrappedIterator, CSVRecordsIterator.HEADER_PROCESSOR);
         it.remove();
     }
 }

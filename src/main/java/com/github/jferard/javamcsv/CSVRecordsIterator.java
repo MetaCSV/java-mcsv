@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.TimeZone;
 
-public class CSVRecordIterator implements Iterator<MetaCSVRecord> {
+public class CSVRecordsIterator implements Iterator<MetaCSVRecord> {
     public static final FieldProcessor<String> TEXT_PROCESSOR =
             TextFieldDescription.INSTANCE.toFieldProcessor(null);
     public static CSVRecordProcessor HEADER_PROCESSOR = new CSVRecordProcessor(
@@ -41,7 +41,7 @@ public class CSVRecordIterator implements Iterator<MetaCSVRecord> {
     private final CSVRecordProcessor processor;
     private boolean first;
 
-    public CSVRecordIterator(Iterator<CSVRecord> csvIterator, CSVRecordProcessor processor) {
+    public CSVRecordsIterator(Iterator<CSVRecord> csvIterator, CSVRecordProcessor processor) {
         this.csvIterator = csvIterator;
         this.processor = processor;
         this.first = true;
