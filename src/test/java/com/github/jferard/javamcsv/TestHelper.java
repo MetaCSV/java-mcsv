@@ -99,6 +99,11 @@ public class TestHelper {
                 public String toString(Object value) {
                     return value.toString();
                 }
+
+                @Override
+                public Object cast(Object o) {
+                    return o;
+                }
             });
         }
         CSVRecord csvRecord = TestHelper.createRecord(values);
@@ -114,6 +119,11 @@ public class TestHelper {
                     @Override
                     public String toString(Object value) {
                         return value.toString();
+                    }
+
+                    @Override
+                    public Object cast(Object o) {
+                        return o;
                     }
                 };
             }

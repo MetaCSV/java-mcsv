@@ -72,4 +72,9 @@ public class PercentageFloatFieldProcessor implements FieldProcessor<Double> {
             return valueAsString + this.symbol;
         }
     }
+
+    @Override
+    public Double cast(Object o) {
+        return this.numberProcessor.cast(o);
+    }
 }

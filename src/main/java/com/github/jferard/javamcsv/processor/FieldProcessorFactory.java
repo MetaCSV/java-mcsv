@@ -43,8 +43,6 @@ public class FieldProcessorFactory {
                         }
                     }
                 };
-            case CAST:
-                throw new RuntimeException("OnError.CAST not allowed for read error.");
             case NULL:
                 return new ReadFieldProcessor<T>() {
                     @Override
@@ -92,55 +90,84 @@ public class FieldProcessorFactory {
         }
     }
 
-    public <T> WriteFieldProcessor toWriteFieldProcessor(FieldDescription<T> description, final String nullValue, OnError onError) {
+    public <T> WriteFieldProcessor toWriteFieldProcessor(FieldDescription<T> description,
+                                                         final String nullValue, OnError onError,
+                                                         boolean lenient) {
         final FieldProcessor<T> rawProcessor = description.toFieldProcessor(nullValue);
-        switch (onError) {
-            case WRAP:
-                throw new RuntimeException("OnError.WRAP not allowed for write error.");
-            case CAST:
-                return new WriteFieldProcessor() {
-                    @Override
-                    public String toString(Object o) {
-                        try {
-                            T text = (T) o;
-                            return rawProcessor.toString(text);
-                        } catch (ClassCastException e) {
-                            return nullValue;
+        if (lenient) {
+            switch (onError) {
+                case WRAP:
+                    throw new RuntimeException("OnError.WRAP not allowed for write error.");
+                case NULL:
+                    return new WriteFieldProcessor() {
+                        @Override
+                        public String toString(Object o) {
+                            try {
+                                T text = rawProcessor.cast(o);
+                                return rawProcessor.toString(text);
+                            } catch (ClassCastException e) {
+                                return nullValue;
+                            }
                         }
-                    }
-                };
-            case NULL:
-                return new WriteFieldProcessor() {
-                    @Override
-                    public String toString(Object o) {
-                        try {
-                            T text = (T) o;
-                            return rawProcessor.toString(text);
-                        } catch (ClassCastException e) {
-                            return nullValue;
+                    };
+                case TEXT:
+                    return new WriteFieldProcessor() {
+                        @Override
+                        public String toString(Object o) {
+                            try {
+                                T value = rawProcessor.cast(o);
+                                return rawProcessor.toString(value);
+                            } catch (ClassCastException e) {
+                                return o.toString();
+                            }
                         }
-                    }
-                };
-            case TEXT:
-                return new WriteFieldProcessor() {
-                    @Override
-                    public String toString(Object o) {
-                        try {
-                            T text = (T) o;
-                            return rawProcessor.toString(text);
-                        } catch (ClassCastException e) {
-                            return o.toString();
+                    };
+                default:
+                    return new WriteFieldProcessor() {
+                        @Override
+                        public String toString(Object o) {
+                            T value = rawProcessor.cast(o);
+                            return rawProcessor.toString(value);
                         }
-                    }
-                };
-            default:
-                return new WriteFieldProcessor() {
-                    @Override
-                    public String toString(Object o) {
-                        T text = (T) o;
-                        return rawProcessor.toString(text);
-                    }
-                };
+                    };
+            }
+        } else {
+            switch (onError) {
+                case WRAP:
+                    throw new RuntimeException("OnError.WRAP not allowed for write error.");
+                case NULL:
+                    return new WriteFieldProcessor() {
+                        @Override
+                        public String toString(Object o) {
+                            try {
+                                T value = (T) o;
+                                return rawProcessor.toString(value);
+                            } catch (ClassCastException e) {
+                                return nullValue;
+                            }
+                        }
+                    };
+                case TEXT:
+                    return new WriteFieldProcessor() {
+                        @Override
+                        public String toString(Object o) {
+                            try {
+                                T value = (T) o;
+                                return rawProcessor.toString(value);
+                            } catch (ClassCastException e) {
+                                return o.toString();
+                            }
+                        }
+                    };
+                default:
+                    return new WriteFieldProcessor() {
+                        @Override
+                        public String toString(Object o) {
+                            T value = (T) o;
+                            return rawProcessor.toString(value);
+                        }
+                    };
+            }
         }
     }
 }

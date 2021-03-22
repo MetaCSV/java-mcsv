@@ -21,8 +21,6 @@
 package com.github.jferard.javamcsv.it;
 
 import com.github.jferard.javamcsv.DataType;
-import com.github.jferard.javamcsv.description.FieldDescription;
-import com.github.jferard.javamcsv.processor.FieldProcessor;
 import com.github.jferard.javamcsv.MetaCSVDataException;
 import com.github.jferard.javamcsv.MetaCSVMetaData;
 import com.github.jferard.javamcsv.MetaCSVParseException;
@@ -30,11 +28,13 @@ import com.github.jferard.javamcsv.MetaCSVReadException;
 import com.github.jferard.javamcsv.MetaCSVReader;
 import com.github.jferard.javamcsv.MetaCSVReaderBuilder;
 import com.github.jferard.javamcsv.MetaCSVRecord;
-import com.github.jferard.javamcsv.description.ObjectFieldDescription;
 import com.github.jferard.javamcsv.ObjectTypeParser;
 import com.github.jferard.javamcsv.ReadError;
 import com.github.jferard.javamcsv.TestHelper;
 import com.github.jferard.javamcsv.Util;
+import com.github.jferard.javamcsv.description.FieldDescription;
+import com.github.jferard.javamcsv.description.ObjectFieldDescription;
+import com.github.jferard.javamcsv.processor.FieldProcessor;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.function.ThrowingRunnable;
@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -302,7 +303,8 @@ public class MetaCSVReaderIT {
 
     private void checkThirdRecord(final MetaCSVRecord thirdRecord)
             throws MetaCSVReadException {
-        Assert.assertEquals(Arrays.asList(false, new ReadError("7", "currency/post/€/integer"), new BigDecimal("17.8"),
+        Assert.assertEquals(Arrays.asList(false, new ReadError("7", "currency/post/€/integer"),
+                new BigDecimal("17.8"),
                 getDate(2003, Calendar.JUNE, 3), null, new BigDecimal("32.5"), -2456.5d,
                 1786L, 0.85d, new BigDecimal("0.128"), "py-mcsv", null),
                 thirdRecord.toList());
@@ -372,6 +374,24 @@ public class MetaCSVReaderIT {
                     return nullValue;
                 } else {
                     return url.toString();
+                }
+            }
+
+            @Override
+            public URL cast(Object o) {
+                if (o == null || o instanceof URL) {
+                    return (URL) o;
+                }
+                try {
+                    if (o instanceof CharSequence) {
+                        return new URL(o.toString());
+                    } else if (o instanceof URI) {
+                        return ((URI) o).toURL();
+                    } else {
+                        return (URL) o;
+                    }
+                } catch (MalformedURLException e) {
+                    throw new RuntimeException(e);
                 }
             }
         };

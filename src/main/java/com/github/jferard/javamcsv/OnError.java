@@ -21,5 +21,5 @@
 package com.github.jferard.javamcsv;
 
 public enum OnError {
-    WRAP, CAST, NULL, TEXT, EXCEPTION;
+    WRAP, NULL, TEXT, EXCEPTION;
 }

@@ -43,4 +43,12 @@ public class TextFieldProcessor
         }
         return value;
     }
+
+    @Override
+    public String cast(Object o) {
+        if (o == null || o instanceof String) {
+            return (String) o;
+        }
+        return o.toString();
+    }
 }

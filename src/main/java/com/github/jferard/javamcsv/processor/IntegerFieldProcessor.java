@@ -52,4 +52,12 @@ public class IntegerFieldProcessor implements FieldProcessor<Long> {
         }
         return Util.formatLong(n, this.thousandsSeparator);
     }
+
+    @Override
+    public Long cast(Object o) {
+        if (o == null || o instanceof Long) {
+            return (Long) o;
+        }
+        return ((Number) o).longValue();
+    }
 }

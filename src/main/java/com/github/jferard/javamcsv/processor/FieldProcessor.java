@@ -55,4 +55,11 @@ public interface FieldProcessor<T> {
      * @return the String representation of the value in the CSV file
      */
     String toString(T value);
+
+    /**
+     * For lenient writer: cast an objet to T type
+     * @param o the object
+     * @return the value
+     */
+    T cast(Object o);
 }

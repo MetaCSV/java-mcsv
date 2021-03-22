@@ -73,4 +73,9 @@ public class CurrencyDecimalFieldProcessor implements FieldProcessor<BigDecimal>
             return valueAsString + " " + this.symbol;
         }
     }
+
+    @Override
+    public BigDecimal cast(Object o) {
+        return this.numberProcessor.cast(o);
+    }
 }

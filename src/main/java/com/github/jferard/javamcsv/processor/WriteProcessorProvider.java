@@ -62,6 +62,6 @@ public class WriteProcessorProvider {
             fieldDescription = TextFieldDescription.INSTANCE;
         }
         return this.fieldProcessorFactory
-                .toWriteFieldProcessor(fieldDescription, nullValue, onError);
+                .toWriteFieldProcessor(fieldDescription, nullValue, onError, true);
     }
 }

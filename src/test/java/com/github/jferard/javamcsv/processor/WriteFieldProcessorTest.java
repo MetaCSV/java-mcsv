@@ -20,35 +20,26 @@
 
 package com.github.jferard.javamcsv.processor;
 
-import com.github.jferard.javamcsv.processor.FieldProcessor;
+import com.github.jferard.javamcsv.OnError;
+import com.github.jferard.javamcsv.description.IntegerFieldDescription;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-public class ObjectFieldProcessor implements FieldProcessor<Object> {
-    private final String nullValue;
+public class WriteFieldProcessorTest {
+    private FieldProcessorFactory factory;
 
-    public ObjectFieldProcessor(String nullValue) {
-        this.nullValue = nullValue;
+    @Before
+    public void setUp() {
+        this.factory = new FieldProcessorFactory();
     }
 
-    @Override
-    public Object toObject(String text) {
-        if (text == null || text.equals(this.nullValue)) {
-            return null;
-        } else {
-            return text;
-        }
+    @Test
+    public void testWithCast() {
+        WriteFieldProcessor processor =
+                this.factory.toWriteFieldProcessor(IntegerFieldDescription.INSTANCE, "<NULL>",
+                        OnError.NULL, true);
+        Assert.assertEquals("10", processor.toString(10));
     }
 
-    @Override
-    public String toString(Object value) {
-        if (value == null) {
-            return this.nullValue;
-        } else {
-            return value.toString();
-        }
-    }
-
-    @Override
-    public Object cast(Object o) {
-        return o;
-    }
 }

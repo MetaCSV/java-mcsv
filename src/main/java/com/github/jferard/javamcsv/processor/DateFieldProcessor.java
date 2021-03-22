@@ -24,6 +24,7 @@ import com.github.jferard.javamcsv.MetaCSVReadException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class DateFieldProcessor implements FieldProcessor<Date> {
@@ -61,5 +62,19 @@ public class DateFieldProcessor implements FieldProcessor<Date> {
             return this.nullValue;
         }
         return simpleDateFormat.format(date);
+    }
+
+    @Override
+    public Date cast(Object o) {
+        if (o == null || o instanceof Date) {
+            return (Date) o;
+        }
+        if (o instanceof Calendar) {
+            return ((Calendar) o).getTime();
+        } else if (o instanceof Number) {
+            return new Date(((Number) o).longValue());
+        } else {
+            return (Date) o;
+        }
     }
 }

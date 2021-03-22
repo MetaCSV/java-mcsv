@@ -56,4 +56,13 @@ public class DecimalFieldProcessor implements FieldProcessor<BigDecimal> {
         }
         return Util.formatBigDecimal(bd, this.thousandsSeparator, decimalSeparator);
     }
+
+    @Override
+    public BigDecimal cast(Object o) {
+        if (o == null || o instanceof BigDecimal) {
+            return (BigDecimal) o;
+        }
+        Number n = (Number) o;
+        return new BigDecimal(n.toString());
+    }
 }

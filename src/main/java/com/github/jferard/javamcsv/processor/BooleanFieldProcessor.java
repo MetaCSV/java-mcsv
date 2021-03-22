@@ -22,6 +22,8 @@ package com.github.jferard.javamcsv.processor;
 
 import com.github.jferard.javamcsv.MetaCSVReadException;
 
+import java.util.Date;
+
 public class BooleanFieldProcessor implements FieldProcessor<Boolean> {
     private final String trueWord;
     private final String falseWord;
@@ -56,6 +58,18 @@ public class BooleanFieldProcessor implements FieldProcessor<Boolean> {
             return this.trueWord;
         } else {
             return this.falseWord;
+        }
+    }
+
+    @Override
+    public Boolean cast(Object o) {
+        if (o == null || o instanceof Boolean) {
+            return (Boolean) o;
+        }
+        if (o instanceof Number) {
+            return ((Number) o).longValue() != 0;
+        } else {
+            return (Boolean) o;
         }
     }
 }

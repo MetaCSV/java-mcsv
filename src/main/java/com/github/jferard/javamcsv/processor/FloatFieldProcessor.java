@@ -55,4 +55,12 @@ public class FloatFieldProcessor implements FieldProcessor<Double> {
         }
         return Util.formatDouble(d, this.thousandsSeparator, decimalSeparator);
     }
+
+    @Override
+    public Double cast(Object o) {
+        if (o == null || o instanceof Double) {
+            return (Double) o;
+        }
+        return ((Number) o).doubleValue();
+    }
 }

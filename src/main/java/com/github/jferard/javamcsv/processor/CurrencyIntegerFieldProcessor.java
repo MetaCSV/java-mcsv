@@ -71,4 +71,9 @@ public class CurrencyIntegerFieldProcessor implements FieldProcessor<Long> {
             return valueAsString + " " + this.symbol;
         }
     }
+
+    @Override
+    public Long cast(Object o) {
+        return this.numberProcessor.cast(o);
+    }
 }

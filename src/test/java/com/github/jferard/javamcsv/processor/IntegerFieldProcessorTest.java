@@ -22,7 +22,6 @@ package com.github.jferard.javamcsv.processor;
 
 import com.github.jferard.javamcsv.MetaCSVReadException;
 import com.github.jferard.javamcsv.description.IntegerFieldDescription;
-import com.github.jferard.javamcsv.processor.FieldProcessor;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +31,7 @@ public class IntegerFieldProcessorTest {
 
     @Before
     public void setUp() {
-        String thSep = new StringBuilder().append((char) 0xA0).toString();
+        String thSep = new String(new char[] {0xA0});
         processor = new IntegerFieldDescription(thSep).toFieldProcessor("NULL");
     }
 
