@@ -34,6 +34,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class DateFieldProcessorTest {
 
@@ -112,5 +113,27 @@ public class DateFieldProcessorTest {
         c.setTimeInMillis(0);
         c.set(2020, Calendar.NOVEMBER, 21, 3, 2, 1);
         Assert.assertEquals("2020-11-21T03:02:01", dtProcessor.toString(c.getTime()));
+    }
+
+    @Test
+    public void testMilliseconds() throws MetaCSVReadException {
+        FieldProcessor<Date> processor =
+                DatetimeFieldDescription.create("yyyy-MM-dd'T'HH:mm:ss", "en_US")
+                        .toFieldProcessor("NULL");
+        Calendar cal = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
+        cal.setTimeInMillis(0);
+        cal.set(2021, Calendar.JANUARY, 12, 15, 34, 25);
+        Assert.assertEquals(cal.getTime(), processor.toObject("2021-01-12T15:34:25.1245"));
+    }
+
+    @Test
+    public void testHours() throws MetaCSVReadException {
+        FieldProcessor<Date> processor =
+                DatetimeFieldDescription.create("yyyy-MM-dd", "en_US")
+                        .toFieldProcessor("NULL");
+        Calendar cal = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
+        cal.setTimeInMillis(0);
+        cal.set(2021, Calendar.JANUARY, 12, 0, 0, 0);
+        Assert.assertEquals(cal.getTime(), processor.toObject("2021-01-12T15:34:25.1245"));
     }
 }
