@@ -75,7 +75,7 @@ public class MetaCSVRecord implements Iterable<Object> {
             Date date = (Date) value;
             Calendar cal = GregorianCalendar.getInstance(UTC_TIME_ZONE);
             cal.setTimeInMillis(date.getTime() + offset);
-            cal.set(Calendar.HOUR, 0);
+            cal.set(Calendar.HOUR_OF_DAY, 0);
             cal.set(Calendar.MINUTE, 0);
             cal.set(Calendar.SECOND, 0);
             cal.set(Calendar.MILLISECOND, 0);

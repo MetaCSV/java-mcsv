@@ -71,7 +71,7 @@ public class MetaCSVRecordTest {
         MetaCSVRecord metaRecord = TestHelper.createMetaRecord("foo", "bar", cal.getTime());
         Calendar expectedCal = GregorianCalendar.getInstance(Util.UTC_TIME_ZONE);
         expectedCal.setTimeInMillis(1234567891011L);
-        expectedCal.set(Calendar.HOUR, 0);
+        expectedCal.set(Calendar.HOUR_OF_DAY, 0);
         expectedCal.set(Calendar.MINUTE, 0);
         expectedCal.set(Calendar.SECOND, 0);
         expectedCal.set(Calendar.MILLISECOND, 0);
