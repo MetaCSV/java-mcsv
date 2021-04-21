@@ -27,6 +27,7 @@ import com.github.jferard.javamcsv.processor.FieldProcessor;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.function.ThrowingRunnable;
 
 import java.math.BigDecimal;
 
@@ -83,5 +84,20 @@ public class PercentageDecimalFieldProcessorTest {
     @Test
     public void testPostToString() {
         Assert.assertEquals("1720,0%", processorPost.toString(new BigDecimal("17.2")));
+     }
+
+    @Test
+    public void testCast() {
+        Assert.assertEquals(new BigDecimal("17.31"), processorPre.cast(17.31));
+    }
+
+    @Test
+    public void testWrongCast() {
+        Assert.assertThrows(ClassCastException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                processorPost.cast("17.31");
+            }
+        });
     }
 }

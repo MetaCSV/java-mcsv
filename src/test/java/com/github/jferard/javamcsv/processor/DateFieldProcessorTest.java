@@ -28,6 +28,7 @@ import com.github.jferard.javamcsv.processor.FieldProcessor;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.function.ThrowingRunnable;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -135,5 +136,31 @@ public class DateFieldProcessorTest {
         cal.setTimeInMillis(0);
         cal.set(2021, Calendar.JANUARY, 12, 0, 0, 0);
         Assert.assertEquals(cal.getTime(), processor.toObject("2021-01-12T15:34:25.1245"));
+    }
+
+    @Test
+    public void testCast() throws MetaCSVReadException {
+        FieldProcessor<Date> processor =
+                DatetimeFieldDescription.create("yyyy-MM-dd", "en_US")
+                        .toFieldProcessor("NULL");
+        Calendar cal = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
+        cal.setTimeInMillis(0);
+        cal.set(2021, Calendar.JANUARY, 12, 0, 0, 0);
+        Assert.assertEquals(cal.getTime(), processor.cast(cal));
+        cal.setTimeInMillis(123456789);
+        Assert.assertEquals(cal.getTime(), processor.cast(123456789));
+    }
+
+    @Test
+    public void testWrongCast() throws MetaCSVReadException {
+        final FieldProcessor<Date> processor =
+                DatetimeFieldDescription.create("yyyy-MM-dd", "en_US")
+                        .toFieldProcessor("NULL");
+        Assert.assertThrows(ClassCastException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                processor.cast("foo");
+            }
+        });
     }
 }

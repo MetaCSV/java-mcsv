@@ -27,28 +27,36 @@ import java.sql.Types;
 
 public class SQLUtil {
     public static int dataTypeToSQLType(DataType dataType) throws SQLException {
+        int t = 0;
         switch (dataType) {
             case OBJECT:
-                return Types.JAVA_OBJECT;
+                t = Types.JAVA_OBJECT;
+                break;
             case TEXT:
-                return Types.VARCHAR;
+                t = Types.VARCHAR;
+                break;
             case BOOLEAN:
-                return Types.BOOLEAN;
+                t = Types.BOOLEAN;
+                break;
             case CURRENCY_DECIMAL:
             case DECIMAL:
             case PERCENTAGE_DECIMAL:
-                return Types.DECIMAL;
+                t =  Types.DECIMAL;
+                break;
             case FLOAT:
             case PERCENTAGE_FLOAT:
-                return Types.DOUBLE;
+                t =  Types.DOUBLE;
+                break;
             case DATE:
             case DATETIME:
-                return Types.DATE;
+                t =  Types.DATE;
+                break;
             case CURRENCY_INTEGER:
             case INTEGER:
-                return Types.INTEGER;
+                t = Types.INTEGER;
+                break;
         }
-        throw new SQLException();
+        return t;
     }
 
     public static DataType sqlTypeToDataType(int sqlType) {

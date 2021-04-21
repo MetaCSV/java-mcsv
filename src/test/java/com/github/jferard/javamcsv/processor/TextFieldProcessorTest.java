@@ -52,4 +52,10 @@ public class TextFieldProcessorTest {
         Assert.assertEquals("NULL", processor.toString(null));
         Assert.assertEquals("bar", processor.toString("bar"));
     }
+
+    @Test
+    public void testCast() {
+        Assert.assertEquals("17.31", processor.cast(17.31));
+    }
+
 }

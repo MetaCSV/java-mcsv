@@ -78,19 +78,31 @@ public class FieldProcessorFactoryTest {
     }
 
     @Test
+    public void testWriteWrapLenient() {
+        Assert.assertThrows(RuntimeException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                FieldProcessorFactoryTest.this.factory
+                        .toWriteFieldProcessor(IntegerFieldDescription.INSTANCE, "<NULL>",
+                                OnError.WRAP, true);
+            }
+        });
+    }
+
+    @Test
     public void testWriteWrap() {
         Assert.assertThrows(RuntimeException.class, new ThrowingRunnable() {
             @Override
             public void run() throws Throwable {
                 FieldProcessorFactoryTest.this.factory
                         .toWriteFieldProcessor(IntegerFieldDescription.INSTANCE, "<NULL>",
-                        OnError.WRAP, true);
+                                OnError.WRAP, false);
             }
         });
     }
 
     @Test
-    public void testWriteNull() {
+    public void testWriteNullLenient() {
         WriteFieldProcessor processor =
                 this.factory.toWriteFieldProcessor(IntegerFieldDescription.INSTANCE, "<NULL>",
                         OnError.NULL, true);
@@ -99,7 +111,16 @@ public class FieldProcessorFactoryTest {
     }
 
     @Test
-    public void testWriteText() {
+    public void testWriteNull() {
+        WriteFieldProcessor processor =
+                this.factory.toWriteFieldProcessor(IntegerFieldDescription.INSTANCE, "<NULL>",
+                        OnError.NULL, false);
+        Assert.assertEquals("10", processor.toString(10L));
+        Assert.assertEquals("<NULL>", processor.toString(null));
+    }
+
+    @Test
+    public void testWriteTextLenient() {
         WriteFieldProcessor processor =
                 this.factory.toWriteFieldProcessor(IntegerFieldDescription.INSTANCE, "<NULL>",
                         OnError.TEXT, true);
@@ -108,7 +129,16 @@ public class FieldProcessorFactoryTest {
     }
 
     @Test
-    public void testWriteException() {
+    public void testWriteText() {
+        WriteFieldProcessor processor =
+                this.factory.toWriteFieldProcessor(IntegerFieldDescription.INSTANCE, "<NULL>",
+                        OnError.TEXT, false);
+        Assert.assertEquals("10", processor.toString(10L));
+        Assert.assertEquals("foo", processor.toString("foo"));
+    }
+
+    @Test
+    public void testWriteExceptionLenient() {
         final WriteFieldProcessor processor =
                 this.factory.toWriteFieldProcessor(IntegerFieldDescription.INSTANCE, "<NULL>",
                         OnError.EXCEPTION, true);
@@ -119,4 +149,19 @@ public class FieldProcessorFactoryTest {
                 processor.toString("foo");
             }
         });
-    }}
+    }
+
+    @Test
+    public void testWriteException() {
+        final WriteFieldProcessor processor =
+                this.factory.toWriteFieldProcessor(IntegerFieldDescription.INSTANCE, "<NULL>",
+                        OnError.EXCEPTION, false);
+        Assert.assertEquals("10", processor.toString(10L));
+        Assert.assertThrows(RuntimeException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                processor.toString("foo");
+            }
+        });
+    }
+}

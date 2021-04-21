@@ -26,6 +26,7 @@ import com.github.jferard.javamcsv.processor.FieldProcessor;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.function.ThrowingRunnable;
 
 import java.math.BigDecimal;
 
@@ -61,5 +62,20 @@ public class DecimalFieldProcessorTest {
     @Test
     public void testToString() {
         Assert.assertEquals("17,2", processor.toString(new BigDecimal("17.2")));
+    }
+
+    @Test
+    public void testCast() {
+        Assert.assertEquals(new BigDecimal("17.31"), processor.cast(17.31));
+    }
+
+    @Test
+    public void testWrongCast() {
+        Assert.assertThrows(ClassCastException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                processor.cast("17.31");
+            }
+        });
     }
 }

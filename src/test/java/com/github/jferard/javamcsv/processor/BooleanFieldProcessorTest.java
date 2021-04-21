@@ -26,6 +26,7 @@ import com.github.jferard.javamcsv.processor.FieldProcessor;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.function.ThrowingRunnable;
 
 public class BooleanFieldProcessorTest {
     private FieldProcessor<Boolean> processor;
@@ -63,5 +64,25 @@ public class BooleanFieldProcessorTest {
                 new BooleanFieldDescription("true", "false").toFieldProcessor("NULL");
         Assert.assertTrue(aProcessor.toObject("True"));
         Assert.assertFalse(aProcessor.toObject("False"));
+    }
+
+    @Test
+    public void testCast() throws MetaCSVReadException {
+        FieldProcessor<Boolean> aProcessor =
+                new BooleanFieldDescription("true", "false").toFieldProcessor("NULL");
+        Assert.assertTrue(aProcessor.cast(true));
+        Assert.assertTrue(aProcessor.cast(1));
+    }
+
+    @Test
+    public void testWrongCast() throws MetaCSVReadException {
+        final FieldProcessor<Boolean> aProcessor =
+                new BooleanFieldDescription("true", "false").toFieldProcessor("NULL");
+        Assert.assertThrows(ClassCastException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                Assert.assertTrue(aProcessor.cast("foo"));
+            }
+        });
     }
 }
