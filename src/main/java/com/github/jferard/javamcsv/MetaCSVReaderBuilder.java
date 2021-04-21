@@ -110,7 +110,7 @@ public class MetaCSVReaderBuilder {
 
     private MetaCSVData getData() throws MetaCSVParseException, IOException, MetaCSVDataException {
         if (this.data == null) {
-            return this.parserBuilder.build();
+            return this.parserBuilder.buildData();
         } else {
             return this.data;
         }

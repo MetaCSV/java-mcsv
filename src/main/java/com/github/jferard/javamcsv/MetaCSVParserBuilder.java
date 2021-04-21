@@ -100,12 +100,16 @@ public class MetaCSVParserBuilder {
         return this;
     }
 
-    public MetaCSVData build() throws MetaCSVDataException, MetaCSVParseException, IOException {
+    public MetaCSVData buildData() throws MetaCSVDataException, MetaCSVParseException, IOException {
+        return this.build().parse();
+    }
+
+    public MetaCSVParser build() throws MetaCSVParseException, IOException {
         if (this.metaParser == null) {
             Iterable<? extends Iterable<String>> rows = buildRows();
             this.metaParser = new MetaCSVParser(rows, this.header, this.objectParser);
         }
-        return this.metaParser.parse();
+        return this.metaParser;
     }
 
     private Iterable<? extends Iterable<String>> buildRows()
