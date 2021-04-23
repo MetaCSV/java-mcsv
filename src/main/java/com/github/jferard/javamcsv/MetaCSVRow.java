@@ -50,6 +50,7 @@ public class MetaCSVRow {
 
     private final String key;
     private final String value;
+
     public MetaCSVRow(String domain, String key, String value) {
         this.domain = domain;
         this.key = key;

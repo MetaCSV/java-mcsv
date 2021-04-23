@@ -61,41 +61,49 @@ public class MetaCSVReaderBuilderTest {
                         Arrays.asList("data", "col/6/type", "percentage/post/%/float/,/.")
                 )
         ).build();
-        MetaCSVMetaData metaData = reader.getMetaData();
-        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(0)),
-                "boolean/T/F");
-        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(1)),
-                "currency/pre/$/decimal/,/.");
-        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(2)),
-                "date/dd\\/MM\\/yyyy");
-        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(3)),
-                "datetime/yyyy-MM-dd HH:mm:ss");
-        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(4)), "float/,/.");
-        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(5)), "integer/ ");
-        Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(6)),
-                "percentage/post/%/float/,/.");
-        Iterator<MetaCSVRecord> iterator = reader.iterator();
-        Assert.assertTrue(iterator.hasNext());
-        Assert.assertEquals(
-                Arrays.asList("boolean", "currency", "date", "datetime", "float", "integer",
-                        "percentage", "text"), iterator.next().toList());
-        Assert.assertTrue(iterator.hasNext());
+        try {
+            MetaCSVMetaData metaData = reader.getMetaData();
+            Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(0)),
+                    "boolean/T/F");
+            Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(1)),
+                    "currency/pre/$/decimal/,/.");
+            Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(2)),
+                    "date/dd\\/MM\\/yyyy");
+            Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(3)),
+                    "datetime/yyyy-MM-dd HH:mm:ss");
+            Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(4)),
+                    "float/,/.");
+            Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(5)),
+                    "integer/ ");
+            Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(6)),
+                    "percentage/post/%/float/,/.");
+            Iterator<MetaCSVRecord> iterator = reader.iterator();
+            Assert.assertTrue(iterator.hasNext());
+            Assert.assertEquals(
+                    Arrays.asList("boolean", "currency", "date", "datetime", "float", "integer",
+                            "percentage", "text"), iterator.next().toList());
+            Assert.assertTrue(iterator.hasNext());
 
-        Calendar c = GregorianCalendar.getInstance(Locale.US);
-        c.setTimeZone(Util.UTC_TIME_ZONE);
-        c.setTimeInMillis(0);
-        c.set(2020, Calendar.DECEMBER, 1, 0, 0, 0);
-        Assert.assertEquals(
-                Arrays.asList(true, new BigDecimal("15"), c.getTime(), null, 10000.5, 12354L, 0.565,
-                        "Foo"),
-                iterator.next().toList());
-        Assert.assertTrue(iterator.hasNext());
-        c.set(2020, Calendar.DECEMBER, 1, 9, 30, 55);
-        Assert.assertEquals(
-                Arrays.asList(false, new BigDecimal("-1900.5"), null, c.getTime(), -520.8, -1000L,
-                        -0.128, "Bar"),
-                iterator.next().toList());
-        Assert.assertFalse(iterator.hasNext());
+            Calendar c = GregorianCalendar.getInstance(Locale.US);
+            c.setTimeZone(Util.UTC_TIME_ZONE);
+            c.setTimeInMillis(0);
+            c.set(2020, Calendar.DECEMBER, 1, 0, 0, 0);
+            Assert.assertEquals(
+                    Arrays.asList(true, new BigDecimal("15"), c.getTime(), null, 10000.5, 12354L,
+                            0.565,
+                            "Foo"),
+                    iterator.next().toList());
+            Assert.assertTrue(iterator.hasNext());
+            c.set(2020, Calendar.DECEMBER, 1, 9, 30, 55);
+            Assert.assertEquals(
+                    Arrays.asList(false, new BigDecimal("-1900.5"), null, c.getTime(), -520.8,
+                            -1000L,
+                            -0.128, "Bar"),
+                    iterator.next().toList());
+            Assert.assertFalse(iterator.hasNext());
+        } finally {
+            reader.close();
+        }
     }
 
     @Test
@@ -115,12 +123,16 @@ public class MetaCSVReaderBuilderTest {
 
         MetaCSVReader reader = new MetaCSVReaderBuilder().csvFile(csvFile)
                 .metaCSVFile(mcsvFile).build();
-        Iterator<MetaCSVRecord> it = reader.iterator();
-        Assert.assertTrue(it.hasNext());
-        Assert.assertEquals(Arrays.asList("a", "b", "c"), it.next().toList());
-        Assert.assertTrue(it.hasNext());
-        Assert.assertEquals(Arrays.<Object>asList("1", 2L, "3"), it.next().toList());
-        Assert.assertFalse(it.hasNext());
+        try {
+            Iterator<MetaCSVRecord> it = reader.iterator();
+            Assert.assertTrue(it.hasNext());
+            Assert.assertEquals(Arrays.asList("a", "b", "c"), it.next().toList());
+            Assert.assertTrue(it.hasNext());
+            Assert.assertEquals(Arrays.<Object>asList("1", 2L, "3"), it.next().toList());
+            Assert.assertFalse(it.hasNext());
+        } finally {
+            reader.close();
+        }
     }
 
     @Test
@@ -132,11 +144,15 @@ public class MetaCSVReaderBuilderTest {
         MetaCSVParser parser = new MetaCSVParserBuilder().metaIn(min).build();
         MetaCSVReader reader = new MetaCSVReaderBuilder().csvIn(in).metaParser(parser).build();
         Iterator<MetaCSVRecord> it = reader.iterator();
-        Assert.assertTrue(it.hasNext());
-        Assert.assertEquals(Arrays.asList("a", "b", "c"), it.next().toList());
-        Assert.assertTrue(it.hasNext());
-        Assert.assertEquals(Arrays.<Object>asList("1", 2L, "3"), it.next().toList());
-        Assert.assertFalse(it.hasNext());
+        try {
+            Assert.assertTrue(it.hasNext());
+            Assert.assertEquals(Arrays.asList("a", "b", "c"), it.next().toList());
+            Assert.assertTrue(it.hasNext());
+            Assert.assertEquals(Arrays.<Object>asList("1", 2L, "3"), it.next().toList());
+            Assert.assertFalse(it.hasNext());
+        } finally {
+            reader.close();
+        }
     }
 
     @Test
@@ -147,12 +163,16 @@ public class MetaCSVReaderBuilderTest {
                 "domain,key,value\r\ndata,col/1/type,integer\r\n".getBytes(UTF_8));
         MetaCSVData data = new MetaCSVParserBuilder().metaIn(min).buildData();
         MetaCSVReader reader = new MetaCSVReaderBuilder().csvIn(in).metaData(data).build();
-        Iterator<MetaCSVRecord> it = reader.iterator();
-        Assert.assertTrue(it.hasNext());
-        Assert.assertEquals(Arrays.asList("a", "b", "c"), it.next().toList());
-        Assert.assertTrue(it.hasNext());
-        Assert.assertEquals(Arrays.<Object>asList("1", 2L, "3"), it.next().toList());
-        Assert.assertFalse(it.hasNext());
+        try {
+            Iterator<MetaCSVRecord> it = reader.iterator();
+            Assert.assertTrue(it.hasNext());
+            Assert.assertEquals(Arrays.asList("a", "b", "c"), it.next().toList());
+            Assert.assertTrue(it.hasNext());
+            Assert.assertEquals(Arrays.<Object>asList("1", 2L, "3"), it.next().toList());
+            Assert.assertFalse(it.hasNext());
+        } finally {
+            reader.close();
+        }
     }
 
     @Test
@@ -165,14 +185,19 @@ public class MetaCSVReaderBuilderTest {
         MetaCSVData data = new MetaCSVParserBuilder().metaIn(min).buildData();
         MetaCSVReader reader = new MetaCSVReaderBuilder().csvIn(in).metaData(data).timeZone(
                 TimeZone.getTimeZone("GMT")).onError(OnError.NULL).build();
-        Iterator<MetaCSVRecord> it = reader.iterator();
-        Assert.assertTrue(it.hasNext());
-        Assert.assertEquals(Arrays.asList("a", "b", "c"), it.next().toList());
-        Assert.assertTrue(it.hasNext());
-        Calendar cal = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
-        cal.setTimeInMillis(0);
-        cal.set(2021, Calendar.APRIL, 20);
-        Assert.assertEquals(Arrays.<Object>asList(null, cal.getTime(), "3"), it.next().toList());
-        Assert.assertFalse(it.hasNext());
+        try {
+            Iterator<MetaCSVRecord> it = reader.iterator();
+            Assert.assertTrue(it.hasNext());
+            Assert.assertEquals(Arrays.asList("a", "b", "c"), it.next().toList());
+            Assert.assertTrue(it.hasNext());
+            Calendar cal = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
+            cal.setTimeInMillis(0);
+            cal.set(2021, Calendar.APRIL, 20);
+            Assert.assertEquals(Arrays.<Object>asList(null, cal.getTime(), "3"),
+                    it.next().toList());
+            Assert.assertFalse(it.hasNext());
+        } finally {
+            reader.close();
+        }
     }
 }

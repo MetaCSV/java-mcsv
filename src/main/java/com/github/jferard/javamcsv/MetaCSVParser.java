@@ -51,7 +51,7 @@ public class MetaCSVParser implements Closeable {
         return new MetaCSVParser(parser, header, MetaCSVParserBuilder.DEFAULT_OBJECT_PARSER);
     }
 
-    public static MetaCSVParser create(Iterable<Iterable<String>> metaTriplets, boolean header) {
+    public static MetaCSVParser create(Iterable<? extends Iterable<String>> metaTriplets, boolean header) {
         return new MetaCSVParser(metaTriplets, header, MetaCSVParserBuilder.DEFAULT_OBJECT_PARSER);
     }
 

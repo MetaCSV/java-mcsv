@@ -21,25 +21,6 @@
 package com.github.jferard.javamcsv;
 
 public class ReadError {
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof ReadError)) {
-            return false;
-        }
-        ReadError other = (ReadError) o;
-        return Util.equal(text, other.text) && Util.equal(description, other.description);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = text != null ? text.hashCode() : 0;
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        return result;
-    }
-
     private final String text;
     private final String description;
 
@@ -62,5 +43,24 @@ public class ReadError {
                 "text='" + text + '\'' +
                 ", description='" + description + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ReadError)) {
+            return false;
+        }
+        ReadError other = (ReadError) o;
+        return Util.equal(text, other.text) && Util.equal(description, other.description);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = text != null ? text.hashCode() : 0;
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        return result;
     }
 }

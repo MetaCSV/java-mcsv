@@ -25,6 +25,9 @@ import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.Arrays;
 
 public class MetaCSVParserTest {
     @Test(expected = MetaCSVParseException.class)
@@ -253,7 +256,8 @@ public class MetaCSVParserTest {
     }
 
     @Test(expected = MetaCSVParseException.class)
-    public void testMissingBooleanParameters() throws IOException, MetaCSVParseException, MetaCSVDataException {
+    public void testMissingBooleanParameters()
+            throws IOException, MetaCSVParseException, MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "domain,key,value\r\n" +
                         "data,col/3/type,boolean\r\n");
@@ -261,7 +265,8 @@ public class MetaCSVParserTest {
     }
 
     @Test(expected = MetaCSVParseException.class)
-    public void testTooManyBooleanParameters() throws IOException, MetaCSVParseException, MetaCSVDataException {
+    public void testTooManyBooleanParameters()
+            throws IOException, MetaCSVParseException, MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "domain,key,value\r\n" +
                         "data,col/3/type,boolean/true/false/maybe\r\n");
@@ -269,7 +274,8 @@ public class MetaCSVParserTest {
     }
 
     @Test
-    public void testCurrencyInteger() throws IOException, MetaCSVParseException, MetaCSVDataException {
+    public void testCurrencyInteger()
+            throws IOException, MetaCSVParseException, MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "domain,key,value\r\n" +
                         "data,col/2/type,currency/pre/$/integer\r\n");
@@ -279,7 +285,8 @@ public class MetaCSVParserTest {
     }
 
     @Test(expected = MetaCSVParseException.class)
-    public void testCurrencyOther() throws IOException, MetaCSVParseException, MetaCSVDataException {
+    public void testCurrencyOther()
+            throws IOException, MetaCSVParseException, MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "domain,key,value\r\n" +
                         "data,col/2/type,currency/pre/$/foo/a/b\r\n");
@@ -297,7 +304,8 @@ public class MetaCSVParserTest {
     }
 
     @Test(expected = MetaCSVParseException.class)
-    public void testDateNoParameter() throws IOException, MetaCSVParseException, MetaCSVDataException {
+    public void testDateNoParameter()
+            throws IOException, MetaCSVParseException, MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "domain,key,value\r\n" +
                         "data,col/1/type,date\r\n");
@@ -305,7 +313,8 @@ public class MetaCSVParserTest {
     }
 
     @Test(expected = MetaCSVParseException.class)
-    public void testDateTooManyParameters() throws IOException, MetaCSVParseException, MetaCSVDataException {
+    public void testDateTooManyParameters()
+            throws IOException, MetaCSVParseException, MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "domain,key,value\r\n" +
                         "data,col/1/type,date/YYYY/fr_FR/foo\r\n");
@@ -313,7 +322,8 @@ public class MetaCSVParserTest {
     }
 
     @Test(expected = MetaCSVParseException.class)
-    public void testDatetimeNoParameter() throws IOException, MetaCSVParseException, MetaCSVDataException {
+    public void testDatetimeNoParameter()
+            throws IOException, MetaCSVParseException, MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "domain,key,value\r\n" +
                         "data,col/1/type,datetime\r\n");
@@ -321,7 +331,8 @@ public class MetaCSVParserTest {
     }
 
     @Test(expected = MetaCSVParseException.class)
-    public void testDatetimeTooManyParameters() throws IOException, MetaCSVParseException, MetaCSVDataException {
+    public void testDatetimeTooManyParameters()
+            throws IOException, MetaCSVParseException, MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "domain,key,value\r\n" +
                         "data,col/1/type,datetime/YYYY/fr_FR/foo\r\n");
@@ -329,7 +340,8 @@ public class MetaCSVParserTest {
     }
 
     @Test(expected = MetaCSVParseException.class)
-    public void testFloatTooManyParameters() throws IOException, MetaCSVParseException, MetaCSVDataException {
+    public void testFloatTooManyParameters()
+            throws IOException, MetaCSVParseException, MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "domain,key,value\r\n" +
                         "data,col/1/type,float//./foo\r\n");
@@ -337,7 +349,8 @@ public class MetaCSVParserTest {
     }
 
     @Test(expected = MetaCSVParseException.class)
-    public void testDecimalTooManyParameters() throws IOException, MetaCSVParseException, MetaCSVDataException {
+    public void testDecimalTooManyParameters()
+            throws IOException, MetaCSVParseException, MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "domain,key,value\r\n" +
                         "data,col/1/type,decimal//./foo\r\n");
@@ -345,7 +358,8 @@ public class MetaCSVParserTest {
     }
 
     @Test(expected = MetaCSVParseException.class)
-    public void testIntegerTooManyParameters() throws IOException, MetaCSVParseException, MetaCSVDataException {
+    public void testIntegerTooManyParameters()
+            throws IOException, MetaCSVParseException, MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "domain,key,value\r\n" +
                         "data,col/1/type,integer//.\r\n");
@@ -361,10 +375,39 @@ public class MetaCSVParserTest {
     }
 
     @Test(expected = MetaCSVParseException.class)
-    public void testBadPercentageNumber() throws IOException, MetaCSVParseException, MetaCSVDataException {
+    public void testBadPercentageNumber()
+            throws IOException, MetaCSVParseException, MetaCSVDataException {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "domain,key,value\r\n" +
                         "data,col/1/type,percentage/post/%/foo\r\n");
         MetaCSVParser.create(is).parse();
+    }
+
+    @Test
+    public void testMetaVersion() throws IOException, MetaCSVParseException,
+            MetaCSVDataException {
+        Reader r = new StringReader(
+                "domain,key,value\r\n" +
+                        "meta,version,0.0\r\n");
+        MetaCSVParser metaCSVParser = MetaCSVParser.create(r);
+        try {
+            MetaCSVData data = metaCSVParser.parse();
+            Assert.assertEquals("0.0", data.getMetaVersion());
+        } finally {
+            metaCSVParser.close();
+        }
+    }
+
+    @Test
+    public void testMeta() throws IOException, MetaCSVParseException,
+            MetaCSVDataException {
+        MetaCSVParser metaCSVParser =
+                MetaCSVParser.create(Arrays.asList(Arrays.asList("meta", "foo", "bar")), false);
+        try {
+            MetaCSVData data = metaCSVParser.parse();
+            Assert.assertEquals("bar", data.getMeta("foo"));
+        } finally {
+            metaCSVParser.close();
+        }
     }
 }
