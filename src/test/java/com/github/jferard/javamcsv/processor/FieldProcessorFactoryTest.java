@@ -108,6 +108,7 @@ public class FieldProcessorFactoryTest {
                         OnError.NULL, true);
         Assert.assertEquals("10", processor.toString(10L));
         Assert.assertEquals("<NULL>", processor.toString(null));
+        Assert.assertEquals("<NULL>", processor.toString("foo"));
     }
 
     @Test
@@ -117,6 +118,7 @@ public class FieldProcessorFactoryTest {
                         OnError.NULL, false);
         Assert.assertEquals("10", processor.toString(10L));
         Assert.assertEquals("<NULL>", processor.toString(null));
+        Assert.assertEquals("<NULL>", processor.toString("foo"));
     }
 
     @Test

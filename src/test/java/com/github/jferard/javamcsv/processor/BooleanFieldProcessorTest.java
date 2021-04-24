@@ -71,7 +71,15 @@ public class BooleanFieldProcessorTest {
         FieldProcessor<Boolean> aProcessor =
                 new BooleanFieldDescription("true", "false").toFieldProcessor("NULL");
         Assert.assertTrue(aProcessor.cast(true));
+        Assert.assertFalse(aProcessor.cast(0));
         Assert.assertTrue(aProcessor.cast(1));
+    }
+
+    @Test
+    public void testCastNull() throws MetaCSVReadException {
+        FieldProcessor<Boolean> aProcessor =
+                new BooleanFieldDescription("true", "false").toFieldProcessor("NULL");
+        Assert.assertNull(aProcessor.cast(null));
     }
 
     @Test

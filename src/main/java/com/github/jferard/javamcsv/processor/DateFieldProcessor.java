@@ -74,7 +74,7 @@ public class DateFieldProcessor implements FieldProcessor<Date> {
         } else if (o instanceof Number) {
             return new Date(((Number) o).longValue());
         } else {
-            return (Date) o;
+            throw new ClassCastException(o.toString());
         }
     }
 }

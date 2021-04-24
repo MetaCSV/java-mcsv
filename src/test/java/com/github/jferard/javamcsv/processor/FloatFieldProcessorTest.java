@@ -22,10 +22,10 @@ package com.github.jferard.javamcsv.processor;
 
 import com.github.jferard.javamcsv.MetaCSVReadException;
 import com.github.jferard.javamcsv.description.FloatFieldDescription;
-import com.github.jferard.javamcsv.processor.FieldProcessor;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.function.ThrowingRunnable;
 
 public class FloatFieldProcessorTest {
     private FieldProcessor<Double> processor;
@@ -43,7 +43,7 @@ public class FloatFieldProcessorTest {
 
     @Test
     public void testToObject() throws MetaCSVReadException {
-        Assert.assertEquals(10.0, (double) processor.toObject("10,0"), 0.001);
+        Assert.assertEquals(10.0, processor.toObject("10,0"), 0.001);
     }
 
     @Test(expected = MetaCSVReadException.class)
@@ -59,5 +59,25 @@ public class FloatFieldProcessorTest {
     @Test
     public void testToString() {
         Assert.assertEquals("17,2", processor.toString(17.2));
+    }
+
+    @Test
+    public void testCast() {
+        Assert.assertEquals(17.0, processor.cast(17L), 0.01);
+    }
+
+    @Test
+    public void testCastNull() {
+        Assert.assertNull(processor.cast(null));
+    }
+
+    @Test
+    public void testWrongCast() {
+        Assert.assertThrows(ClassCastException.class, new ThrowingRunnable() {
+            @Override
+            public void run() {
+                processor.cast("foo");
+            }
+        });
     }
 }

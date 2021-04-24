@@ -149,6 +149,7 @@ public class DateFieldProcessorTest {
         Assert.assertEquals(cal.getTime(), processor.cast(cal));
         cal.setTimeInMillis(123456789);
         Assert.assertEquals(cal.getTime(), processor.cast(123456789));
+        Assert.assertEquals(new Date(123), processor.cast(new java.sql.Date(123)));
     }
 
     @Test

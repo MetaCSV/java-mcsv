@@ -46,5 +46,6 @@ public class MetaCSVMetaDataTest {
     public void testGetDescription() throws MetaCSVDataException, IOException {
         MetaCSVMetaData data = new MetaCSVDataBuilder().build().getMetaData();
         Assert.assertEquals(TextFieldDescription.INSTANCE, data.getDescription(0));
+        Assert.assertEquals(TextFieldDescription.INSTANCE, data.getDescription(0, TextFieldDescription.class));
     }
 }

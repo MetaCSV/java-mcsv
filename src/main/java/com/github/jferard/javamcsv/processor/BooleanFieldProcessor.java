@@ -69,7 +69,7 @@ public class BooleanFieldProcessor implements FieldProcessor<Boolean> {
         if (o instanceof Number) {
             return ((Number) o).longValue() != 0;
         } else {
-            return (Boolean) o;
+            throw new ClassCastException(o.toString());
         }
     }
 }
