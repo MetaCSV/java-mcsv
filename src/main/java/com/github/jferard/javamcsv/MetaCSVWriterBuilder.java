@@ -114,6 +114,8 @@ public class MetaCSVWriterBuilder {
                 this.metaRenderer = MetaCSVRenderer.create(metaOut);
                 this.metaRenderer.render(this.data);
             }
+        } else {
+            this.metaRenderer.render(this.data);
         }
     }
 }

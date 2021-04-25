@@ -165,4 +165,16 @@ public class MetaCSVRecordTest {
                 TestHelper.createMetaRecord("foo", "bar", 10.5));
 
     }
+
+    @Test
+    public void testNull() throws IOException, MetaCSVReadException {
+        MetaCSVRecord metaRecord = TestHelper.createMetaRecord(null, null);
+        Assert.assertNull(metaRecord.getBoolean(0));
+        Assert.assertNull(metaRecord.getDate(0));
+        Assert.assertNull(metaRecord.getDatetime(0));
+        Assert.assertNull(metaRecord.getDecimal(0));
+        Assert.assertNull(metaRecord.getFloat(0));
+        Assert.assertNull(metaRecord.getInteger(0));
+        Assert.assertNull(metaRecord.getText(0));
+    }
 }

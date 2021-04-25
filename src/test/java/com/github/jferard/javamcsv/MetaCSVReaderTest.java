@@ -40,8 +40,6 @@ import java.util.Iterator;
 import java.util.Locale;
 
 public class MetaCSVReaderTest {
-    private static final String UTF_8 = "UTF-8";
-
     @Test
     public void testBOM()
             throws IOException, MetaCSVReadException, MetaCSVDataException, MetaCSVParseException {
@@ -200,10 +198,11 @@ public class MetaCSVReaderTest {
         csvFile.deleteOnExit();
         mcsvFile.deleteOnExit();
 
-        Writer w = new OutputStreamWriter(new FileOutputStream(csvFile), UTF_8);
+        Writer w = new OutputStreamWriter(new FileOutputStream(csvFile), TestHelper.UTF_8_CHARSET);
         w.write("a,b,c\r\n1,2,3\r\n");
         w.close();
-        Writer mw = new OutputStreamWriter(new FileOutputStream(mcsvFile), UTF_8);
+        Writer mw =
+                new OutputStreamWriter(new FileOutputStream(mcsvFile), TestHelper.UTF_8_CHARSET);
         mw.write("domain,key,value\r\ndata,col/1/type,integer\r\n");
         mw.close();
 
@@ -228,10 +227,11 @@ public class MetaCSVReaderTest {
         csvFile.deleteOnExit();
         mcsvFile.deleteOnExit();
 
-        Writer w = new OutputStreamWriter(new FileOutputStream(csvFile), UTF_8);
+        Writer w = new OutputStreamWriter(new FileOutputStream(csvFile), TestHelper.UTF_8_CHARSET);
         w.write("a,b,c\r\n1,2,3\r\n");
         w.close();
-        Writer mw = new OutputStreamWriter(new FileOutputStream(mcsvFile), UTF_8);
+        Writer mw =
+                new OutputStreamWriter(new FileOutputStream(mcsvFile), TestHelper.UTF_8_CHARSET);
         mw.write("domain,key,value\r\ndata,col/1/type,integer\r\n");
         mw.close();
 
@@ -254,7 +254,7 @@ public class MetaCSVReaderTest {
         File csvFile = File.createTempFile("test", ".csv");
         csvFile.deleteOnExit();
 
-        Writer w = new OutputStreamWriter(new FileOutputStream(csvFile), UTF_8);
+        Writer w = new OutputStreamWriter(new FileOutputStream(csvFile), TestHelper.UTF_8_CHARSET);
         w.write("a,b,c\r\n1,2,3\r\n");
         w.close();
 
@@ -274,7 +274,8 @@ public class MetaCSVReaderTest {
     @Test
     public void testCreateInputStream()
             throws IOException, MetaCSVReadException, MetaCSVDataException, MetaCSVParseException {
-        InputStream in = new ByteArrayInputStream("a,b,c\r\n1,2,3\r\n".getBytes(UTF_8));
+        InputStream in =
+                new ByteArrayInputStream("a,b,c\r\n1,2,3\r\n".getBytes(TestHelper.UTF_8_CHARSET));
         MetaCSVData data =
                 new MetaCSVDataBuilder().colType(1, IntegerFieldDescription.INSTANCE).build();
         MetaCSVReader reader = MetaCSVReader.create(in, data);

@@ -25,6 +25,7 @@ import com.github.jferard.javamcsv.processor.CSVRecordProcessor;
 import org.apache.commons.csv.CSVRecord;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.function.ThrowingRunnable;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -40,6 +41,29 @@ public class CSVRecordsIteratorTest {
                         TestHelper.createRecord("foo value", "bar value", "baz value")).iterator();
         MetaCSVData metaData = new MetaCSVDataBuilder()
                 .colType(1, IntegerFieldDescription.INSTANCE).nullValue(null).build();
+        CSVRecordProcessor processor = new CSVRecordProcessor(metaData.toProcessorProvider(null),
+                metaData.toReadProcessorProvider(OnError.EXCEPTION),
+                OnError.WRAP, TimeZone.getTimeZone("UTC"));
+        final Iterator<MetaCSVRecord> it = new CSVRecordsIterator(wrappedIterator, processor);
+        Assert.assertTrue(it.hasNext());
+        TestHelper.assertMetaEquals(TestHelper.createMetaRecord("foo", "bar", "baz"), it.next());
+        Assert.assertTrue(it.hasNext());
+        Assert.assertThrows(RuntimeException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                it.next().toList();
+            }
+        });
+        Assert.assertFalse(it.hasNext());
+    }
+
+    @Test
+    public void testReadWrap() throws IOException, MetaCSVDataException, MetaCSVReadException {
+        Iterator<CSVRecord> wrappedIterator =
+                Arrays.asList(TestHelper.createRecord("foo", "bar", "baz"),
+                        TestHelper.createRecord("foo value", "bar value", "baz value")).iterator();
+        MetaCSVData metaData = new MetaCSVDataBuilder()
+                .colType(1, IntegerFieldDescription.INSTANCE).nullValue(null).build();
         Iterator<MetaCSVRecord> it =
                 new CSVRecordsIterator(wrappedIterator,
                         new CSVRecordProcessor(metaData.toProcessorProvider(null),
@@ -48,7 +72,10 @@ public class CSVRecordsIteratorTest {
         Assert.assertTrue(it.hasNext());
         TestHelper.assertMetaEquals(TestHelper.createMetaRecord("foo", "bar", "baz"), it.next());
         Assert.assertTrue(it.hasNext());
-        it.next();
+        TestHelper.assertMetaEquals(TestHelper.createMetaRecord("foo value",
+                new ReadError("bar value", "integer"), "baz value"),
+                it.next());
+        Assert.assertFalse(it.hasNext());
     }
 
     @Test
@@ -59,8 +86,10 @@ public class CSVRecordsIteratorTest {
         MetaCSVData metaData = new MetaCSVDataBuilder()
                 .colType(1, IntegerFieldDescription.INSTANCE).nullValue(null).build();
         Iterator<MetaCSVRecord> it =
-                new CSVRecordsIterator(wrappedIterator, new CSVRecordProcessor(metaData.toProcessorProvider(null),
-                        metaData.toReadProcessorProvider(OnError.WRAP), OnError.WRAP, TimeZone.getTimeZone("UTC")));
+                new CSVRecordsIterator(wrappedIterator,
+                        new CSVRecordProcessor(metaData.toProcessorProvider(null),
+                                metaData.toReadProcessorProvider(OnError.WRAP), OnError.WRAP,
+                                TimeZone.getTimeZone("UTC")));
         Assert.assertTrue(it.hasNext());
         TestHelper.assertMetaEquals(TestHelper.createMetaRecord("foo", "bar", "baz"),
                 it.next());

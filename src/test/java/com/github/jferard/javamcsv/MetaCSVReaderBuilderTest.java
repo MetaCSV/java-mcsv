@@ -20,6 +20,8 @@
 
 package com.github.jferard.javamcsv;
 
+import com.github.jferard.javamcsv.description.FieldDescription;
+import com.github.jferard.javamcsv.description.TextFieldDescription;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -35,13 +37,11 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
 public class MetaCSVReaderBuilderTest {
-
-    public static final String UTF_8 = "UTF-8";
-
     @Test
     public void test()
             throws IOException, MetaCSVReadException, MetaCSVDataException, MetaCSVParseException {
@@ -114,10 +114,11 @@ public class MetaCSVReaderBuilderTest {
         csvFile.deleteOnExit();
         mcsvFile.deleteOnExit();
 
-        Writer w = new OutputStreamWriter(new FileOutputStream(csvFile), UTF_8);
+        Writer w = new OutputStreamWriter(new FileOutputStream(csvFile), TestHelper.UTF_8_CHARSET);
         w.write("a,b,c\r\n1,2,3\r\n");
         w.close();
-        Writer mw = new OutputStreamWriter(new FileOutputStream(mcsvFile), UTF_8);
+        Writer mw =
+                new OutputStreamWriter(new FileOutputStream(mcsvFile), TestHelper.UTF_8_CHARSET);
         mw.write("domain,key,value\r\ndata,col/1/type,integer\r\n");
         mw.close();
 
@@ -138,9 +139,11 @@ public class MetaCSVReaderBuilderTest {
     @Test
     public void testMetaParser()
             throws MetaCSVDataException, MetaCSVReadException, MetaCSVParseException, IOException {
-        InputStream in = new ByteArrayInputStream("a,b,c\r\n1,2,3\r\n".getBytes(UTF_8));
+        InputStream in =
+                new ByteArrayInputStream("a,b,c\r\n1,2,3\r\n".getBytes(TestHelper.UTF_8_CHARSET));
         InputStream min = new ByteArrayInputStream(
-                "domain,key,value\r\ndata,col/1/type,integer\r\n".getBytes(UTF_8));
+                "domain,key,value\r\ndata,col/1/type,integer\r\n"
+                        .getBytes(TestHelper.UTF_8_CHARSET));
         MetaCSVParser parser = new MetaCSVParserBuilder().metaIn(min).build();
         MetaCSVReader reader = new MetaCSVReaderBuilder().csvIn(in).metaParser(parser).build();
         Iterator<MetaCSVRecord> it = reader.iterator();
@@ -158,9 +161,11 @@ public class MetaCSVReaderBuilderTest {
     @Test
     public void testMetaData()
             throws MetaCSVDataException, MetaCSVReadException, MetaCSVParseException, IOException {
-        InputStream in = new ByteArrayInputStream("a,b,c\r\n1,2,3\r\n".getBytes(UTF_8));
+        InputStream in =
+                new ByteArrayInputStream("a,b,c\r\n1,2,3\r\n".getBytes(TestHelper.UTF_8_CHARSET));
         InputStream min = new ByteArrayInputStream(
-                "domain,key,value\r\ndata,col/1/type,integer\r\n".getBytes(UTF_8));
+                "domain,key,value\r\ndata,col/1/type,integer\r\n"
+                        .getBytes(TestHelper.UTF_8_CHARSET));
         MetaCSVData data = new MetaCSVParserBuilder().metaIn(min).buildData();
         MetaCSVReader reader = new MetaCSVReaderBuilder().csvIn(in).metaData(data).build();
         try {
@@ -178,10 +183,11 @@ public class MetaCSVReaderBuilderTest {
     @Test
     public void testTZOnError()
             throws MetaCSVDataException, MetaCSVReadException, MetaCSVParseException, IOException {
-        InputStream in = new ByteArrayInputStream("a,b,c\r\nfoo,2021-04-20,3\r\n".getBytes(UTF_8));
+        InputStream in = new ByteArrayInputStream("a,b,c\r\nfoo,2021-04-20,3\r\n".getBytes(
+                TestHelper.UTF_8_CHARSET));
         InputStream min = new ByteArrayInputStream(
-                "domain,key,value\r\ndata,col/0/type,integer\ndata,col/1/type,date/yyyy-MM-dd\n"
-                        .getBytes(UTF_8));
+                "domain,key,value\r\ndata,col/0/type,integer\r\ndata,col/1/type,date/yyyy-MM-dd\r\n"
+                        .getBytes(TestHelper.UTF_8_CHARSET));
         MetaCSVData data = new MetaCSVParserBuilder().metaIn(min).buildData();
         MetaCSVReader reader = new MetaCSVReaderBuilder().csvIn(in).metaData(data).timeZone(
                 TimeZone.getTimeZone("GMT")).onError(OnError.NULL).build();
@@ -194,6 +200,35 @@ public class MetaCSVReaderBuilderTest {
             cal.setTimeInMillis(0);
             cal.set(2021, Calendar.APRIL, 20);
             Assert.assertEquals(Arrays.<Object>asList(null, cal.getTime(), "3"),
+                    it.next().toList());
+            Assert.assertFalse(it.hasNext());
+        } finally {
+            reader.close();
+        }
+    }
+
+    @Test
+    public void testObjectParser()
+            throws IOException, MetaCSVDataException, MetaCSVParseException, MetaCSVReadException {
+        InputStream in = new ByteArrayInputStream("a,b,c\r\nfoo,bar,baz\r\n".getBytes(
+                TestHelper.UTF_8_CHARSET));
+        InputStream min = new ByteArrayInputStream(
+                "domain,key,value\r\ndata,col/1/type,object/my\r\n"
+                        .getBytes(TestHelper.UTF_8_CHARSET));
+        MetaCSVData data = new MetaCSVParserBuilder().metaIn(min).buildData();
+        MetaCSVReader reader = new MetaCSVReaderBuilder().csvIn(in).metaData(data).objectParser(
+                new ObjectTypeParser() {
+                    @Override
+                    public FieldDescription<?> parse(List<String> parameters) {
+                        return TextFieldDescription.INSTANCE;
+                    }
+                }).build();
+        try {
+            Iterator<MetaCSVRecord> it = reader.iterator();
+            Assert.assertTrue(it.hasNext());
+            Assert.assertEquals(Arrays.asList("a", "b", "c"), it.next().toList());
+            Assert.assertTrue(it.hasNext());
+            Assert.assertEquals(Arrays.<Object>asList("foo", "bar", "baz"),
                     it.next().toList());
             Assert.assertFalse(it.hasNext());
         } finally {

@@ -109,10 +109,10 @@ public class MetaCSVParserIT {
     }
 
     private String render(MetaCSVData metaCSVData, boolean minimal) throws IOException {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        MetaCSVRenderer renderer = MetaCSVRenderer.create(bos, minimal);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        MetaCSVRenderer renderer = MetaCSVRenderer.create(out, minimal);
         renderer.render(metaCSVData);
-        return bos.toString(TestHelper.UTF_8_CHARSET_NAME);
+        return out.toString(TestHelper.UTF_8_CHARSET_NAME);
     }
 
     private MetaCSVData getMetaCSVData(String metaCSVFilename)

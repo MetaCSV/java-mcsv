@@ -48,7 +48,7 @@ public class CSVRecordProcessor {
         this.timeZone = timeZone;
     }
 
-    public MetaCSVRecord process(CSVRecord record) throws MetaCSVReadException, IOException {
+    public MetaCSVRecord createRecord(CSVRecord record) {
         if (this.maxSize < record.size()) {
             updateProcessorByIndex(record);
             this.maxSize = record.size();

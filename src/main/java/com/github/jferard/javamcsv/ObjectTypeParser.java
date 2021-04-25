@@ -25,5 +25,5 @@ import com.github.jferard.javamcsv.description.FieldDescription;
 import java.util.List;
 
 public interface ObjectTypeParser {
-    FieldDescription<?> parse(List<String> parameters);
+    FieldDescription<?> parse(List<String> parameters) throws MetaCSVParseException;
 }

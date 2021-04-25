@@ -50,9 +50,9 @@ import java.util.Map;
 import java.util.TimeZone;
 
 public class TestHelper {
-    public static String UTF_8_CHARSET_NAME = "UTF-8";
-    public static Charset UTF_8_CHARSET = Charset.forName("UTF-8");
-    public static Charset ASCII_CHARSET = Charset.forName("US-ASCII");
+    public static String UTF_8_CHARSET_NAME = Util.UTF_8_CHARSET_NAME;
+    public static Charset UTF_8_CHARSET = Util.UTF_8_CHARSET;
+    public static Charset ASCII_CHARSET = Util.ASCII_CHARSET;
 
     public static String render(FieldDescription<?> fd) throws IOException {
         Appendable sb = new StringBuilder();

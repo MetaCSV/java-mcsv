@@ -29,7 +29,6 @@ import com.github.jferard.javamcsv.processor.ReadFieldProcessor;
 import com.github.jferard.javamcsv.processor.ReadProcessorProvider;
 import org.apache.commons.csv.CSVRecord;
 
-import java.io.IOException;
 import java.util.Iterator;
 
 public class CSVRecordsIterator implements Iterator<MetaCSVRecord> {
@@ -68,17 +67,11 @@ public class CSVRecordsIterator implements Iterator<MetaCSVRecord> {
     @Override
     public MetaCSVRecord next() {
         CSVRecord record = this.csvIterator.next();
-        try {
-            if (this.first) {
-                this.first = false;
-                return HEADER_PROCESSOR.process(record);
-            }
-            return processor.process(record);
-        } catch (MetaCSVReadException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (this.first) {
+            this.first = false;
+            return HEADER_PROCESSOR.createRecord(record);
         }
+        return processor.createRecord(record);
     }
 
     @Override

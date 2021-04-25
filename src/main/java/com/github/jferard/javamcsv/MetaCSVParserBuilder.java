@@ -74,6 +74,7 @@ public class MetaCSVParserBuilder {
 
     /**
      * Only for triplets or directives. Otherwise, the header is mandatory.
+     * Must be the last method before `build`.
      *
      * @param header
      * @return

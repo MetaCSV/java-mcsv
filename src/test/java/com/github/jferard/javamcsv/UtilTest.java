@@ -183,4 +183,9 @@ public class UtilTest extends TestCase {
         Assert.assertEquals(Locale.US, Util.getLocale("en_US"));
         Assert.assertEquals(Locale.ENGLISH, Util.getLocale("en"));
     }
+
+    @Test
+    public void testReplaceChar() {
+        Assert.assertEquals("foo", Util.replaceChar("foo", null, "a"));
+    }
 }

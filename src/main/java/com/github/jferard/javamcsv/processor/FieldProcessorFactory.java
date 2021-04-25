@@ -20,15 +20,16 @@
 
 package com.github.jferard.javamcsv.processor;
 
-import com.github.jferard.javamcsv.description.FieldDescription;
 import com.github.jferard.javamcsv.MetaCSVReadException;
 import com.github.jferard.javamcsv.OnError;
 import com.github.jferard.javamcsv.ReadError;
+import com.github.jferard.javamcsv.description.FieldDescription;
 
 import java.io.IOException;
 
 public class FieldProcessorFactory {
-    public <T> ReadFieldProcessor<T> toReadFieldProcessor(FieldDescription<T> description, String nullValue, OnError onError) {
+    public <T> ReadFieldProcessor<T> toReadFieldProcessor(FieldDescription<T> description,
+                                                          String nullValue, OnError onError) {
         final FieldProcessor<T> rawProcessor = description.toFieldProcessor(nullValue);
         switch (onError) {
             case WRAP:

@@ -33,6 +33,7 @@ import org.junit.Test;
 import org.junit.function.ThrowingRunnable;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -86,7 +87,7 @@ public class MetaCSVWriterTest {
         Assert.assertEquals("boolean,currency,date,datetime,float,integer,percentage,text\r\n" +
                         "T,$15.0,01/12/2020,NULL,\"10,000.5\",12 354,56.49999999999999%,Foo\r\n" +
                         "F,\"$-1,900.5\",NULL,2020-12-01 09:30:55,-520.8,-1 000,-12.8%,Bar\r\n",
-                out.toString());
+                out.toString(TestHelper.UTF_8_CHARSET_NAME));
         Assert.assertEquals("domain,key,value\r\n" +
                         "data,null_value,NULL\r\n" +
                         "data,col/0/type,boolean/T/F\r\n" +
@@ -97,7 +98,7 @@ public class MetaCSVWriterTest {
                         "data,col/5/type,\"integer/ \"\r\n" +
                         "data,col/6/type,\"percentage/post/%/float/,/.\"\r\n" +
                         ""
-                , metaOut.toString());
+                , metaOut.toString(TestHelper.UTF_8_CHARSET_NAME));
     }
 
     @Test
@@ -119,5 +120,52 @@ public class MetaCSVWriterTest {
                 }
             }
         });
+    }
+
+    @Test
+    public void testCsvFile()
+            throws MetaCSVDataException, MetaCSVReadException, MetaCSVParseException, IOException {
+        File csvFile = File.createTempFile("test", ".csv");
+        csvFile.deleteOnExit();
+
+        MetaCSVData data =
+                new MetaCSVDataBuilder().colType(1, IntegerFieldDescription.INSTANCE).build();
+        MetaCSVWriter writer = MetaCSVWriter.create(csvFile, data);
+        try {
+            writer.writeHeader(Arrays.asList("a", "b", "c"));
+            writer.writeRow(Arrays.<Object>asList("1", 2L, "3"));
+        } finally {
+            writer.close();
+        }
+
+        Assert.assertEquals("a,b,c\r\n" +
+                "1,2,3\r\n", TestHelper.toString(csvFile));
+        Assert.assertEquals("domain,key,value\r\n" +
+                        "data,col/1/type,integer\r\n",
+                TestHelper.toString(Util.withExtension(csvFile, ".mcsv")));
+    }
+
+    @Test
+    public void testCsvMCsvFiles()
+            throws MetaCSVDataException, MetaCSVReadException, MetaCSVParseException, IOException {
+        File csvFile = File.createTempFile("test", ".csv");
+        File mcsvFile = File.createTempFile("test", ".mcsv");
+        csvFile.deleteOnExit();
+        mcsvFile.deleteOnExit();
+
+        MetaCSVData data =
+                new MetaCSVDataBuilder().colType(1, IntegerFieldDescription.INSTANCE).build();
+        MetaCSVWriter writer = MetaCSVWriter.create(csvFile, mcsvFile, data);
+        try {
+            writer.writeHeader(Arrays.asList("a", "b", "c"));
+            writer.writeRow(Arrays.<Object>asList("1", 2L, "3"));
+        } finally {
+            writer.close();
+        }
+
+        Assert.assertEquals("a,b,c\r\n" +
+                "1,2,3\r\n", TestHelper.toString(csvFile));
+        Assert.assertEquals("domain,key,value\r\n" +
+                "data,col/1/type,integer\r\n", TestHelper.toString(mcsvFile));
     }
 }
