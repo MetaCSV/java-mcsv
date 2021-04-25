@@ -48,8 +48,10 @@ public class SQLUtil {
                 t =  Types.DOUBLE;
                 break;
             case DATE:
-            case DATETIME:
                 t =  Types.DATE;
+                break;
+            case DATETIME:
+                t =  Types.TIMESTAMP;
                 break;
             case CURRENCY_INTEGER:
             case INTEGER:
@@ -90,10 +92,10 @@ public class SQLUtil {
                 dt = DataType.TEXT;
                 break;
             case Types.DATE:
-            case Types.TIMESTAMP:
                 dt = DataType.DATE;
                 break;
             case Types.TIME:
+            case Types.TIMESTAMP:
                 dt = DataType.DATETIME;
                 break;
             case Types.BINARY:

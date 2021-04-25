@@ -25,6 +25,7 @@ import com.github.jferard.javamcsv.MetaCSVDataBuilder;
 import com.github.jferard.javamcsv.MetaCSVDataException;
 import com.github.jferard.javamcsv.MetaCSVRenderer;
 import com.github.jferard.javamcsv.MetaCSVWriter;
+import com.github.jferard.javamcsv.TestHelper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,9 +52,12 @@ public class ResultSetMetaCSVWriterTest {
                 "Float DOUBLE,\n" +
                 "Text VARCHAR,\n" +
                 "Object ARRAY,\n" +
-                "Date DATE\n" +
+                "Date DATE,\n" +
+                "Bool BOOLEAN,\n" +
+                "Dt DATETIME\n" +
                 ")");
-        statement.executeUpdate("INSERT INTO test VALUES (1, 1, 0.456, 'foo', (1, 2), '2021-01-01')");
+        statement.executeUpdate(
+                "INSERT INTO test VALUES (1, 1, 0.456, 'foo', (1, 2), '2021-01-01', TRUE, '2021-01-01T23:21:56')");
         rs = statement.executeQuery("SELECT * FROM test");
     }
 
@@ -63,20 +67,23 @@ public class ResultSetMetaCSVWriterTest {
         MetaCSVRenderer renderer = MetaCSVRenderer.create(out, false);
         new ResultSetMetaCSVWriter(rs).writeMetaCSV(renderer);
         Assert.assertEquals("domain,key,value\r\n" +
-                "file,encoding,UTF-8\r\n" +
-                "file,bom,false\r\n" +
-                "file,line_terminator,\\r\\n\r\n" +
-                "csv,delimiter,\",\"\r\n" +
-                "csv,double_quote,true\r\n" +
-                "csv,quote_char,\"\"\"\"\r\n" +
-                "csv,skip_initial_space,false\r\n" +
-                "data,null_value,\r\n" +
-                "data,col/0/type,integer\r\n" +
-                "data,col/1/type,decimal//.\r\n" +
-                "data,col/2/type,float//.\r\n" +
-                "data,col/3/type,text\r\n" +
-                "data,col/4/type,object\r\n" +
-                "data,col/5/type,date/yyyy-MM-dd\r\n", out.toString());
+                        "file,encoding,UTF-8\r\n" +
+                        "file,bom,false\r\n" +
+                        "file,line_terminator,\\r\\n\r\n" +
+                        "csv,delimiter,\",\"\r\n" +
+                        "csv,double_quote,true\r\n" +
+                        "csv,quote_char,\"\"\"\"\r\n" +
+                        "csv,skip_initial_space,false\r\n" +
+                        "data,null_value,\r\n" +
+                        "data,col/0/type,integer\r\n" +
+                        "data,col/1/type,decimal//.\r\n" +
+                        "data,col/2/type,float//.\r\n" +
+                        "data,col/3/type,text\r\n" +
+                        "data,col/4/type,object\r\n" +
+                        "data,col/5/type,date/yyyy-MM-dd\r\n" +
+                        "data,col/6/type,boolean/true/false\r\n" +
+                        "data,col/7/type,datetime/yyyy-MM-dd'T'HH:mm:ss\r\n"
+                , out.toString());
     }
 
     @Test
@@ -86,8 +93,9 @@ public class ResultSetMetaCSVWriterTest {
         MetaCSVData data = rsWriter.getMetaCSVData(new MetaCSVDataBuilder());
         MetaCSVWriter writer = MetaCSVWriter.create(out, data);
         rsWriter.writeCSV(writer);
-        Assert.assertTrue(out.toString().startsWith("INT,BIGD,FLOAT,TEXT,OBJECT,DATE\r\n" +
-                "1,1.0,0.456,foo,[Ljava.lang.Object;"));
-        Assert.assertTrue(out.toString().endsWith(",2021-01-01\r\n"));
+        Assert.assertTrue(out.toString(TestHelper.UTF_8_CHARSET_NAME)
+                .startsWith("INT,BIGD,FLOAT,TEXT,OBJECT,DATE,BOOL,DT\r\n" +
+                        "1,1.0,0.456,foo,[Ljava.lang.Object;"));
+        Assert.assertTrue(out.toString(TestHelper.UTF_8_CHARSET_NAME).endsWith(",2021-01-01,true,2021-01-01T23:21:56\r\n"));
     }
 }

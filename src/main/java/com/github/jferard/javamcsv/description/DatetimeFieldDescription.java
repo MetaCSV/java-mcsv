@@ -30,7 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class DatetimeFieldDescription implements FieldDescription<Date> {
-    public static final FieldDescription<?> INSTANCE = DateFieldDescription.create("yyyy-MM-dd'T'HH:mm:ss");
+    public static final FieldDescription<?> INSTANCE = DatetimeFieldDescription.create("yyyy-MM-dd'T'HH:mm:ss");
 
     public static FieldDescription<Date> create(String dateFormat) {
         SimpleDateFormat format = new SimpleDateFormat(dateFormat);

@@ -20,567 +20,279 @@
 
 package com.github.jferard.javamcsv.tool;
 
-import com.github.jferard.javamcsv.MetaCSVDataException;
-import com.github.jferard.javamcsv.MetaCSVParseException;
-import com.github.jferard.javamcsv.MetaCSVReadException;
-import com.github.jferard.javamcsv.MetaCSVReader;
-import com.github.jferard.javamcsv.TestHelper;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.function.ThrowingRunnable;
 
-import javax.sql.rowset.serial.SerialArray;
-import javax.sql.rowset.serial.SerialBlob;
-import javax.sql.rowset.serial.SerialClob;
-import javax.sql.rowset.serial.SerialRef;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.sql.NClob;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
+import java.sql.SQLWarning;
+import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Locale;
 
 public class AbstractResultSetTest {
-    private ResultSet rs;
-    private Calendar c;
-
-    @Before
-    public void setUp()
-            throws MetaCSVReadException, MetaCSVDataException, MetaCSVParseException, IOException {
-        c = GregorianCalendar.getInstance(Locale.US);
-        c.setTimeInMillis(0);
-        c.set(2020, Calendar.DECEMBER, 1, 0, 0, 0);
-        ByteArrayInputStream is = TestHelper.utf8InputStream(
-                "boolean,currency,date,datetime,float,integer,percentage,text\r\n" +
-                        "T,$15,01/12/2020,NULL,\"10,000.5\",12 354,56.5%,Foo\r\n" +
-                        "F,\"$-1,900.5\",NULL,2020-12-01 09:30:55,-520.8,-1 000,-12.8%,Bar\r\n");
-        ByteArrayInputStream metaIs = TestHelper.utf8InputStream(
-                "domain,key,value\r\n" +
-                        "data,null_value,NULL\r\n" +
-                        "data,col/0/type,boolean/T/F\r\n" +
-                        "data,col/1/type,\"currency/pre/$/decimal/,/.\"\r\n" +
-                        "data,col/2/type,date/dd\\/MM\\/yyyy\r\n" +
-                        "data,col/3/type,datetime/yyyy-MM-dd HH:mm:ss\r\n" +
-                        "data,col/4/type,\"float/,/.\"\r\n" +
-                        "data,col/5/type,\"integer/ \"\r\n" +
-                        "data,col/6/type,\"percentage/post/%/float/,/.\"\r\n");
-        MetaCSVReader reader = MetaCSVReader.create(is, metaIs);
-        rs = Tool.readerToResultSet(reader);
-    }
-
     @Test
-    public void testGetLabel() throws SQLException {
-        rs.next();
-        Assert.assertTrue(rs.getBoolean("boolean"));
-        Assert.assertTrue((Boolean) rs.getObject("boolean"));
-        Assert.assertEquals("true", rs.getString("boolean"));
-        Assert.assertEquals(12354, rs.getShort("integer"));
-        Assert.assertEquals(12354, rs.getInt("integer"));
-        Assert.assertEquals(12354, rs.getInt("integer"));
-        Assert.assertEquals(12354L, rs.getLong("integer"));
-        Assert.assertEquals(12354L, rs.getObject("integer"));
-    }
+    public void test() throws SQLException, IOException {
+        final ResultSet rs = new AbstractResultSet() {
+            @Override
+            public boolean next() throws SQLException {
+                return false;
+            }
 
-    @Test(expected = SQLException.class)
-    public void testGetByteOverflow() throws SQLException {
-        rs.next();
-        rs.getByte("integer");
-    }
-
-    @Test
-    public void testFeatureNotSupported0Arg()
-            throws NoSuchMethodException, IllegalAccessException, SQLException {
-        Class<?>[] parameterTypes = {};
-        Object[] args = {};
-        String[] methodNames = {"getCursorName", "isBeforeFirst",
-                "isAfterLast", "isFirst", "isLast", "beforeFirst", "afterLast", "first", "last",
-                "previous", "rowUpdated", "rowDeleted", "rowInserted", "insertRow", "updateRow",
-                "deleteRow", "refreshRow", "cancelRowUpdates", "moveToInsertRow",
-                "moveToCurrentRow"};
-        testFeatureNotSupported(methodNames, parameterTypes, args);
-    }
-
-    @Test
-    public void testFeatureNotSupported1ArgInt()
-            throws NoSuchMethodException, IllegalAccessException, SQLException {
-        Class<?>[] parameterTypes = {int.class};
-        Object[] args = {1};
-        String[] methodNames = {"getUnicodeStream", "absolute", "relative",
-                "updateNull", "getRef", "getBlob", "getClob", "getArray", "getURL", "getRowId",
-                "getNClob", "getSQLXML", "getNString", "getNCharacterStream"};
-        testFeatureNotSupported(methodNames, parameterTypes, args);
-    }
-
-    @Test
-    public void testFeatureNotSupported1ArgString()
-            throws NoSuchMethodException, IllegalAccessException, SQLException {
-        Class<?>[] parameterTypes = {String.class};
-        Object[] args = {"boolean"};
-        String[] methodNames =
-                {"getUnicodeStream", "updateNull", "getRef", "getBlob", "getClob", "getArray",
-                        "getURL", "getRowId", "getNClob", "getSQLXML", "getNString",
-                        "getNCharacterStream"};
-        testFeatureNotSupported(methodNames, parameterTypes, args);
-    }
-
-    @Test
-    public void testFeatureNotSupported1ArgLabel()
-            throws NoSuchMethodException, IllegalAccessException, SQLException {
-        Class<?>[] parameterTypes = {String.class};
-        Object[] args = {"boolean"};
-        String[] methodNames = {"getUnicodeStream",
-                "updateNull", "getRef", "getBlob", "getClob", "getArray", "getURL",
-                "getNClob", "getSQLXML", "getNString", "getNCharacterStream"};
-        testFeatureNotSupported(methodNames, parameterTypes, args);
-    }
-
-    @Test
-    public void testFeatureNotSupported2ArgsIntReader()
-            throws NoSuchMethodException, IllegalAccessException, SQLException {
-        Class<?>[] parameterTypes = {int.class, Reader.class};
-        Object[] args = {1, new StringReader("")};
-        String[] methodNames =
-                {"updateCharacterStream", "updateClob", "updateNClob", "updateNCharacterStream"};
-        testFeatureNotSupported(methodNames, parameterTypes, args);
-    }
-
-    @Test
-    public void testFeatureNotSupported2ArgsIntInputStream()
-            throws NoSuchMethodException, IllegalAccessException, SQLException {
-        Class<?>[] parameterTypes = {int.class, InputStream.class};
-        Object[] args = {1, new ByteArrayInputStream(new byte[]{})};
-        String[] methodNames =
-                {"updateAsciiStream", "updateBinaryStream", "updateBlob"};
-        testFeatureNotSupported(methodNames, parameterTypes, args);
-    }
-
-    @Test
-    public void testFeatureNotSupported3ArgsIntReaderInt()
-            throws NoSuchMethodException, IllegalAccessException, SQLException {
-        Class<?>[] parameterTypes = {int.class, Reader.class, int.class};
-        Object[] args = {1, new StringReader(""), 0};
-        String[] methodNames = {"updateCharacterStream"};
-        testFeatureNotSupported(methodNames, parameterTypes, args);
-    }
-
-    @Test
-    public void testFeatureNotSupported3ArgsIntReaderLong()
-            throws NoSuchMethodException, IllegalAccessException, SQLException {
-        Class<?>[] parameterTypes = {int.class, Reader.class, long.class};
-        Object[] args = {1, new StringReader(""), 0L};
-        String[] methodNames =
-                {"updateNClob", "updateClob", "updateNCharacterStream", "updateCharacterStream"};
-        testFeatureNotSupported(methodNames, parameterTypes, args);
-    }
-
-    @Test
-    public void testFeatureNotSupported2ArgsIntInputStreamLong()
-            throws NoSuchMethodException, IllegalAccessException, SQLException {
-        Class<?>[] parameterTypes = {int.class, InputStream.class, long.class};
-        Object[] args = {1, new ByteArrayInputStream(new byte[]{}), 0L};
-        String[] methodNames =
-                {"updateAsciiStream", "updateBinaryStream", "updateBlob"};
-        testFeatureNotSupported(methodNames, parameterTypes, args);
-    }
-
-    @Test
-    public void testFeatureNotSupported2ArgsStringInputStreamLong()
-            throws NoSuchMethodException, IllegalAccessException, SQLException {
-        Class<?>[] parameterTypes = {String.class, InputStream.class, long.class};
-        Object[] args = {"boolean", new ByteArrayInputStream(new byte[]{}), 0L};
-        String[] methodNames =
-                {"updateAsciiStream", "updateBinaryStream", "updateBlob"};
-        testFeatureNotSupported(methodNames, parameterTypes, args);
-    }
-
-    public void testFeatureNotSupported(String[] methodNames, Class<?>[] parameterTypes,
-                                        Object[] args)
-            throws NoSuchMethodException, IllegalAccessException {
-        for (String methodName : methodNames) {
-            final Method m = ResultSet.class.getMethod(methodName, parameterTypes);
-            try {
-                m.invoke(rs, args);
-                Assert.assertFalse(true);
-            } catch (InvocationTargetException e) {
-                Assert.assertEquals(SQLFeatureNotSupportedException.class,
-                        e.getTargetException().getClass());
-            }
-        }
-    }
-
-    @Test
-    public void testFeatureNotSupportedUpdateIndex()
-            throws SQLException {
-        rs.next();
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
             @Override
-            public void run() throws Throwable {
-                rs.updateBoolean(1, true);
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateByte(1, (byte) '0');
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateShort(1, (short) 10);
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateInt(1, 10);
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateLong(1, 10L);
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateFloat(1, 10.0f);
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateDouble(1, 10.0);
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateBigDecimal(1, BigDecimal.valueOf(10.0));
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateString(1, "foo");
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateBytes(1, new byte[]{});
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateDate(1, new Date(0));
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateTime(1, new Time(0));
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateTimestamp(1, new Timestamp(0));
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateAsciiStream(1, new ByteArrayInputStream(new byte[]{}), 10);
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateBinaryStream(1, new ByteArrayInputStream(new byte[]{}), 10);
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateObject(1, new Object());
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateObject(1, new Object(), 10);
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateRef(1, null);
+            public void close() throws SQLException {
 
             }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateBlob(1, new SerialBlob(new byte[]{}));
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateClob(1, new SerialClob(new char[]{}));
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateArray(1, null);
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateRowId(1, null);
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateNString(1, "");
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateNClob(1, (NClob) null);
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateSQLXML(1, null);
-            }
-        });
-    }
 
-    @Test
-    public void testFeatureNotSupportedUpdateLabel()
-            throws SQLException {
-        rs.next();
-        Assert.assertEquals(1, rs.findColumn("boolean"));
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
             @Override
-            public void run() throws Throwable {
-                rs.updateBoolean("boolean", true);
+            public boolean wasNull() throws SQLException {
+                return false;
             }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+
             @Override
-            public void run() throws Throwable {
-                rs.updateByte("boolean", (byte) '0');
+            public String getString(int columnIndex) throws SQLException {
+                return null;
             }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+
             @Override
-            public void run() throws Throwable {
-                rs.updateShort("boolean", (short) 10);
+            public boolean getBoolean(int columnIndex) throws SQLException {
+                return false;
             }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+
             @Override
-            public void run() throws Throwable {
-                rs.updateInt("boolean", 10);
+            public byte getByte(int columnIndex) throws SQLException {
+                return 0;
             }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+
             @Override
-            public void run() throws Throwable {
-                rs.updateLong("boolean", 10L);
+            public short getShort(int columnIndex) throws SQLException {
+                return 0;
             }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+
             @Override
-            public void run() throws Throwable {
-                rs.updateFloat("boolean", 10.0f);
+            public int getInt(int columnIndex) throws SQLException {
+                return 0;
             }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+
             @Override
-            public void run() throws Throwable {
-                rs.updateDouble("boolean", 10.0);
+            public long getLong(int columnIndex) throws SQLException {
+                return 0;
             }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+
             @Override
-            public void run() throws Throwable {
-                rs.updateBigDecimal("boolean", BigDecimal.valueOf(10.0));
+            public float getFloat(int columnIndex) throws SQLException {
+                return 1.0f;
             }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+
             @Override
-            public void run() throws Throwable {
-                rs.updateString("boolean", "foo");
+            public double getDouble(int columnIndex) throws SQLException {
+                return 0;
             }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+
             @Override
-            public void run() throws Throwable {
-                rs.updateBytes("boolean", new byte[]{});
+            public byte[] getBytes(int columnIndex) throws SQLException {
+                return new byte[]{3};
             }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+
             @Override
-            public void run() throws Throwable {
-                rs.updateDate("boolean", new Date(0));
+            public Date getDate(int columnIndex) throws SQLException {
+                return null;
             }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+
             @Override
-            public void run() throws Throwable {
-                rs.updateTime("boolean", new Time(0));
+            public Time getTime(int columnIndex) throws SQLException {
+                return new Time(5);
             }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+
             @Override
-            public void run() throws Throwable {
-                rs.updateTimestamp("boolean", new Timestamp(0));
+            public Timestamp getTimestamp(int columnIndex) throws SQLException {
+                return new Timestamp(6);
             }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+
             @Override
-            public void run() throws Throwable {
-                rs.updateAsciiStream("boolean", new ByteArrayInputStream(new byte[]{}));
+            public InputStream getAsciiStream(int columnIndex) throws SQLException {
+                return new ByteArrayInputStream(new byte[] {'7'});
             }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+
             @Override
-            public void run() throws Throwable {
-                rs.updateAsciiStream("boolean", new ByteArrayInputStream(new byte[]{}), 10);
+            public InputStream getBinaryStream(int columnIndex) throws SQLException {
+                return new ByteArrayInputStream(new byte[] {'8'});
             }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+
             @Override
-            public void run() throws Throwable {
-                rs.updateBinaryStream("boolean", new ByteArrayInputStream(new byte[]{}));
+            public SQLWarning getWarnings() throws SQLException {
+                return null;
             }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+
             @Override
-            public void run() throws Throwable {
-                rs.updateBinaryStream("boolean", new ByteArrayInputStream(new byte[]{}), 10);
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateCharacterStream("boolean", new StringReader(""));
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateCharacterStream("boolean", new StringReader(""), 10);
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateObject("boolean", new Object());
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateObject("boolean", new Object(), 10);
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateBlob("boolean", new SerialBlob(new byte[]{}));
+            public void clearWarnings() throws SQLException {
 
             }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateClob("boolean", new SerialClob(new char[]{}));
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateArray("boolean", null);
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateRowId("boolean", null);
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateNString("boolean", "");
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateNClob("boolean", (NClob) null);
-            }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
-            @Override
-            public void run() throws Throwable {
-                rs.updateSQLXML("boolean", null);
-            }
-        });
-    }
 
-    @Test
-    public void testOther() throws SQLException {
-        rs.next();
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
             @Override
-            public void run() throws Throwable {
-                rs.getBigDecimal(1, 1);
+            public ResultSetMetaData getMetaData() throws SQLException {
+                return null;
             }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+
             @Override
-            public void run() throws Throwable {
-                rs.getBigDecimal("boolean", 1);
+            public Object getObject(int columnIndex) throws SQLException {
+                return null;
             }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+
             @Override
-            public void run() throws Throwable {
-                rs.getObject(1, new HashMap<String, Class<?>>());
+            public int findColumn(String columnLabel) throws SQLException {
+                return 0;
             }
-        });
-        Assert.assertThrows(SQLFeatureNotSupportedException.class, new ThrowingRunnable() {
+
             @Override
-            public void run() throws Throwable {
-                rs.getObject("boolean", new HashMap<String, Class<?>>());
+            public Reader getCharacterStream(int columnIndex) throws SQLException {
+                return new StringReader("9");
             }
-        });
+
+            @Override
+            public BigDecimal getBigDecimal(int columnIndex) throws SQLException {
+                return new BigDecimal("2.0");
+            }
+
+            @Override
+            public int getFetchDirection() throws SQLException {
+                return 0;
+            }
+
+            @Override
+            public void setFetchDirection(int direction) throws SQLException {
+
+            }
+
+            @Override
+            public int getFetchSize() throws SQLException {
+                return 0;
+            }
+
+            @Override
+            public void setFetchSize(int rows) throws SQLException {
+
+            }
+
+            @Override
+            public int getType() throws SQLException {
+                return 0;
+            }
+
+            @Override
+            public int getConcurrency() throws SQLException {
+                return 0;
+            }
+
+            @Override
+            public Statement getStatement() throws SQLException {
+                return null;
+            }
+
+            @Override
+            public Date getDate(int columnIndex, Calendar cal) throws SQLException {
+                return null;
+            }
+
+            @Override
+            public Time getTime(int columnIndex, Calendar cal) throws SQLException {
+                return null;
+            }
+
+            @Override
+            public Timestamp getTimestamp(int columnIndex, Calendar cal) throws SQLException {
+                return null;
+            }
+
+            @Override
+            public int getHoldability() throws SQLException {
+                return 0;
+            }
+
+            @Override
+            public boolean isClosed() throws SQLException {
+                return false;
+            }
+
+            @Override
+            public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
+                return null;
+            }
+
+            @Override
+            public InputStream getUnicodeStream(int columnIndex) {
+                return new ByteArrayInputStream(new byte[] {'A'});
+            }
+
+            @Override
+            public BigDecimal getBigDecimal(int columnIndex, int scale) {
+                return new BigDecimal("2");
+            }
+
+            @Override
+            public int getRow() {
+                return 1000;
+            }
+
+            @Override
+            public void updateNull(int columnIndex) throws SQLException {
+            }
+
+            @Override
+            public void updateBoolean(int columnIndex, boolean b) throws SQLException {
+            }
+
+            @Override
+            public void updateByte(int columnIndex, byte b) throws SQLException {
+            }
+
+            @Override
+            public void updateShort(int columnIndex, short s) throws SQLException {
+            }
+
+            @Override
+            public void updateInt(int columnIndex, int i) throws SQLException {
+            }
+
+            @Override
+            public void updateLong(int columnIndex, long i) throws SQLException {
+            }
+
+            @Override
+            public void updateFloat(int columnIndex, float f) throws SQLException {
+            }
+
+            @Override
+            public void updateDouble(int columnIndex, double d) throws SQLException {
+            }
+        };
+        Assert.assertEquals(0, rs.getByte("foo"));
+        Assert.assertEquals(1.0f, rs.getFloat("foo"), 0.01);
+        Assert.assertArrayEquals(new byte[]{3}, rs.getBytes("foo"));
+        Assert.assertEquals(new Time(5), rs.getTime("foo"));
+        Assert.assertEquals(new Timestamp(6), rs.getTimestamp("foo"));
+        Assert.assertEquals('7', rs.getAsciiStream("foo").read());
+        Assert.assertEquals('8', rs.getBinaryStream("foo").read());
+        Assert.assertEquals('9', rs.getCharacterStream("foo").read());
+        Assert.assertEquals('A', rs.getUnicodeStream("foo").read());
+        Assert.assertEquals(new BigDecimal("2"), rs.getBigDecimal("foo", 2));
+        Assert.assertEquals(1000, rs.getRow());
+        rs.updateNull("foo");
+        rs.updateBoolean("foo", true);
+        rs.updateByte("foo", (byte) '1');
+        rs.updateShort("foo", (short) 1);
+        rs.updateInt("foo", 1);
+        rs.updateLong("foo", 1L);
+        rs.updateFloat("foo", 1.0f);
+        rs.updateDouble("foo", 1.0);
     }
 }

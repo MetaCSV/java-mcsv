@@ -94,7 +94,7 @@ public class MetaCSVResultSetMetaDataTest {
     @Test
     public void testColumnType() throws SQLException {
         List<Integer> types =
-                Arrays.asList(null, Types.BOOLEAN, Types.DECIMAL, Types.DATE, Types.DATE,
+                Arrays.asList(null, Types.BOOLEAN, Types.DECIMAL, Types.DATE, Types.TIMESTAMP,
                         Types.DOUBLE, Types.INTEGER,
                         Types.DOUBLE, Types.VARCHAR);
         for (int i = 1; i <= 8; i++) {

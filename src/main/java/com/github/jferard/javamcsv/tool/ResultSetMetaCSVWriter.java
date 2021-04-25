@@ -21,13 +21,13 @@
 package com.github.jferard.javamcsv.tool;
 
 import com.github.jferard.javamcsv.DataType;
-import com.github.jferard.javamcsv.description.FieldDescription;
 import com.github.jferard.javamcsv.MetaCSVData;
 import com.github.jferard.javamcsv.MetaCSVDataBuilder;
 import com.github.jferard.javamcsv.MetaCSVDataException;
 import com.github.jferard.javamcsv.MetaCSVRenderer;
 import com.github.jferard.javamcsv.MetaCSVWriter;
 import com.github.jferard.javamcsv.Util;
+import com.github.jferard.javamcsv.description.FieldDescription;
 
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -63,7 +63,7 @@ public class ResultSetMetaCSVWriter {
     }
 
     public void writeMetaCSV(MetaCSVDataBuilder dataBuilder,
-                                    MetaCSVRenderer renderer)
+                             MetaCSVRenderer renderer)
             throws SQLException, MetaCSVDataException, IOException {
         MetaCSVData metaCSVData = getMetaCSVData(dataBuilder);
         renderer.render(metaCSVData);
@@ -129,19 +129,25 @@ public class ResultSetMetaCSVWriter {
                 case BOOLEAN:
                     value = resultSet.getBoolean(i + 1);
                     break;
-                case CURRENCY_DECIMAL: case DECIMAL: case PERCENTAGE_DECIMAL:
+                case CURRENCY_DECIMAL:
+                case DECIMAL:
+                case PERCENTAGE_DECIMAL:
                     value = resultSet.getBigDecimal(i + 1);
                     break;
-                case CURRENCY_INTEGER: case INTEGER:
+                case CURRENCY_INTEGER:
+                case INTEGER:
                     value = resultSet.getLong(i + 1);
                     break;
                 case DATE:
-                    value = resultSet.getDate(i + 1, GregorianCalendar.getInstance(Util.UTC_TIME_ZONE));
+                    value = resultSet
+                            .getDate(i + 1, GregorianCalendar.getInstance(Util.UTC_TIME_ZONE));
                     break;
                 case DATETIME:
-                    value = resultSet.getTime(i + 1, GregorianCalendar.getInstance(Util.UTC_TIME_ZONE));
+                    value = resultSet
+                            .getTimestamp(i + 1, GregorianCalendar.getInstance(Util.UTC_TIME_ZONE));
                     break;
-                case FLOAT: case PERCENTAGE_FLOAT:
+                case FLOAT:
+                case PERCENTAGE_FLOAT:
                     value = resultSet.getDouble(i + 1);
                     break;
                 case TEXT:
