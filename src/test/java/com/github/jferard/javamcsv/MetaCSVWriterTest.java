@@ -30,6 +30,7 @@ import com.github.jferard.javamcsv.description.IntegerFieldDescription;
 import com.github.jferard.javamcsv.description.PercentageFloatFieldDescription;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.function.ThrowingRunnable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -64,23 +65,28 @@ public class MetaCSVWriterTest {
                                         new FloatFieldDescription(",", "."))).
                         build();
         MetaCSVWriter writer = MetaCSVWriter.create(out, metaOut, data);
-        Calendar c = GregorianCalendar.getInstance(Locale.US);
-        c.set(2020, Calendar.DECEMBER, 1, 9, 30, 55);
+        try {
+            Calendar c = GregorianCalendar.getInstance(Locale.US);
+            c.set(2020, Calendar.DECEMBER, 1, 9, 30, 55);
 
-        writer.writeHeader(Arrays.<String>asList("boolean", "currency", "date", "datetime", "float",
-                "integer", "percentage", "text"));
-        writer.writeRow(
-                Arrays.<Object>asList(true, new BigDecimal("15.0"), c.getTime(), null, 10000.5,
-                        12354L, 0.565, "Foo"));
-        writer.writeRow(
-                Arrays.<Object>asList(false, new BigDecimal("-1900.5"), null, c.getTime(), -520.8,
-                        -1000L, -0.128, "Bar"));
-        writer.close();
+            writer.writeHeader(
+                    Arrays.<String>asList("boolean", "currency", "date", "datetime", "float",
+                            "integer", "percentage", "text"));
+            writer.writeRow(
+                    Arrays.<Object>asList(true, new BigDecimal("15.0"), c.getTime(), null, 10000.5,
+                            12354L, 0.565, "Foo"));
+            writer.writeRow(
+                    Arrays.<Object>asList(false, new BigDecimal("-1900.5"), null, c.getTime(),
+                            -520.8,
+                            -1000L, -0.128, "Bar"));
+        } finally {
+            writer.close();
+        }
 
         Assert.assertEquals("boolean,currency,date,datetime,float,integer,percentage,text\r\n" +
                         "T,$15.0,01/12/2020,NULL,\"10,000.5\",12 354,56.49999999999999%,Foo\r\n" +
                         "F,\"$-1,900.5\",NULL,2020-12-01 09:30:55,-520.8,-1 000,-12.8%,Bar\r\n",
-                new String(out.toByteArray()));
+                out.toString());
         Assert.assertEquals("domain,key,value\r\n" +
                         "data,null_value,NULL\r\n" +
                         "data,col/0/type,boolean/T/F\r\n" +
@@ -91,6 +97,27 @@ public class MetaCSVWriterTest {
                         "data,col/5/type,\"integer/ \"\r\n" +
                         "data,col/6/type,\"percentage/post/%/float/,/.\"\r\n" +
                         ""
-                , new String(metaOut.toByteArray()));
+                , metaOut.toString());
+    }
+
+    @Test
+    public void testException() throws MetaCSVDataException, IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ByteArrayOutputStream metaOut = new ByteArrayOutputStream();
+        MetaCSVData data =
+                new MetaCSVDataBuilder().colType(0, DateFieldDescription.INSTANCE).build();
+        final MetaCSVWriter writer =
+                new MetaCSVWriterBuilder().out(out).metaOut(metaOut).metaData(data).build();
+        Assert.assertThrows(ClassCastException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                try {
+                    writer.writeHeader(Arrays.asList("foo"));
+                    writer.writeRow(Arrays.<Object>asList("bar"));
+                } finally {
+                    writer.close();
+                }
+            }
+        });
     }
 }

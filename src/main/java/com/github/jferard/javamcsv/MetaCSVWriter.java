@@ -36,39 +36,27 @@ import java.util.List;
 
 public class MetaCSVWriter implements Closeable {
     public static MetaCSVWriter create(File csvFile, MetaCSVData data) throws IOException {
-        File metaCSVFile = Util.withExtension(csvFile, ".mcsv");
-        return create(csvFile, metaCSVFile, data);
+        return new MetaCSVWriterBuilder().csvFile(csvFile).metaData(data).build();
     }
 
     public static MetaCSVWriter create(File csvFile, File metaCSVFile, MetaCSVData data)
             throws IOException {
-        OutputStream metaOut = new FileOutputStream(metaCSVFile);
-        OutputStream out = new FileOutputStream(csvFile);
-        return create(out, metaOut, data);
+        return new MetaCSVWriterBuilder().csvFile(csvFile).metaCSVFile(metaCSVFile).metaData(data).build();
     }
 
     public static MetaCSVWriter create(OutputStream out, OutputStream metaOut, MetaCSVData data)
             throws IOException {
-        try {
-            MetaCSVRenderer renderer = MetaCSVRenderer.create(metaOut);
-            renderer.render(data);
-        } finally {
-            metaOut.close();
-        }
-        return create(out, data);
+        return new MetaCSVWriterBuilder().out(out).metaOut(metaOut).metaData(data).build();
     }
 
     public static MetaCSVWriter create(OutputStream out, MetaCSVData data) throws IOException {
-        CSVFormat format = CSVFormatHelper.getCSVFormat(data);
-        Appendable writer = new OutputStreamWriter(out, data.getEncoding());
-        CSVPrinter printer = new CSVPrinter(writer, format);
-        return new MetaCSVWriter(printer, data.toWriteProcessorProvider(OnError.TEXT));
+        return new MetaCSVWriterBuilder().out(out).metaData(data).build();
     }
 
     private final WriteProcessorProvider writeProvider;
     private final CSVPrinter printer;
 
-    private MetaCSVWriter(CSVPrinter printer, WriteProcessorProvider writeProvider) {
+    protected MetaCSVWriter(CSVPrinter printer, WriteProcessorProvider writeProvider) {
         this.printer = printer;
         this.writeProvider = writeProvider;
     }
