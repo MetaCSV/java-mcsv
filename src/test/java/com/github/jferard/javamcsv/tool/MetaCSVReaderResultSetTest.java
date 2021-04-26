@@ -34,6 +34,7 @@ import org.junit.function.ThrowingRunnable;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -42,6 +43,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class MetaCSVReaderResultSetTest {
     private ResultSet rs;
@@ -57,7 +59,7 @@ public class MetaCSVReaderResultSetTest {
         ByteArrayInputStream is = TestHelper.utf8InputStream(
                 "boolean,currency,date,datetime,float,integer,percentage,text\r\n" +
                         "T,$15,01/12/2020,NULL,\"10,000.5\",12 354,56.5%,Foo\r\n" +
-                        "F,\"$-1,900.5\",NULL,2020-12-01 09:30:55,-520.8,-1 000,-12.8%,Bar\r\n");
+                        "F,\"$-1,900.5\",NULL,2020-12-01 09:30:55,-520.8,-1 000,-12.8%,Accentué\r\n");
         ByteArrayInputStream metaIs = TestHelper.utf8InputStream(
                 "domain,key,value\r\n" +
                         "data,null_value,NULL\r\n" +
@@ -81,6 +83,7 @@ public class MetaCSVReaderResultSetTest {
         for (int i = 1; i <= 8; i++) {
             Assert.assertEquals(firstCol.get(i), rs.getObject(i));
         }
+        Assert.assertEquals("Foo", rs.getObject(8, String.class));
     }
 
     @Test
@@ -88,11 +91,28 @@ public class MetaCSVReaderResultSetTest {
         Assert.assertTrue(rs.next());
         Assert.assertTrue(rs.getBoolean(1));
         Assert.assertEquals(BigDecimal.valueOf(15L), rs.getBigDecimal(2));
+
         Assert.assertEquals(c.getTime(), rs.getDate(3));
-        Assert.assertEquals(null, rs.getDate(4));
         Assert.assertEquals(10000.5, rs.getDouble(5), 0.001);
+
         Assert.assertEquals(12354L, rs.getLong(6));
         Assert.assertEquals(0.565, rs.getDouble(7), 0.001);
+    }
+
+    @Test
+    public void testDates() throws SQLException {
+        Assert.assertTrue(rs.next());
+        Calendar tzCal = Calendar.getInstance(TimeZone.getTimeZone("GMT-8:00"));
+        Assert.assertEquals(c.getTime(), rs.getTimestamp(3));
+
+        Calendar c2 = (Calendar) c.clone();
+        c2.add(Calendar.HOUR_OF_DAY, -8);
+
+        Assert.assertEquals(c2.getTime(), rs.getDate(3, tzCal));
+        Assert.assertEquals(c2.getTime(), rs.getTime(3, tzCal));
+        Assert.assertEquals(c2.getTime(), rs.getTimestamp(3, tzCal));
+
+        Assert.assertNull(rs.getDate(4));
     }
 
     @Test
@@ -107,19 +127,32 @@ public class MetaCSVReaderResultSetTest {
         Assert.assertEquals(12354L, rs.getShort(6));
         Assert.assertEquals(12354L, rs.getInt(6));
         Assert.assertEquals(12354L, rs.getLong(6));
+        Assert.assertThrows(SQLException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.getLong(8);
+            }
+        });
     }
 
     @Test
     public void testBigDecimal() throws SQLException {
         Assert.assertTrue(rs.next());
+        Assert.assertThrows(SQLException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.getBigDecimal(8);
+            }
+        });
         Assert.assertEquals(BigDecimal.ZERO, rs.getBigDecimal(4));
         Assert.assertTrue(rs.wasNull());
+        Assert.assertEquals(new BigDecimal("10000.5"), rs.getBigDecimal(5));
         Assert.assertEquals(new BigDecimal(15L), rs.getBigDecimal(2));
     }
 
     @Test
     public void testGetConstants() throws SQLException {
-        rs.next();
+        Assert.assertTrue(rs.next());
         Assert.assertEquals(ResultSet.FETCH_FORWARD, rs.getFetchDirection());
         Assert.assertEquals(0, rs.getFetchSize());
         Assert.assertEquals(ResultSet.TYPE_FORWARD_ONLY, rs.getType());
@@ -129,15 +162,15 @@ public class MetaCSVReaderResultSetTest {
 
     @Test
     public void testGetRow() throws SQLException {
-        rs.next();
+        Assert.assertTrue(rs.next());
         Assert.assertEquals(1, rs.getRow());
-        rs.next();
+        Assert.assertTrue(rs.next());
         Assert.assertEquals(2, rs.getRow());
     }
 
     @Test
     public void testSetConstants() throws SQLException {
-        rs.next();
+        Assert.assertTrue(rs.next());
         rs.setFetchSize(10);
         Assert.assertThrows(SQLException.class, new ThrowingRunnable() {
             @Override
@@ -160,7 +193,7 @@ public class MetaCSVReaderResultSetTest {
         );
         MetaCSVReader reader = MetaCSVReader.create(is, metaIs);
         rs = Tool.readerToResultSet(reader);
-        rs.next();
+        Assert.assertTrue(rs.next());
         Assert.assertEquals(1, rs.getByte(1));
         Assert.assertFalse(rs.wasNull());
         Assert.assertEquals(1, rs.getShort(1));
@@ -196,7 +229,7 @@ public class MetaCSVReaderResultSetTest {
 
     @Test
     public void testStream() throws SQLException, IOException {
-        rs.next();
+        Assert.assertTrue(rs.next());
         InputStream stream = rs.getAsciiStream(1);
         byte[] buf = getBytes(stream, 4);
         Assert.assertArrayEquals(new byte[]{'t', 'r', 'u', 'e'}, buf);
@@ -206,18 +239,29 @@ public class MetaCSVReaderResultSetTest {
         byte[] buf2 = getBytes(stream2, 4);
         Assert.assertArrayEquals(new byte[]{'t', 'r', 'u', 'e'}, buf2);
         Assert.assertFalse(rs.wasNull());
+
+        Assert.assertTrue(rs.next());
+        InputStream stream3 = rs.getBinaryStream(8);
+        byte[] buf3 = getBytes(stream3, 9);
+        Assert.assertArrayEquals(new byte[]{'A', 'c', 'c', 'e', 'n', 't', 'u', (byte) 0xc3,
+                (byte) 0xa9}, buf3);
+        Assert.assertFalse(rs.wasNull());
+
+        Reader r = rs.getCharacterStream(8);
+        Assert.assertEquals("Accentué", TestHelper.readReader(r));
+        Assert.assertFalse(rs.wasNull());
     }
 
     @Test
     public void testNullStream() throws SQLException, IOException {
-        rs.next();
+        Assert.assertTrue(rs.next());
         Assert.assertNull(rs.getAsciiStream(4));
         Assert.assertNull(rs.getBinaryStream(4));
     }
 
     @Test
     public void testDateAndTime() throws SQLException {
-        rs.next();
+        Assert.assertTrue(rs.next());
         Assert.assertEquals(c.getTime(), rs.getDate(3));
         Assert.assertEquals(c.getTime(), rs.getTime(3));
         Assert.assertEquals(c.getTime(), rs.getTimestamp(3));
@@ -225,7 +269,7 @@ public class MetaCSVReaderResultSetTest {
 
     @Test
     public void testFindColumn() throws SQLException {
-        rs.next();
+        Assert.assertTrue(rs.next());
         Assert.assertThrows(SQLException.class, new ThrowingRunnable() {
             @Override
             public void run() throws Throwable {
@@ -260,7 +304,7 @@ public class MetaCSVReaderResultSetTest {
         Assert.assertTrue(rs.getBoolean("boolean"));
         Assert.assertEquals(BigDecimal.valueOf(15L), rs.getBigDecimal("currency"));
         Assert.assertEquals(c.getTime(), rs.getDate("date"));
-        Assert.assertEquals(null, rs.getDate("datetime"));
+        Assert.assertNull(rs.getDate("datetime"));
         Assert.assertEquals(10000.5, rs.getDouble("float"), 0.001);
         Assert.assertEquals(12354L, rs.getLong("integer"));
         Assert.assertEquals(0.565, rs.getDouble("percentage"), 0.001);
@@ -277,11 +321,12 @@ public class MetaCSVReaderResultSetTest {
         List<Object> secondCol =
                 Arrays.<Object>asList(null, false, new BigDecimal("-1900.5"), null, c.getTime(),
                         -520.8, -1000L,
-                        -0.128, "Bar");
+                        -0.128, "Accentué");
         for (int i = 1; i <= 8; i++) {
             Assert.assertEquals(secondCol.get(i), rs.getObject(i));
         }
         Assert.assertFalse(rs.next());
+        Assert.assertTrue(rs.isClosed());
     }
 
     @Test
@@ -363,5 +408,28 @@ public class MetaCSVReaderResultSetTest {
     @Test
     public void testWrongWrapperFor() throws SQLException {
         Assert.assertFalse(rs.isWrapperFor(String.class));
+    }
+
+    @Test
+    public void testStatement() throws SQLException {
+        Assert.assertNull(rs.getStatement());
+    }
+
+    @Test
+    public void testWarnings() throws SQLException {
+        rs.clearWarnings();
+        Assert.assertNull(rs.getWarnings());
+    }
+
+    @Test
+    public void testClose() throws SQLException {
+        rs.close();
+        Assert.assertTrue(rs.isClosed());
+        Assert.assertThrows(SQLException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                rs.next();
+            }
+        });
     }
 }

@@ -47,11 +47,11 @@ import java.util.TimeZone;
 
 public class MetaCSVReaderResultSet extends AbstractResultSet {
     private final Map<String, Integer> indexByLabel;
+    private final List<String> header;
     private Iterator<MetaCSVRecord> iterator;
     private MetaCSVReader reader;
     private MetaCSVRecord cur;
     private boolean wasNull;
-    private final List<String> header;
 
     public MetaCSVReaderResultSet(MetaCSVReader reader) throws MetaCSVReadException {
         this.reader = reader;
@@ -60,7 +60,7 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
         this.header = Util.header(headerRecord);
         this.indexByLabel = new HashMap<String, Integer>();
         for (int i = 0; i < header.size(); i++) {
-            this.indexByLabel.put(header.get(i), i+1);
+            this.indexByLabel.put(header.get(i), i + 1);
         }
         this.cur = null;
         this.wasNull = false;
@@ -68,6 +68,9 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
 
     @Override
     public boolean next() throws SQLException {
+        if (iterator == null) {
+            throw new SQLException();
+        }
         boolean ret = this.iterator.hasNext();
         if (ret) {
             this.cur = this.iterator.next();
@@ -264,29 +267,21 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
 
     @Override
     public InputStream getAsciiStream(int columnIndex) throws SQLException {
-        try {
-            String s = this.getString(columnIndex);
-            if (s == null) {
-                return null;
-            }
-            return new ByteArrayInputStream(s.getBytes(Util.ASCII_CHARSET));
-        } catch (Exception e) {
-            throw new SQLException(e);
+        String s = this.getString(columnIndex);
+        if (s == null) {
+            return null;
         }
+        return new ByteArrayInputStream(s.getBytes(Util.ASCII_CHARSET));
     }
 
     @Override
     public InputStream getBinaryStream(int columnIndex) throws SQLException {
-        try {
-            String s = this.getString(columnIndex);
-            if (s == null) {
-                return null;
-            }
-            return new ByteArrayInputStream(
-                    s.getBytes(Util.UTF_8_CHARSET));
-        } catch (Exception e) {
-            throw new SQLException(e);
+        String s = this.getString(columnIndex);
+        if (s == null) {
+            return null;
         }
+        return new ByteArrayInputStream(
+                s.getBytes(Util.UTF_8_CHARSET));
     }
 
     @Override
@@ -300,7 +295,8 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
 
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
-        return new MetaCSVResultSetMetaData(this.reader.getMetaData(), this.header, this.indexByLabel);
+        return new MetaCSVResultSetMetaData(this.reader.getMetaData(), this.header,
+                this.indexByLabel);
     }
 
     @Override
@@ -331,7 +327,7 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
         } else {
             this.wasNull = false;
             if (o instanceof Long || o instanceof Double) {
-                new BigDecimal(o.toString());
+                return new BigDecimal(o.toString());
             } else if (o instanceof BigDecimal) {
                 return (BigDecimal) o;
             }
@@ -410,7 +406,7 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
 
     @Override
     public boolean isClosed() throws SQLException {
-        return !iterator.hasNext();
+        return iterator == null || !iterator.hasNext();
     }
 
     @Override
@@ -420,6 +416,6 @@ public class MetaCSVReaderResultSet extends AbstractResultSet {
 
     @Override
     public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
-        return null;
+        return (T) getObject(columnIndex);
     }
 }
