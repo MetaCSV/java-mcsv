@@ -33,6 +33,7 @@ import org.junit.Assert;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -187,5 +188,69 @@ public class TestHelper {
         StringBuilder sb = new StringBuilder();
         description.render(sb);
         return sb.toString();
+    }
+
+    public static byte[] readStream(InputStream in) throws IOException {
+        ByteArrayOutputStream ret = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int count = in.read(buffer, 0, buffer.length);
+        while (count != -1) {
+            ret.write(buffer, 0, count);
+            count = in.read(buffer, 0, buffer.length);
+        }
+
+        ret.flush();
+        return ret.toByteArray();
+    }
+
+    public static String readReader(Reader r) throws IOException {
+        StringBuilder ret = new StringBuilder();
+        char[] buffer = new char[1024];
+        int count = r.read(buffer, 0, buffer.length);
+        while (count != -1) {
+            ret.append(buffer, 0, count);
+            count = r.read(buffer, 0, buffer.length);
+        }
+        return ret.toString();
+    }
+
+    public static InputStream boundedStream(final InputStream in, final long len) {
+        return new InputStream() {
+            long pos = 0;
+
+            @Override
+            public int read() throws IOException {
+                if (pos >= len) {
+                    return -1;
+                }
+                pos++;
+                return in.read();
+            }
+        };
+    }
+
+    public static Reader boundedReader(final Reader reader, final long length) {
+        return new Reader() {
+            long pos = 0;
+
+            @Override
+            public int read(char[] cbuf, int off, int len) throws IOException {
+                if (pos >= length) {
+                    return -1;
+                }
+                pos++;
+                int read = reader.read();
+                if (read == -1) {
+                    return -1;
+                }
+                cbuf[off] = (char) read;
+                return 1;
+            }
+
+            @Override
+            public void close() throws IOException {
+                reader.close();
+            }
+        };
     }
 }

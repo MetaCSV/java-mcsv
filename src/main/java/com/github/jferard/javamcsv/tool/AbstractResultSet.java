@@ -233,82 +233,82 @@ public abstract class AbstractResultSet implements ResultSet {
     }
 
     @Override
-    public void updateBoolean(int columnIndex, boolean x) throws SQLException {
+    public void updateBoolean(int columnIndex, boolean b) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
     @Override
-    public void updateByte(int columnIndex, byte x) throws SQLException {
+    public void updateByte(int columnIndex, byte b) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
     @Override
-    public void updateShort(int columnIndex, short x) throws SQLException {
+    public void updateShort(int columnIndex, short s) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
     @Override
-    public void updateInt(int columnIndex, int x) throws SQLException {
+    public void updateInt(int columnIndex, int i) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
     @Override
-    public void updateLong(int columnIndex, long x) throws SQLException {
+    public void updateLong(int columnIndex, long l) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
     @Override
-    public void updateFloat(int columnIndex, float x) throws SQLException {
+    public void updateFloat(int columnIndex, float f) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
     @Override
-    public void updateDouble(int columnIndex, double x) throws SQLException {
+    public void updateDouble(int columnIndex, double d) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
     @Override
-    public void updateBigDecimal(int columnIndex, BigDecimal x) throws SQLException {
+    public void updateBigDecimal(int columnIndex, BigDecimal bd) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
     @Override
-    public void updateString(int columnIndex, String x) throws SQLException {
+    public void updateString(int columnIndex, String s) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
     @Override
-    public void updateBytes(int columnIndex, byte[] x) throws SQLException {
+    public void updateBytes(int columnIndex, byte[] bs) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
     @Override
-    public void updateDate(int columnIndex, Date x) throws SQLException {
+    public void updateDate(int columnIndex, Date d) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
     @Override
-    public void updateTime(int columnIndex, Time x) throws SQLException {
+    public void updateTime(int columnIndex, Time t) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
     @Override
-    public void updateTimestamp(int columnIndex, Timestamp x) throws SQLException {
+    public void updateTimestamp(int columnIndex, Timestamp ts) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
     @Override
-    public void updateAsciiStream(int columnIndex, InputStream x, int length) throws SQLException {
+    public void updateAsciiStream(int columnIndex, InputStream in, int length) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
     @Override
-    public void updateBinaryStream(int columnIndex, InputStream x, int length) throws SQLException {
+    public void updateBinaryStream(int columnIndex, InputStream in, int length) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
     @Override
-    public void updateCharacterStream(int columnIndex, Reader x, int length) throws SQLException {
+    public void updateCharacterStream(int columnIndex, Reader r, int length) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -328,80 +328,80 @@ public abstract class AbstractResultSet implements ResultSet {
     }
 
     @Override
-    public void updateBoolean(String columnLabel, boolean x) throws SQLException {
-        updateBoolean(this.findColumn(columnLabel), x);
+    public void updateBoolean(String columnLabel, boolean b) throws SQLException {
+        updateBoolean(this.findColumn(columnLabel), b);
     }
 
     @Override
-    public void updateByte(String columnLabel, byte x) throws SQLException {
-        updateByte(this.findColumn(columnLabel), x);
+    public void updateByte(String columnLabel, byte b) throws SQLException {
+        updateByte(this.findColumn(columnLabel), b);
     }
 
     @Override
-    public void updateShort(String columnLabel, short x) throws SQLException {
-        updateShort(this.findColumn(columnLabel), x);
+    public void updateShort(String columnLabel, short s) throws SQLException {
+        updateShort(this.findColumn(columnLabel), s);
     }
 
     @Override
-    public void updateInt(String columnLabel, int x) throws SQLException {
-        updateInt(this.findColumn(columnLabel), x);
+    public void updateInt(String columnLabel, int i) throws SQLException {
+        updateInt(this.findColumn(columnLabel), i);
     }
 
     @Override
-    public void updateLong(String columnLabel, long x) throws SQLException {
-        updateLong(this.findColumn(columnLabel), x);
+    public void updateLong(String columnLabel, long l) throws SQLException {
+        updateLong(this.findColumn(columnLabel), l);
     }
 
     @Override
-    public void updateFloat(String columnLabel, float x) throws SQLException {
-        updateFloat(this.findColumn(columnLabel), x);
+    public void updateFloat(String columnLabel, float f) throws SQLException {
+        updateFloat(this.findColumn(columnLabel), f);
     }
 
     @Override
-    public void updateDouble(String columnLabel, double x) throws SQLException {
-        updateDouble(this.findColumn(columnLabel), x);
+    public void updateDouble(String columnLabel, double d) throws SQLException {
+        updateDouble(this.findColumn(columnLabel), d);
     }
 
     @Override
-    public void updateBigDecimal(String columnLabel, BigDecimal x) throws SQLException {
-        updateBigDecimal(this.findColumn(columnLabel), x);
+    public void updateBigDecimal(String columnLabel, BigDecimal bd) throws SQLException {
+        updateBigDecimal(this.findColumn(columnLabel), bd);
     }
 
     @Override
-    public void updateString(String columnLabel, String x) throws SQLException {
-        updateString(this.findColumn(columnLabel), x);
+    public void updateString(String columnLabel, String s) throws SQLException {
+        updateString(this.findColumn(columnLabel), s);
     }
 
     @Override
-    public void updateBytes(String columnLabel, byte[] x) throws SQLException {
-        updateBytes(this.findColumn(columnLabel), x);
+    public void updateBytes(String columnLabel, byte[] bs) throws SQLException {
+        updateBytes(this.findColumn(columnLabel), bs);
     }
 
     @Override
-    public void updateDate(String columnLabel, Date x) throws SQLException {
-        updateDate(this.findColumn(columnLabel), x);
+    public void updateDate(String columnLabel, Date d) throws SQLException {
+        updateDate(this.findColumn(columnLabel), d);
     }
 
     @Override
-    public void updateTime(String columnLabel, Time x) throws SQLException {
-        updateTime(this.findColumn(columnLabel), x);
+    public void updateTime(String columnLabel, Time t) throws SQLException {
+        updateTime(this.findColumn(columnLabel), t);
     }
 
     @Override
-    public void updateTimestamp(String columnLabel, Timestamp x) throws SQLException {
-        updateTimestamp(this.findColumn(columnLabel), x);
+    public void updateTimestamp(String columnLabel, Timestamp ts) throws SQLException {
+        updateTimestamp(this.findColumn(columnLabel), ts);
     }
 
     @Override
-    public void updateAsciiStream(String columnLabel, InputStream x, int length)
+    public void updateAsciiStream(String columnLabel, InputStream in, int length)
             throws SQLException {
-        updateAsciiStream(this.findColumn(columnLabel), x);
+        updateAsciiStream(this.findColumn(columnLabel), in, length);
     }
 
     @Override
-    public void updateBinaryStream(String columnLabel, InputStream x, int length)
+    public void updateBinaryStream(String columnLabel, InputStream in, int length)
             throws SQLException {
-        updateBinaryStream(this.findColumn(columnLabel), x, length);
+        updateBinaryStream(this.findColumn(columnLabel), in, length);
     }
 
     @Override
@@ -531,43 +531,43 @@ public abstract class AbstractResultSet implements ResultSet {
     }
 
     @Override
-    public void updateRef(int columnIndex, Ref x) throws SQLException {
+    public void updateRef(int columnIndex, Ref ref) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
     @Override
-    public void updateRef(String columnLabel, Ref x) throws SQLException {
-        this.updateRef(this.findColumn(columnLabel), x);
+    public void updateRef(String columnLabel, Ref ref) throws SQLException {
+        this.updateRef(this.findColumn(columnLabel), ref);
     }
 
     @Override
-    public void updateBlob(int columnIndex, Blob x) throws SQLException {
+    public void updateBlob(int columnIndex, Blob blob) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
     @Override
-    public void updateBlob(String columnLabel, Blob x) throws SQLException {
-        this.updateBlob(this.findColumn(columnLabel), x);
+    public void updateBlob(String columnLabel, Blob blob) throws SQLException {
+        this.updateBlob(this.findColumn(columnLabel), blob);
     }
 
     @Override
-    public void updateClob(int columnIndex, Clob x) throws SQLException {
+    public void updateClob(int columnIndex, Clob clob) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
     @Override
-    public void updateClob(String columnLabel, Clob x) throws SQLException {
-        this.updateClob(this.findColumn(columnLabel), x);
+    public void updateClob(String columnLabel, Clob clob) throws SQLException {
+        this.updateClob(this.findColumn(columnLabel), clob);
     }
 
     @Override
-    public void updateArray(int columnIndex, Array x) throws SQLException {
+    public void updateArray(int columnIndex, Array arr) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
     @Override
-    public void updateArray(String columnLabel, Array x) throws SQLException {
-        this.updateArray(this.findColumn(columnLabel), x);
+    public void updateArray(String columnLabel, Array arr) throws SQLException {
+        this.updateArray(this.findColumn(columnLabel), arr);
     }
 
     @Override
@@ -581,13 +581,13 @@ public abstract class AbstractResultSet implements ResultSet {
     }
 
     @Override
-    public void updateRowId(int columnIndex, RowId x) throws SQLException {
+    public void updateRowId(int columnIndex, RowId id) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
     @Override
-    public void updateRowId(String columnLabel, RowId x) throws SQLException {
-        this.updateRowId(this.findColumn(columnLabel), x);
+    public void updateRowId(String columnLabel, RowId id) throws SQLException {
+        this.updateRowId(this.findColumn(columnLabel), id);
     }
 
     @Override
@@ -661,7 +661,7 @@ public abstract class AbstractResultSet implements ResultSet {
     }
 
     @Override
-    public void updateNCharacterStream(int columnIndex, Reader x, long length) throws SQLException {
+    public void updateNCharacterStream(int columnIndex, Reader reader, long length) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -672,31 +672,31 @@ public abstract class AbstractResultSet implements ResultSet {
     }
 
     @Override
-    public void updateAsciiStream(int columnIndex, InputStream x, long length) throws SQLException {
+    public void updateAsciiStream(int columnIndex, InputStream in, long length) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
     @Override
-    public void updateBinaryStream(int columnIndex, InputStream x, long length)
+    public void updateBinaryStream(int columnIndex, InputStream in, long length)
             throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
     @Override
-    public void updateCharacterStream(int columnIndex, Reader x, long length) throws SQLException {
+    public void updateCharacterStream(int columnIndex, Reader r, long length) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
     @Override
-    public void updateAsciiStream(String columnLabel, InputStream x, long length)
+    public void updateAsciiStream(String columnLabel, InputStream in, long length)
             throws SQLException {
-        this.updateAsciiStream(this.findColumn(columnLabel), x, length);
+        this.updateAsciiStream(this.findColumn(columnLabel), in, length);
     }
 
     @Override
-    public void updateBinaryStream(String columnLabel, InputStream x, long length)
+    public void updateBinaryStream(String columnLabel, InputStream in, long length)
             throws SQLException {
-        this.updateBinaryStream(this.findColumn(columnLabel), x, length);
+        this.updateBinaryStream(this.findColumn(columnLabel), in, length);
     }
 
     @Override
@@ -738,7 +738,7 @@ public abstract class AbstractResultSet implements ResultSet {
     }
 
     @Override
-    public void updateNCharacterStream(int columnIndex, Reader x) throws SQLException {
+    public void updateNCharacterStream(int columnIndex, Reader r) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
@@ -748,28 +748,28 @@ public abstract class AbstractResultSet implements ResultSet {
     }
 
     @Override
-    public void updateAsciiStream(int columnIndex, InputStream x) throws SQLException {
+    public void updateAsciiStream(int columnIndex, InputStream in) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
     @Override
-    public void updateBinaryStream(int columnIndex, InputStream x) throws SQLException {
+    public void updateBinaryStream(int columnIndex, InputStream in) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
     @Override
-    public void updateCharacterStream(int columnIndex, Reader x) throws SQLException {
+    public void updateCharacterStream(int columnIndex, Reader r) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
     @Override
-    public void updateAsciiStream(String columnLabel, InputStream x) throws SQLException {
-        this.updateAsciiStream(this.findColumn(columnLabel), x);
+    public void updateAsciiStream(String columnLabel, InputStream in) throws SQLException {
+        this.updateAsciiStream(this.findColumn(columnLabel), in);
     }
 
     @Override
-    public void updateBinaryStream(String columnLabel, InputStream x) throws SQLException {
-        this.updateBinaryStream(this.findColumn(columnLabel), x);
+    public void updateBinaryStream(String columnLabel, InputStream in) throws SQLException {
+        this.updateBinaryStream(this.findColumn(columnLabel), in);
    }
 
     @Override
