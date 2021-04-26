@@ -39,62 +39,52 @@ import java.util.List;
 
 public class ResultSetMetaCSVWriter {
     private ResultSet resultSet;
+    private MetaCSVDataBuilder dataBuilder;
 
     public ResultSetMetaCSVWriter(ResultSet resultSet) {
         this.resultSet = resultSet;
+        this.dataBuilder = new MetaCSVDataBuilder();
+    }
+
+    public ResultSetMetaCSVWriter(ResultSet resultSet, MetaCSVDataBuilder dataBuilder) {
+        this.resultSet = resultSet;
+        this.dataBuilder = dataBuilder;
     }
 
     public void write(MetaCSVWriter writer, MetaCSVRenderer renderer)
-            throws SQLException, IOException, MetaCSVDataException {
-        write(writer, renderer, new MetaCSVDataBuilder());
-    }
-
-    private void write(MetaCSVWriter writer, MetaCSVRenderer renderer,
-                       MetaCSVDataBuilder dataBuilder)
             throws SQLException, MetaCSVDataException, IOException {
-        MetaCSVData metaCSVData = getMetaCSVData(dataBuilder);
+        MetaCSVData metaCSVData = getMetaCSVData();
         renderer.render(metaCSVData);
         writeCSV(writer, metaCSVData);
     }
 
     public void writeMetaCSV(MetaCSVRenderer renderer)
             throws SQLException, MetaCSVDataException, IOException {
-        this.writeMetaCSV(new MetaCSVDataBuilder(), renderer);
-    }
-
-    public void writeMetaCSV(MetaCSVDataBuilder dataBuilder,
-                             MetaCSVRenderer renderer)
-            throws SQLException, MetaCSVDataException, IOException {
-        MetaCSVData metaCSVData = getMetaCSVData(dataBuilder);
+        MetaCSVData metaCSVData = getMetaCSVData();
         renderer.render(metaCSVData);
     }
 
-    public MetaCSVData getMetaCSVData(MetaCSVDataBuilder dataBuilder)
+    public MetaCSVData getMetaCSVData()
             throws SQLException, MetaCSVDataException {
         ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
-        MetaCSVData data0 = dataBuilder.build();
+        MetaCSVData data0 = this.dataBuilder.build();
         int count = resultSetMetaData.getColumnCount();
         for (int c = 0; c < count; c++) {
             if (data0.getDescription(c) != null) {
-                continue;
+                continue; // already known
             }
             int columnType = resultSetMetaData.getColumnType(c + 1);
             DataType dataType = SQLUtil.sqlTypeToDataType(columnType);
             FieldDescription<?> description = dataType.getDefaultDescription();
-            dataBuilder.colType(c, description);
+            this.dataBuilder.colType(c, description);
         }
-        MetaCSVData metaCSVData = dataBuilder.build();
+        MetaCSVData metaCSVData = this.dataBuilder.build();
         return metaCSVData;
     }
 
     public void writeCSV(MetaCSVWriter writer)
             throws SQLException, IOException, MetaCSVDataException {
-        writeCSV(writer, new MetaCSVDataBuilder());
-    }
-
-    private void writeCSV(MetaCSVWriter writer, MetaCSVDataBuilder dataBuilder)
-            throws SQLException, MetaCSVDataException, IOException {
-        MetaCSVData metaCSVData = getMetaCSVData(dataBuilder);
+        MetaCSVData metaCSVData = getMetaCSVData();
         writeCSV(writer, metaCSVData);
     }
 
