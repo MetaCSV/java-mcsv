@@ -26,6 +26,11 @@ import com.github.jferard.javamcsv.processor.FieldProcessor;
 import java.io.IOException;
 
 public interface FieldDescription<T> {
+    /**
+     * Render the field description
+     * @param out the output
+     * @throws IOException
+     */
     void render(Appendable out) throws IOException;
 
     FieldProcessor<T> toFieldProcessor(String nullValue);

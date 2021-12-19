@@ -21,7 +21,10 @@
 package com.github.jferard.javamcsv;
 
 import com.github.jferard.javamcsv.description.CurrencyDecimalFieldDescription;
+import com.github.jferard.javamcsv.description.FieldDescription;
 import com.github.jferard.javamcsv.description.IntegerFieldDescription;
+import com.github.jferard.javamcsv.description.ObjectFieldDescription;
+import com.github.jferard.javamcsv.processor.FieldProcessor;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -33,11 +36,16 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class MetaCSVReaderTest {
     @Test
@@ -249,6 +257,143 @@ public class MetaCSVReaderTest {
         } finally {
             reader.close();
         }
+    }
+
+    @Test
+    public void testObject()
+            throws IOException, MetaCSVReadException, MetaCSVDataException, MetaCSVParseException {
+        ByteArrayInputStream is = TestHelper.utf8InputStream(
+                "year,yearmonth,yearmonthday\r\n" +
+                        "2014,201409,20140917\r\n");
+        MetaCSVReader reader =
+                new MetaCSVReaderBuilder().csvIn(is)
+                        .metaCSVDirectives("data,null_value,NULL", "data,col/0/type,object/partialdate",
+                                "data,col/1/type,object/partialdate", "data,col/2/type,object/partialdate")
+                        .objectParser(
+                                new ObjectTypeParser() {
+                                    @Override
+                                    public FieldDescription<?> parse(
+                                            final List<String> parameters) {
+                                        if (parameters.size() > 0 &&
+                                                parameters.get(0).equals("partialdate")) {
+                                            return MetaCSVReaderTest.this.getPartialDateFieldDescription(
+                                                    parameters);
+                                        } else {
+                                            return new ObjectFieldDescription(parameters);
+                                        }
+                                    }
+                                }).timeZone(TimeZone.getTimeZone("UTC")).build();
+
+
+        try {
+            Iterator<MetaCSVRecord> iterator = reader.iterator();
+            Assert.assertTrue(iterator.hasNext());
+            Assert.assertEquals(
+                    Arrays.asList("year", "yearmonth", "yearmonthday"), iterator.next().toList());
+            Assert.assertTrue(iterator.hasNext());
+
+            Calendar c = GregorianCalendar.getInstance(Locale.US);
+            c.setTimeZone(Util.UTC_TIME_ZONE);
+            c.setTimeInMillis(0);
+            c.set(2014, Calendar.JANUARY, 1, 0, 0, 0);
+            Date d1 = c.getTime();
+            c.set(Calendar.MONTH, Calendar.SEPTEMBER);
+            Date d2 = c.getTime();
+            c.set(Calendar.DAY_OF_MONTH, 17);
+            Date d3 = c.getTime();
+            Assert.assertEquals(
+                    Arrays.asList(d1, d2, d3),
+                    iterator.next().toList());
+            Assert.assertFalse(iterator.hasNext());
+        } finally {
+            reader.close();
+        }
+    }
+
+    private FieldDescription<?> getPartialDateFieldDescription(final List<String> parameters) {
+        return new FieldDescription<Date>() {
+            @Override
+            public void render(Appendable out)
+                    throws IOException {
+                Util.render(out, parameters.toArray(new String[]{}));
+            }
+
+            @Override
+            public FieldProcessor<Date> toFieldProcessor(
+                    final String nullValue) {
+                return getPartialDateFieldProcessor(nullValue);
+            }
+
+            @Override
+            public Class<Date> getJavaType() {
+                return Date.class;
+            }
+
+            @Override
+            public DataType getDataType() {
+                return DataType.DATE;
+            }
+        };
+    }
+
+    private FieldProcessor<Date> getPartialDateFieldProcessor(final String nullValue) {
+        final SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
+        df.setTimeZone(Util.UTC_TIME_ZONE);
+        return new FieldProcessor<Date>() {
+            @Override
+            public Date toObject(String text)
+                    throws MetaCSVReadException {
+                if (text == null || text.trim().equals(nullValue)) {
+                    return null;
+                }
+                text = text.trim();
+                try {
+                    switch (text.length()) {
+                        case 8:
+                            return df.parse(text);
+                        case 6:
+                            return df.parse(text + "01");
+                        case 4:
+                            return df.parse(text + "0101");
+                        default:
+                            throw new MetaCSVReadException("");
+                    }
+                } catch (ParseException e) {
+                    throw new MetaCSVReadException(e);
+                }
+            }
+
+            @Override
+            public String toString(Date date) {
+                if (date == null) {
+                    return nullValue;
+                } else {
+                    return df.format(date);
+                }
+            }
+
+            @Override
+            public String toCanonicalString(String text) throws MetaCSVReadException {
+                if (text == null || text.trim().equals(nullValue)) {
+                    return "";
+                }
+                return df.format(this.toObject(text));
+            }
+
+            @Override
+            public Date cast(Object o) {
+                if (o == null || o instanceof Date) {
+                    return (Date) o;
+                }
+                if (o instanceof Calendar) {
+                    return ((Calendar) o).getTime();
+                } else if (o instanceof Number) {
+                    return new Date(((Number) o).longValue());
+                } else {
+                    throw new ClassCastException(o.toString());
+                }
+            }
+        };
     }
 
     @Test
