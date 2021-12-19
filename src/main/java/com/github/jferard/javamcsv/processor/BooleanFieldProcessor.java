@@ -62,6 +62,21 @@ public class BooleanFieldProcessor implements FieldProcessor<Boolean> {
     }
 
     @Override
+    public String toCanonicalString(String text) throws MetaCSVReadException {
+        if (text == null || text.trim().equals(this.nullValue)) {
+            return "";
+        }
+        text = text.trim();
+        if (text.equalsIgnoreCase(this.trueWord)) {
+            return "true";
+        } else if (text.equalsIgnoreCase(this.falseWord)) {
+            return "false";
+        } else {
+            throw new MetaCSVReadException("Unknown boolean: "+text+" ("+this.trueWord+"/"+this.falseWord+")");
+        }
+    }
+
+    @Override
     public Boolean cast(Object o) {
         if (o == null || o instanceof Boolean) {
             return (Boolean) o;

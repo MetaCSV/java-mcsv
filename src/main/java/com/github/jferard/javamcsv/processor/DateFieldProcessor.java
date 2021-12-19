@@ -21,6 +21,7 @@
 package com.github.jferard.javamcsv.processor;
 
 import com.github.jferard.javamcsv.MetaCSVReadException;
+import com.github.jferard.javamcsv.Util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -31,11 +32,14 @@ public class DateFieldProcessor implements FieldProcessor<Date> {
     private final SimpleDateFormat simpleDateFormat;
     private final String locale;
     private final String nullValue;
+    private SimpleDateFormat canonicalFormat;
 
-    public DateFieldProcessor(SimpleDateFormat simpleDateFormat, String locale, String nullValue) {
+    public DateFieldProcessor(SimpleDateFormat simpleDateFormat, String locale, String nullValue,
+                              SimpleDateFormat canonicalFormat) {
         this.simpleDateFormat = simpleDateFormat;
         this.locale = locale;
         this.nullValue = nullValue;
+        this.canonicalFormat = canonicalFormat;
     }
 
     /**
@@ -62,6 +66,18 @@ public class DateFieldProcessor implements FieldProcessor<Date> {
             return this.nullValue;
         }
         return simpleDateFormat.format(date);
+    }
+
+    @Override
+    public String toCanonicalString(String text) throws MetaCSVReadException {
+        if (text == null || text.equals(this.nullValue)) {
+            return "";
+        }
+        try {
+            return this.canonicalFormat.format(simpleDateFormat.parse(text));
+        } catch (ParseException e) {
+            throw new MetaCSVReadException(e);
+        }
     }
 
     @Override

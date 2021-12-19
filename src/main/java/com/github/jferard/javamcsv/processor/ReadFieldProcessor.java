@@ -26,4 +26,11 @@ public interface ReadFieldProcessor<T> {
      * @return the Object
      */
     Object toObject(String text);
+
+    /**
+     * Return a canonical version of the value
+     * @param text the value as string
+     * @return the canonical version of the value
+     */
+    String toCanonicalString(String text);
 }

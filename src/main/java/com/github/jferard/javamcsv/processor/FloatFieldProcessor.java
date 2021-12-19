@@ -22,7 +22,6 @@ package com.github.jferard.javamcsv.processor;
 
 import com.github.jferard.javamcsv.MetaCSVReadException;
 import com.github.jferard.javamcsv.Util;
-import com.github.jferard.javamcsv.processor.FieldProcessor;
 
 public class FloatFieldProcessor implements FieldProcessor<Double> {
     private final String thousandsSeparator;
@@ -54,6 +53,14 @@ public class FloatFieldProcessor implements FieldProcessor<Double> {
             return this.nullValue;
         }
         return Util.formatDouble(d, this.thousandsSeparator, decimalSeparator);
+    }
+
+    @Override
+    public String toCanonicalString(String text) throws MetaCSVReadException {
+        if (text == null || text.equals(this.nullValue)) {
+            return "";
+        }
+        return Util.normalizeDecimalText(text, this.thousandsSeparator, this.decimalSeparator);
     }
 
     @Override

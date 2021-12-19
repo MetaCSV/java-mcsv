@@ -58,6 +58,14 @@ public class DecimalFieldProcessor implements FieldProcessor<BigDecimal> {
     }
 
     @Override
+    public String toCanonicalString(String text) throws MetaCSVReadException {
+        if (text == null || text.equals(this.nullValue)) {
+            return "";
+        }
+        return Util.normalizeDecimalText(text, this.thousandsSeparator, this.decimalSeparator);
+    }
+
+    @Override
     public BigDecimal cast(Object o) {
         if (o == null || o instanceof BigDecimal) {
             return (BigDecimal) o;

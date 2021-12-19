@@ -43,6 +43,15 @@ public class FieldProcessorFactory {
                             return new ReadError(text, strDescription);
                         }
                     }
+
+                    @Override
+                    public String toCanonicalString(String text) {
+                        try {
+                            return rawProcessor.toCanonicalString(text);
+                        } catch (MetaCSVReadException e) {
+                            return new ReadError(text, strDescription).toString();
+                        }
+                    }
                 };
             case NULL:
                 return new ReadFieldProcessor<T>() {
@@ -52,6 +61,15 @@ public class FieldProcessorFactory {
                             return rawProcessor.toObject(text);
                         } catch (MetaCSVReadException e) {
                             return null;
+                        }
+                    }
+
+                    @Override
+                    public String toCanonicalString(String text) {
+                        try {
+                            return rawProcessor.toCanonicalString(text);
+                        } catch (MetaCSVReadException e) {
+                            return "";
                         }
                     }
                 };
@@ -65,6 +83,15 @@ public class FieldProcessorFactory {
                             return text;
                         }
                     }
+
+                    @Override
+                    public String toCanonicalString(String text) {
+                        try {
+                            return rawProcessor.toCanonicalString(text);
+                        } catch (MetaCSVReadException e) {
+                            return text;
+                        }
+                    }
                 };
             default:
                 return new ReadFieldProcessor<T>() {
@@ -72,6 +99,15 @@ public class FieldProcessorFactory {
                     public Object toObject(String text) {
                         try {
                             return rawProcessor.toObject(text);
+                        } catch (MetaCSVReadException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+
+                    @Override
+                    public String toCanonicalString(String text) {
+                        try {
+                            return rawProcessor.toCanonicalString(text);
                         } catch (MetaCSVReadException e) {
                             throw new RuntimeException(e);
                         }

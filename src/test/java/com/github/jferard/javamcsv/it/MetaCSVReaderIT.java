@@ -378,6 +378,18 @@ public class MetaCSVReaderIT {
             }
 
             @Override
+            public String toCanonicalString(String text) throws MetaCSVReadException {
+                if (text == null || text.trim().equals(nullValue)) {
+                    return "";
+                }
+                try {
+                    return new URL(text.trim()).toString();
+                } catch (MalformedURLException e) {
+                    throw new MetaCSVReadException(e);
+                }
+            }
+
+            @Override
             public URL cast(Object o) {
                 if (o == null || o instanceof URL) {
                     return (URL) o;

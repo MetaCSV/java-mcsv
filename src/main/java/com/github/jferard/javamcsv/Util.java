@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -35,6 +36,17 @@ public class Util {
     public static final TimeZone UTC_TIME_ZONE = TimeZone.getTimeZone("UTC");
     public static Charset UTF_8_CHARSET = Charset.forName("UTF-8");
     public static String UTF_8_CHARSET_NAME = "UTF-8";
+
+    public static final SimpleDateFormat
+            CANONICAL_DATE_FORMAT;
+    public static final SimpleDateFormat CANONICAL_DATETIME_FORMAT;
+    static {
+        CANONICAL_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        CANONICAL_DATE_FORMAT.setTimeZone(UTC_TIME_ZONE);
+        CANONICAL_DATETIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+        CANONICAL_DATETIME_FORMAT.setTimeZone(UTC_TIME_ZONE);
+    }
+
 
     public static List<String> parse(String s) {
         List<String> parts = new ArrayList<String>();
@@ -67,7 +79,8 @@ public class Util {
 
     /**
      * Escape values and join then with a slash
-     * @param out the output
+     *
+     * @param out    the output
      * @param values the values
      * @throws IOException
      */
@@ -93,7 +106,7 @@ public class Util {
     }
 
     private static void render_escaped(Appendable out, String value) throws IOException {
-        for (int i=0; i<value.length(); i++) {
+        for (int i = 0; i < value.length(); i++) {
             char c = value.charAt(i);
             if (c == '/' || c == '\\') {
                 out.append('\\');
@@ -159,7 +172,7 @@ public class Util {
     public static List<String> header(MetaCSVRecord headerRecord) throws MetaCSVReadException {
         int size = headerRecord.size();
         List<String> ret = new ArrayList<String>(size);
-        for (int c=0; c<size; c++) {
+        for (int c = 0; c < size; c++) {
             ret.add(headerRecord.getText(c).toString());
         }
         return ret;
@@ -270,38 +283,37 @@ public class Util {
     }
 
     public static long parseLong(String s, String thousandsSeparator) {
-        String text;
-        if (thousandsSeparator == null || thousandsSeparator.isEmpty()) {
-            text = s;
-        } else {
-            text = Util.replaceChar(s, thousandsSeparator, "");
-        }
+        String text = normalizeIntegerText(s, thousandsSeparator);
         return Long.parseLong(text);
     }
 
     public static double parseDouble(String s, String thousandsSeparator,
                                      String decimalSeparator) {
-        String text = normalizeText(s, thousandsSeparator, decimalSeparator);
+        String text = normalizeDecimalText(s, thousandsSeparator, decimalSeparator);
         return Double.parseDouble(text);
     }
 
-    private static String normalizeText(String s, String thousandsSeparator,
-                                        String decimalSeparator) {
+    public static String normalizeDecimalText(String s, String thousandsSeparator,
+                                              String decimalSeparator) {
         String text;
-        if (thousandsSeparator == null || thousandsSeparator.isEmpty()) {
-            text = s;
-        } else {
-            text = Util.replaceChar(s, thousandsSeparator, "");
-        }
+        text = normalizeIntegerText(s, thousandsSeparator);
         if (!(decimalSeparator == null || decimalSeparator.equals("."))) {
             text = Util.replaceChar(text, decimalSeparator, ".");
         }
         return text;
     }
 
+    public static String normalizeIntegerText(String s, String thousandsSeparator) {
+        if (thousandsSeparator == null || thousandsSeparator.isEmpty()) {
+            return s;
+        } else {
+            return Util.replaceChar(s, thousandsSeparator, "");
+        }
+    }
+
     public static BigDecimal parseBigDecimal(String s, String thousandsSeparator,
                                              String decimalSeparator) {
-        String text = normalizeText(s, thousandsSeparator, decimalSeparator);
+        String text = normalizeDecimalText(s, thousandsSeparator, decimalSeparator);
         return new BigDecimal(text);
     }
 
@@ -322,5 +334,24 @@ public class Util {
         } else {
             return o1.equals(o2);
         }
+    }
+
+    public static String cleanCurrencyText(String text, boolean pre, String symbol)
+            throws MetaCSVReadException {
+        text = text.trim();
+        if (pre) {
+            if (text.startsWith(symbol)) {
+                text = text.substring(symbol.length()).trim();
+            } else {
+                throw new MetaCSVReadException("Value " + text + " should start with " + symbol);
+            }
+        } else {
+            if (text.endsWith(symbol)) {
+                text = text.substring(0, text.length() - symbol.length()).trim();
+            } else {
+                throw new MetaCSVReadException("Value " + text + " should end with " + symbol);
+            }
+        }
+        return text;
     }
 }

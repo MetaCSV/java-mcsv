@@ -166,6 +166,17 @@ public class MetaCSVRecord implements Iterable<Object> {
         return ret;
     }
 
+    public List<String> toCanonicalList() {
+        int size = this.record.size();
+        List<String> ret = new ArrayList<String>(size);
+        for (int c = 0; c < size; c++) {
+            String text = record.get(c);
+            ReadFieldProcessor<?> processor = this.readProvider.getProcessor(c);
+            ret.add(processor.toCanonicalString(text));
+        }
+        return ret;
+    }
+
     @Override
     public String toString() {
         return "MetaCSVRecord{record=" + record + "}";

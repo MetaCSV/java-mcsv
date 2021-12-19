@@ -21,6 +21,7 @@
 package com.github.jferard.javamcsv.processor;
 
 import com.github.jferard.javamcsv.MetaCSVReadException;
+import com.github.jferard.javamcsv.Util;
 
 public class CurrencyIntegerFieldProcessor implements FieldProcessor<Long> {
     private final boolean pre;
@@ -42,20 +43,7 @@ public class CurrencyIntegerFieldProcessor implements FieldProcessor<Long> {
         if (text == null || text.equals(this.nullValue)) {
             return null;
         }
-        text = text.trim();
-        if (this.pre) {
-            if (text.startsWith(this.symbol)) {
-                text = text.substring(this.symbol.length()).trim();
-            } else {
-                throw new MetaCSVReadException("Value "+text+" should start with "+symbol);
-            }
-        } else {
-            if (text.endsWith(this.symbol)) {
-                text = text.substring(0, text.length() - this.symbol.length()).trim();
-            } else {
-                throw new MetaCSVReadException("Value "+text+" should end with "+symbol);
-            }
-        }
+        text = Util.cleanCurrencyText(text, this.pre, this.symbol);
         return this.numberProcessor.toObject(text);
     }
 
@@ -70,6 +58,15 @@ public class CurrencyIntegerFieldProcessor implements FieldProcessor<Long> {
         } else {
             return valueAsString + " " + this.symbol;
         }
+    }
+
+    @Override
+    public String toCanonicalString(String text) throws MetaCSVReadException {
+        if (text == null || text.equals(this.nullValue)) {
+            return "";
+        }
+        text = Util.cleanCurrencyText(text, this.pre, this.symbol);
+        return this.numberProcessor.toCanonicalString(text);
     }
 
     @Override

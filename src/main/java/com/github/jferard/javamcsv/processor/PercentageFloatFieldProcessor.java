@@ -21,7 +21,10 @@
 package com.github.jferard.javamcsv.processor;
 
 import com.github.jferard.javamcsv.MetaCSVReadException;
+import com.github.jferard.javamcsv.Util;
 import com.github.jferard.javamcsv.processor.FieldProcessor;
+
+import java.math.BigDecimal;
 
 public class PercentageFloatFieldProcessor implements FieldProcessor<Double> {
     private final boolean pre;
@@ -42,20 +45,7 @@ public class PercentageFloatFieldProcessor implements FieldProcessor<Double> {
         if (text == null || text.equals(this.nullValue)) {
             return null;
         }
-        text = text.trim();
-        if (this.pre) {
-            if (text.startsWith(this.symbol)) {
-                text = text.substring(this.symbol.length()).trim();
-            } else {
-                throw new MetaCSVReadException("Value "+text+" should start with "+symbol);
-            }
-        } else {
-            if (text.endsWith(this.symbol)) {
-                text = text.substring(0, text.length() - this.symbol.length()).trim();
-            } else {
-                throw new MetaCSVReadException("Value "+text+" should end with "+symbol);
-            }
-        }
+        text = Util.cleanCurrencyText(text, this.pre, this.symbol);
         return this.numberProcessor.toObject(text) / 100.0;
     }
 
@@ -71,6 +61,15 @@ public class PercentageFloatFieldProcessor implements FieldProcessor<Double> {
         } else {
             return valueAsString + this.symbol;
         }
+    }
+
+    @Override
+    public String toCanonicalString(String text) throws MetaCSVReadException {
+        Double value = this.toObject(text);
+        if (value == null) {
+            return "";
+        }
+        return value.toString();
     }
 
     @Override

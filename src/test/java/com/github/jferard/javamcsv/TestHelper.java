@@ -102,6 +102,11 @@ public class TestHelper {
                 }
 
                 @Override
+                public String toCanonicalString(String text) throws MetaCSVReadException {
+                    return values[col].toString();
+                }
+
+                @Override
                 public Object cast(Object o) {
                     return o;
                 }
@@ -123,6 +128,11 @@ public class TestHelper {
                     }
 
                     @Override
+                    public String toCanonicalString(String text) throws MetaCSVReadException {
+                        return values[c].toString();
+                    }
+
+                    @Override
                     public Object cast(Object o) {
                         return o;
                     }
@@ -136,6 +146,11 @@ public class TestHelper {
                     @Override
                     public Object toObject(String text) {
                         return values[c];
+                    }
+
+                    @Override
+                    public String toCanonicalString(String text) {
+                        return values[c].toString();
                     }
 
                 };

@@ -59,6 +59,13 @@ public class BooleanFieldProcessorTest {
     }
 
     @Test
+    public void testToCanonicalString() throws MetaCSVReadException {
+        Assert.assertEquals("", processor.toCanonicalString(null));
+        Assert.assertEquals("true", processor.toCanonicalString("T"));
+        Assert.assertEquals("false", processor.toCanonicalString("F"));
+    }
+
+    @Test
     public void testCase() throws MetaCSVReadException {
         FieldProcessor<Boolean> aProcessor =
                 new BooleanFieldDescription("true", "false").toFieldProcessor("NULL");

@@ -57,6 +57,13 @@ public interface FieldProcessor<T> {
     String toString(T value);
 
     /**
+     * Prepare a value for a canonical String
+     * @param text the text value
+     * @return the canonical String representation of the text.
+     */
+    String toCanonicalString(String text) throws MetaCSVReadException;
+
+    /**
      * For lenient writer: cast an objet to T type
      * @param o the object
      * @return the value

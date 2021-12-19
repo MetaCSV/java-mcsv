@@ -128,6 +128,67 @@ public class MetaCSVReaderTest {
     }
 
     @Test
+    public void testCanonical()
+            throws IOException, MetaCSVParseException, MetaCSVReadException, MetaCSVDataException {
+        ByteArrayInputStream is = TestHelper.utf8InputStream(
+                "boolean,currency,date,datetime,float,integer,percentage,text\r\n" +
+                        "T,$15,01/12/2020,NULL,\"10,000.5\",12 354,56.5%,Foo\r\n" +
+                        "F,\"$-1,900.5\",NULL,2020-12-01 09:30:55,-520.8,-1 000,-12.8%,Bar\r\n");
+        ByteArrayInputStream metaIs = TestHelper.utf8InputStream(
+                "domain,key,value\r\n" +
+                        "data,null_value,NULL\r\n" +
+                        "data,col/0/type,boolean/T/F\r\n" +
+                        "data,col/1/type,\"currency/pre/$/decimal/,/.\"\r\n" +
+                        "data,col/2/type,date/dd\\/MM\\/yyyy\r\n" +
+                        "data,col/3/type,datetime/yyyy-MM-dd HH:mm:ss\r\n" +
+                        "data,col/4/type,\"float/,/.\"\r\n" +
+                        "data,col/5/type,\"integer/ \"\r\n" +
+                        "data,col/6/type,\"percentage/post/%/float/,/.\"\r\n");
+        MetaCSVReader reader = MetaCSVReader.create(is, metaIs);
+        try {
+            MetaCSVMetaData metaData = reader.getMetaData();
+            Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(0)),
+                    "boolean/T/F");
+            Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(1)),
+                    "currency/pre/$/decimal/,/.");
+            Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(2)),
+                    "date/dd\\/MM\\/yyyy");
+            Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(3)),
+                    "datetime/yyyy-MM-dd HH:mm:ss");
+            Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(4)),
+                    "float/,/.");
+            Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(5)),
+                    "integer/ ");
+            Assert.assertEquals(TestHelper.stringDescription(metaData.getDescription(6)),
+                    "percentage/post/%/float/,/.");
+            Iterator<MetaCSVRecord> iterator = reader.iterator();
+            Assert.assertTrue(iterator.hasNext());
+            Assert.assertEquals(
+                    Arrays.asList("boolean", "currency", "date", "datetime", "float", "integer",
+                            "percentage", "text"), iterator.next().toList());
+            Assert.assertTrue(iterator.hasNext());
+
+            Calendar c = GregorianCalendar.getInstance(Locale.US);
+            c.setTimeZone(Util.UTC_TIME_ZONE);
+            c.setTimeInMillis(0);
+            c.set(2020, Calendar.DECEMBER, 1, 0, 0, 0);
+            Assert.assertEquals(
+                    Arrays.asList("true", "15", "2020-12-01", "", "10000.5", "12354",
+                            "0.565", "Foo"),
+                    iterator.next().toCanonicalList());
+            Assert.assertTrue(iterator.hasNext());
+            c.set(2020, Calendar.DECEMBER, 1, 9, 30, 55);
+            Assert.assertEquals(
+                    Arrays.asList("false", "-1900.5", "", "2020-12-01T09:30:55", "-520.8",
+                            "-1000", "-0.128", "Bar"),
+                    iterator.next().toCanonicalList());
+            Assert.assertFalse(iterator.hasNext());
+        } finally {
+            reader.close();
+        }
+    }
+
+    @Test
     public void test2()
             throws IOException, MetaCSVReadException, MetaCSVDataException, MetaCSVParseException {
         ByteArrayInputStream is = TestHelper.utf8InputStream(

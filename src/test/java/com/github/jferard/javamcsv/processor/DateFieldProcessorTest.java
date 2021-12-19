@@ -24,7 +24,6 @@ import com.github.jferard.javamcsv.MetaCSVReadException;
 import com.github.jferard.javamcsv.Util;
 import com.github.jferard.javamcsv.description.DateFieldDescription;
 import com.github.jferard.javamcsv.description.DatetimeFieldDescription;
-import com.github.jferard.javamcsv.processor.FieldProcessor;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,9 +43,9 @@ public class DateFieldProcessorTest {
 
     @Before
     public void setUp() {
-        processor = new DateFieldDescription(new SimpleDateFormat("yyyy-MM-dd", Locale.US), "en_US")
+        processor = new DateFieldDescription(Util.CANONICAL_DATE_FORMAT, "en_US")
                 .toFieldProcessor("NULL");
-        dtProcessor = DatetimeFieldDescription.create("yyyy-MM-dd'T'HH:mm:ss", "en_US")
+        dtProcessor = new DatetimeFieldDescription(Util.CANONICAL_DATETIME_FORMAT, "en_US")
                 .toFieldProcessor("NULL");
     }
 
@@ -61,7 +60,21 @@ public class DateFieldProcessorTest {
         Calendar c = GregorianCalendar.getInstance(Locale.US);
         c.setTimeInMillis(0);
         c.set(2020, Calendar.NOVEMBER, 21, 0, 0, 0);
+        c.setTimeZone(Util.UTC_TIME_ZONE);
         Assert.assertEquals(c.getTime(), processor.toObject("2020-11-21"));
+    }
+
+    @Test
+    public void testUncompleteDateToObject() throws MetaCSVReadException {
+        final FieldProcessor<Date> processor2 =
+                new DateFieldDescription(new SimpleDateFormat("yyyyMMdd", Locale.US), "en_US")
+                        .toFieldProcessor("NULL");
+        Assert.assertThrows(MetaCSVReadException.class, new ThrowingRunnable() {
+            @Override
+            public void run() throws Throwable {
+                processor2.toObject("2020    ");
+            }
+        });
     }
 
     @Test(expected = MetaCSVReadException.class)
@@ -76,7 +89,7 @@ public class DateFieldProcessorTest {
 
     @Test
     public void testDateToString() {
-        Calendar c = GregorianCalendar.getInstance(Locale.US);
+        Calendar c = GregorianCalendar.getInstance(Util.UTC_TIME_ZONE, Locale.US);
         c.setTimeInMillis(0);
         c.set(2020, Calendar.NOVEMBER, 21, 0, 0, 0);
         Assert.assertEquals("2020-11-21", processor.toString(c.getTime()));
@@ -90,8 +103,7 @@ public class DateFieldProcessorTest {
 
     @Test
     public void testDatetimeToObject() throws MetaCSVReadException {
-        Calendar c = GregorianCalendar.getInstance(Locale.US);
-        c.setTimeZone(Util.UTC_TIME_ZONE);
+        Calendar c = GregorianCalendar.getInstance(Util.UTC_TIME_ZONE, Locale.US);
         c.setTimeInMillis(0);
         c.set(2020, Calendar.NOVEMBER, 21, 3, 2, 1);
         Assert.assertEquals(c.getTime(), dtProcessor.toObject("2020-11-21T03:02:01"));
@@ -155,7 +167,7 @@ public class DateFieldProcessorTest {
     @Test
     public void testWrongCast() throws MetaCSVReadException {
         final FieldProcessor<Date> processor =
-                DatetimeFieldDescription.create("yyyy-MM-dd", "en_US")
+                new DatetimeFieldDescription(Util.CANONICAL_DATE_FORMAT, "en_US")
                         .toFieldProcessor("NULL");
         Assert.assertThrows(ClassCastException.class, new ThrowingRunnable() {
             @Override
@@ -163,5 +175,15 @@ public class DateFieldProcessorTest {
                 processor.cast("foo");
             }
         });
+    }
+
+    @Test
+    public void testCanonicalString() throws MetaCSVReadException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        simpleDateFormat.setTimeZone(Util.UTC_TIME_ZONE);
+        DateFieldProcessor processor2 =
+                new DateFieldProcessor(simpleDateFormat, "fr_FR", "NULL",
+                        Util.CANONICAL_DATE_FORMAT);
+        Assert.assertEquals("1975-04-20", processor2.toCanonicalString("20/04/1975"));
     }
 }

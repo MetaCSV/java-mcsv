@@ -20,6 +20,8 @@
 
 package com.github.jferard.javamcsv.processor;
 
+import com.github.jferard.javamcsv.MetaCSVReadException;
+
 public class TextFieldProcessor
         implements ReadFieldProcessor<String>, FieldProcessor<String> {
     private final String nullValue;
@@ -42,6 +44,14 @@ public class TextFieldProcessor
             return this.nullValue;
         }
         return value;
+    }
+
+    @Override
+    public String toCanonicalString(String text) {
+        if (text == null || text.equals(this.nullValue)) {
+            return "";
+        }
+        return text;
     }
 
     @Override

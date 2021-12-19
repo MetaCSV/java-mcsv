@@ -20,6 +20,7 @@
 
 package com.github.jferard.javamcsv.processor;
 
+import com.github.jferard.javamcsv.MetaCSVReadException;
 import com.github.jferard.javamcsv.processor.FieldProcessor;
 
 public class ObjectFieldProcessor implements FieldProcessor<Object> {
@@ -44,6 +45,15 @@ public class ObjectFieldProcessor implements FieldProcessor<Object> {
             return this.nullValue;
         } else {
             return value.toString();
+        }
+    }
+
+    @Override
+    public String toCanonicalString(String text) throws MetaCSVReadException {
+        if (text == null || text.equals(this.nullValue)) {
+            return "";
+        } else {
+            return text;
         }
     }
 

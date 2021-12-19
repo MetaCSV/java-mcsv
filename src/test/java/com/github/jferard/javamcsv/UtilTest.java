@@ -188,4 +188,9 @@ public class UtilTest extends TestCase {
     public void testReplaceChar() {
         Assert.assertEquals("foo", Util.replaceChar("foo", null, "a"));
     }
+
+    @Test
+    public void testCleanCurrencyText() throws MetaCSVReadException {
+        Assert.assertEquals("10", Util.cleanCurrencyText("10 €", false, "€"));
+    }
 }

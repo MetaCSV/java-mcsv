@@ -22,7 +22,6 @@ package com.github.jferard.javamcsv.processor;
 
 import com.github.jferard.javamcsv.MetaCSVReadException;
 import com.github.jferard.javamcsv.Util;
-import com.github.jferard.javamcsv.processor.FieldProcessor;
 
 public class IntegerFieldProcessor implements FieldProcessor<Long> {
     private final String thousandsSeparator;
@@ -51,6 +50,14 @@ public class IntegerFieldProcessor implements FieldProcessor<Long> {
             return this.nullValue;
         }
         return Util.formatLong(n, this.thousandsSeparator);
+    }
+
+    @Override
+    public String toCanonicalString(String text) {
+        if (text == null || text.equals(this.nullValue)) {
+            return "";
+        }
+        return Util.normalizeIntegerText(text, this.thousandsSeparator);
     }
 
     @Override
