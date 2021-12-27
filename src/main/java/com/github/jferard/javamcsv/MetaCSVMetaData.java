@@ -28,8 +28,7 @@ import java.util.Map;
 
 /** Utility class, similar to ResultSetMetaData */
 public class MetaCSVMetaData {
-    public static MetaCSVMetaData create(Map<Integer, FieldDescription<?>> descriptionByColIndex)
-            throws IOException {
+    public static MetaCSVMetaData create(Map<Integer, FieldDescription<?>> descriptionByColIndex) {
         return new MetaCSVMetaData(descriptionByColIndex);
     }
 

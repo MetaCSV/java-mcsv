@@ -21,6 +21,7 @@
 package com.github.jferard.javamcsv.description;
 
 import com.github.jferard.javamcsv.DataType;
+import com.github.jferard.javamcsv.MetaCSVReadException;
 import com.github.jferard.javamcsv.processor.FieldProcessor;
 
 import java.io.IOException;
@@ -29,7 +30,7 @@ public interface FieldDescription<T> {
     /**
      * Render the field description
      * @param out the output
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      */
     void render(Appendable out) throws IOException;
 

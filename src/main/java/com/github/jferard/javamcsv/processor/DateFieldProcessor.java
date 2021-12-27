@@ -46,7 +46,7 @@ public class DateFieldProcessor implements FieldProcessor<Date> {
      *
      * @param text the CSV value
      * @return the UTC-Date
-     * @throws MetaCSVReadException
+     * @throws MetaCSVReadException if the text can't be converted to a T value.
      */
     @Override
     public Date toObject(String text) throws MetaCSVReadException {

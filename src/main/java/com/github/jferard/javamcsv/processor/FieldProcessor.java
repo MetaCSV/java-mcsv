@@ -40,6 +40,8 @@ package com.github.jferard.javamcsv.processor;/*
 
 import com.github.jferard.javamcsv.MetaCSVReadException;
 
+import java.io.IOException;
+
 public interface FieldProcessor<T> {
     /**
      * Prepare a value for a consumer
@@ -60,6 +62,7 @@ public interface FieldProcessor<T> {
      * Prepare a value for a canonical String
      * @param text the text value
      * @return the canonical String representation of the text.
+     * @throws MetaCSVReadException if the text can't be converted to a T value.
      */
     String toCanonicalString(String text) throws MetaCSVReadException;
 

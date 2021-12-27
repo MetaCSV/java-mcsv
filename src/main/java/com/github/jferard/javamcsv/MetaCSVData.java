@@ -140,9 +140,8 @@ public class MetaCSVData implements CSVParameters {
 
     /**
      * @return the utility meta data object
-     * @throws IOException
      */
-    public MetaCSVMetaData getMetaData() throws IOException {
+    public MetaCSVMetaData getMetaData() {
         return MetaCSVMetaData.create(this.descriptionByColIndex);
     }
 

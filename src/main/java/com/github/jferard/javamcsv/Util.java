@@ -34,12 +34,12 @@ public class Util {
     public static final String CRLF = "\r\n";
     public static final Charset ASCII_CHARSET = Charset.forName("US-ASCII");
     public static final TimeZone UTC_TIME_ZONE = TimeZone.getTimeZone("UTC");
-    public static Charset UTF_8_CHARSET = Charset.forName("UTF-8");
-    public static String UTF_8_CHARSET_NAME = "UTF-8";
-
     public static final SimpleDateFormat
             CANONICAL_DATE_FORMAT;
     public static final SimpleDateFormat CANONICAL_DATETIME_FORMAT;
+    public static Charset UTF_8_CHARSET = Charset.forName("UTF-8");
+    public static String UTF_8_CHARSET_NAME = "UTF-8";
+
     static {
         CANONICAL_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         CANONICAL_DATE_FORMAT.setTimeZone(UTC_TIME_ZONE);
@@ -82,7 +82,7 @@ public class Util {
      *
      * @param out    the output
      * @param values the values
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      */
     public static void render(Appendable out, String... values) throws IOException {
         int len = getActualLength(values);

@@ -76,8 +76,8 @@ public class MetaCSVParserBuilder {
      * Only for triplets or directives. Otherwise, the header is mandatory.
      * Must be the last method before `build`.
      *
-     * @param header
-     * @return
+     * @param header true if the header is mandatory
+     * @return this for fluent style
      */
     public MetaCSVParserBuilder header(boolean header) {
         this.header = header;
